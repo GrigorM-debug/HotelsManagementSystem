@@ -1,81 +1,45 @@
-using Microsoft.AspNetCore.Mvc.Infrastructure;
+using HotelsManagementSystem.Api.Extensions;
 using Scalar.AspNetCore;
-using System.Security.Claims;
-using System.Threading.RateLimiting;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
 builder.Services.AddControllers();
+
+builder.Services.AddProblemDetailsConfiguration();
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
-builder.Services.AddOpenApi();
-
-// Added CORS configuration
-var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
-
-builder.Services.AddCors(options =>
-{
-    options.AddPolicy(name: MyAllowSpecificOrigins,
-                      policy =>
-                      {
-                          policy.AllowAnyOrigin()                                 
-                                .AllowAnyHeader()
-                                .AllowAnyMethod();
-                      });
-});
-
+builder.Services.AddOpenApiConfiguration();
+builder.Services.AddCorsConfiguration();
 // Added Rate Limiting configuration
-builder.Services.AddRateLimiter(options =>
-{
-    options.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
-
-    options.OnRejected = async (context, token) =>
-    {
-        if(context.Lease.TryGetMetadata(MetadataName.RetryAfter, out TimeSpan retryAfter))
-        {
-            context.HttpContext.Response.Headers.RetryAfter = $"{retryAfter.TotalSeconds}";
-
-            ProblemDetailsFactory problemDetailsFactory = context.HttpContext.RequestServices.GetRequiredService<ProblemDetailsFactory>();
-
-            Microsoft.AspNetCore.Mvc.ProblemDetails problemDetails = problemDetailsFactory.CreateProblemDetails(
-                context.HttpContext,
-                statusCode: StatusCodes.Status429TooManyRequests,
-                title: "Too Many Requests",
-                detail: $"You have exceeded the allowed request limit. Please try again in {retryAfter.TotalSeconds} seconds."
-            );
-
-            await context.HttpContext.Response.WriteAsJsonAsync(problemDetails, cancellationToken: token);
-        }
-        ;
-    };
-
-    options.GlobalLimiter = PartitionedRateLimiter.Create<HttpContext, string>(httpContext =>
-         RateLimitPartition.GetFixedWindowLimiter(
-             partitionKey: httpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value
-                           ?? httpContext.Connection.RemoteIpAddress?.ToString()
-                           ?? httpContext.Request.Headers.Host.ToString(),
-             factory: partition => new FixedWindowRateLimiterOptions
-             {
-                 PermitLimit = 10,
-                 Window = TimeSpan.FromMinutes(1)
-             }));
-});
+builder.Services.AddRateLimitingConfiguration();
 
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
+    app.UseDeveloperExceptionPage();
     app.MapOpenApi();
-    app.MapScalarApiReference();
+    app.MapScalarApiReference(options =>
+    {
+        options
+            .WithTitle("Hotels Management System API Docs")
+            .WithTheme(ScalarTheme.Default)
+            .WithOpenApiRoutePattern("/openapi/v1.json");
+    });
+}
+else
+{
+    app.UseExceptionHandler("/error");
 }
 
 app.UseHttpsRedirection();
 
 //app.UseStaticFiles();
 
-app.UseCors(MyAllowSpecificOrigins);
+app.UseCors(ServiceExtensions.MyAllowSpecificOrigins);
 
 app.UseRateLimiter();
 
