@@ -8,6 +8,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
 
+builder.Services.AddDatabaseConfiguration(builder.Configuration);
 builder.Services.AddProblemDetailsConfiguration();
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApiConfiguration();
@@ -34,6 +35,11 @@ else
 {
     app.UseExceptionHandler("/error");
 }
+
+//Apply migrations at application startup
+await DatabaseExtension.ApplyMigrationsAsync(app);
+//Seed initial users data
+await DatabaseExtension.SeedUsersAndRoles(app);
 
 app.UseHttpsRedirection();
 
