@@ -11,7 +11,7 @@ namespace HotelsManagementSystem.Api.Data
             builder.Entity<RoomType>().HasData(
                 new RoomType
                 {
-                    Id = Guid.Parse("11111111-1111-1111-1111-111111111111"),
+                    Id = Guid.NewGuid(),
                     Name = "Single Room",
                     Description = "A room assigned to one person. May have one or more beds.",
                     PricePerNight = 50.00m,
@@ -19,7 +19,7 @@ namespace HotelsManagementSystem.Api.Data
                 },
                 new RoomType
                 {
-                    Id = Guid.Parse("22222222-2222-2222-2222-222222222222"),
+                    Id = Guid.NewGuid(),
                     Name = "Double Room",
                     Description = "A room assigned to two people. May have one or more beds.",
                     PricePerNight = 75.00m,
@@ -27,7 +27,7 @@ namespace HotelsManagementSystem.Api.Data
                 },
                 new RoomType
                 {
-                    Id = Guid.Parse("33333333-3333-3333-3333-333333333333"),
+                    Id = Guid.NewGuid(),
                     Name = "Suite",
                     Description = "A parlour or living room connected with to one or more bedrooms.",
                     PricePerNight = 150.00m,
@@ -35,7 +35,7 @@ namespace HotelsManagementSystem.Api.Data
                 },
                 new RoomType
                 {
-                    Id = Guid.Parse("44444444-4444-4444-4444-444444444444"),
+                    Id = Guid.NewGuid(),
                     Name = "Family Room",
                     Description = "A room that is large enough to accommodate a family.",
                     PricePerNight = 120.00m,
@@ -43,7 +43,7 @@ namespace HotelsManagementSystem.Api.Data
                 },
                 new RoomType
                 {
-                    Id = Guid.Parse("55555555-5555-5555-5555-555555555555"),
+                    Id = Guid.NewGuid(),
                     Name = "Deluxe Room",
                     Description = "A room with luxurious amenities, furnishings, and a high level of comfort.",
                     PricePerNight = 200.00m,
@@ -51,7 +51,7 @@ namespace HotelsManagementSystem.Api.Data
                 },
                 new RoomType
                 {
-                    Id = Guid.Parse("66666666-6666-6666-6666-666666666666"),
+                    Id = Guid.NewGuid(),
                     Name = "Presidential Suite",
                     Description = "The most luxurious suite in the hotel, often featuring multiple rooms and premium amenities.",
                     PricePerNight = 500.00m,
@@ -59,7 +59,7 @@ namespace HotelsManagementSystem.Api.Data
                 },
                 new RoomType
                 {
-                    Id = Guid.Parse("77777777-7777-7777-7777-777777777777"),
+                    Id = Guid.NewGuid(),
                     Name = "Economy Room",
                     Description = "A basic room with essential amenities at a budget-friendly price.",
                     PricePerNight = 40.00m,
@@ -67,7 +67,7 @@ namespace HotelsManagementSystem.Api.Data
                 },
                 new RoomType
                 {
-                    Id = Guid.Parse("88888888-8888-8888-8888-888888888888"),
+                    Id = Guid.NewGuid(),
                     Name = "Accessible Room",
                     Description = "A room designed to accommodate guests with disabilities, featuring accessibility features.",
                     PricePerNight = 80.00m,
@@ -75,7 +75,7 @@ namespace HotelsManagementSystem.Api.Data
                 },
                 new RoomType
                 {
-                    Id = Guid.Parse("99999999-9999-9999-9999-999999999999"),
+                    Id = Guid.NewGuid(),
                     Name = "Triple Room",
                     Description = "Accommodates three people and may have a combination of beds like one double and one twin, or three twin beds.",
                     PricePerNight = 90.00m,
@@ -83,7 +83,7 @@ namespace HotelsManagementSystem.Api.Data
                 },
                 new RoomType
                 {
-                    Id = Guid.Parse("00000000-0000-0000-0000-000000000001"),
+                    Id = Guid.NewGuid(),
                     Name = "Twin Room",
                     Description = "Contains two separate single beds.",
                     PricePerNight = 70.00m,
@@ -97,97 +97,97 @@ namespace HotelsManagementSystem.Api.Data
             builder.Entity<Amenity>().HasData(
                new Amenity
                {
-                   Id = Guid.Parse("a1111111-1111-1111-1111-111111111111"),
+                   Id = Guid.NewGuid(),
                    Name = "Free Wi-Fi"
                },
                new Amenity
                {
-                   Id = Guid.Parse("a2222222-2222-2222-2222-222222222222"),
+                   Id = Guid.NewGuid(),
                    Name = "24/7 Front Desk"
                },
                new Amenity
                {
-                   Id = Guid.Parse("a3333333-3333-3333-3333-333333333333"),
+                   Id = Guid.NewGuid(),
                    Name = "Air Conditioning"
                },
                new Amenity
                {
-                   Id = Guid.Parse("a4444444-4444-4444-4444-444444444444"),
+                   Id = Guid.NewGuid(),
                    Name = "Daily Housekeeping"
                },
                new Amenity
                {
-                   Id = Guid.Parse("a5555555-5555-5555-5555-555555555555"),
+                   Id = Guid.NewGuid(),
                    Name = "Free Parking"
                },
                new Amenity
                {
-                   Id = Guid.Parse("a6666666-6666-6666-6666-666666666666"),
+                   Id = Guid.NewGuid(),
                    Name = "Swimming Pool"
                },
                new Amenity
                {
-                   Id = Guid.Parse("a7777777-7777-7777-7777-777777777777"),
+                   Id = Guid.NewGuid(),
                    Name = "Fitness Center"
                },
                new Amenity
                {
-                   Id = Guid.Parse("a8888888-8888-8888-8888-888888888888"),
+                   Id = Guid.NewGuid(),
                    Name = "Restaurant"
                },
                new Amenity
                {
-                   Id = Guid.Parse("a9999999-9999-9999-9999-999999999999"),
+                   Id = Guid.NewGuid(),
                    Name = "Bar/Lounge"
                },
                new Amenity
                {
-                   Id = Guid.Parse("a0000000-0000-0000-0000-000000000001"),
+                   Id = Guid.NewGuid(),
                    Name = "Elevator"
                },
                new Amenity
                {
-                   Id = Guid.Parse("b2222222-2222-2222-2222-222222222222"),
+                   Id = Guid.NewGuid(),
                    Name = "Room Service"
                },
                new Amenity
                {
-                   Id = Guid.Parse("b3333333-3333-3333-3333-333333333333"),
+                   Id = Guid.NewGuid(),
                    Name = "Spa Services"
                },
                new Amenity
                {
-                   Id = Guid.Parse("b4444444-4444-4444-4444-444444444444"),
+                   Id = Guid.NewGuid(),
                    Name = "Valet Parking"
                },
                new Amenity
                {
-                   Id = Guid.Parse("b5555555-5555-5555-5555-555555555555"),
+                   Id = Guid.NewGuid(),
                    Name = "Airport Shuttle"
                },
                new Amenity
                {
-                   Id = Guid.Parse("b6666666-6666-6666-6666-666666666666"),
+                   Id = Guid.NewGuid(),
                    Name = "Laundry Service"
                },
                new Amenity
                {
-                   Id = Guid.Parse("b7777777-7777-7777-7777-777777777777"),
+                   Id = Guid.NewGuid(),
                    Name = "Parking"
                },
                new Amenity
                {
-                   Id = Guid.Parse("b8888888-8888-8888-8888-888888888888"),
+                   Id = Guid.NewGuid(),
                    Name = "Pet-Friendly Services"
                },
                new Amenity
                {
-                   Id = Guid.Parse("b9999999-9999-9999-9999-999999999999"),
+                   Id = Guid.NewGuid(),
                    Name = "Conference Room"
                },
                new Amenity
                {
-                   Id = Guid.Parse("b0000000-0000-0000-0000-000000000001"),
+                   Id = Guid.NewGuid(),
                    Name = "Massage Services"
                }
            );
@@ -198,82 +198,82 @@ namespace HotelsManagementSystem.Api.Data
             builder.Entity<Feature>().HasData(
                 new Feature
                 {
-                    Id = Guid.Parse("f1111111-1111-1111-1111-111111111111"),
+                    Id = Guid.NewGuid(),
                     Name = "Television"
                 },
                 new Feature
                 {
-                    Id = Guid.Parse("f2222222-2222-2222-2222-222222222222"),
+                    Id = Guid.NewGuid(),
                     Name = "Air Conditioning"
                 },
                 new Feature
                 {
-                    Id = Guid.Parse("f3333333-3333-3333-3333-333333333333"),
+                    Id = Guid.NewGuid(),
                     Name = "Bathtub"
                 },
                 new Feature
                 {
-                    Id = Guid.Parse("f4444444-4444-4444-4444-444444444444"),
+                    Id = Guid.NewGuid(),
                     Name = "Work Desk"
                 },
                 new Feature
                 {
-                    Id = Guid.Parse("f5555555-5555-5555-5555-555555555555"),
+                    Id = Guid.NewGuid(),
                     Name = "Hair Dryer"
                 },
                 new Feature
                 {
-                    Id = Guid.Parse("f6666666-6666-6666-6666-666666666666"),
+                    Id = Guid.NewGuid(),
                     Name = "Wardrobe"
                 },
                 new Feature
                 {
-                    Id = Guid.Parse("f7777777-7777-7777-7777-777777777777"),
+                    Id = Guid.NewGuid(),
                     Name = "Free Wi-Fi"
                 },
                 new Feature
                 {
-                    Id = Guid.Parse("f8888888-8888-8888-8888-888888888888"),
+                    Id = Guid.NewGuid(),
                     Name = "Telephone"
                 },
                 new Feature
                 {
-                    Id = Guid.Parse("g1111111-1111-1111-1111-111111111111"),
+                    Id = Guid.NewGuid(),
                     Name = "Mini Bar"
                 },
                 new Feature
                 {
-                    Id = Guid.Parse("g2222222-2222-2222-2222-222222222222"),
+                    Id = Guid.NewGuid(),
                     Name = "Coffee Maker"
                 },
                 new Feature
                 {
-                    Id = Guid.Parse("g3333333-3333-3333-3333-333333333333"),
+                    Id = Guid.NewGuid(),
                     Name = "Balcony"
                 },
                 new Feature
                 {
-                    Id = Guid.Parse("g4444444-4444-4444-4444-444444444444"),
+                    Id = Guid.NewGuid(),
                     Name = "Room Safe"
                 },
                 new Feature
                 {
-                    Id = Guid.Parse("g5555555-5555-5555-5555-555555555555"),
+                    Id = Guid.NewGuid(),
                     Name = "Jacuzzi"
                 },
                 new Feature
                 {
-                    Id = Guid.Parse("g6666666-6666-6666-6666-666666666666"),
+                    Id = Guid.NewGuid(),
                     Name = "Premium TV Channels"
                 },
                 new Feature
                 {
-                    Id = Guid.Parse("g7777777-7777-7777-7777-777777777777"),
+                    Id = Guid.NewGuid(),
                     Name = "Ocean View"
                 },
                 new Feature
                 {
-                    Id = Guid.Parse("g8888888-8888-8888-8888-888888888888"),
+                    Id = Guid.NewGuid(),
                     Name = "Sea View"
                 }
             );
