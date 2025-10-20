@@ -5,6 +5,8 @@ import { loginAction } from "../../../actions/auth/login_action";
 export default function Login() {
   const [state, formAction, isPending] = useActionState(loginAction, null);
 
+  console.log("Login state:", state);
+
   return (
     <div className={styles.loginContainer}>
       <form className={styles.loginForm} action={formAction}>
@@ -24,6 +26,7 @@ export default function Login() {
             type="text"
             id="userName"
             name="userName"
+            defaultValue={state?.data?.userName}
             className={`${styles.input} ${
               state?.errors?.userName ? styles.inputError : ""
             }`}

@@ -8,6 +8,14 @@ export async function registerAction(prevState, formData) {
       success: false,
       message: "Please fix the errors below.",
       errors: validation.errors,
+      date: {
+        firstName: formData.get("firstName"),
+        lastName: formData.get("lastName"),
+        userName: formData.get("userName"),
+        email: formData.get("email"),
+        phoneNumber: formData.get("phoneNumber"),
+        // password: formData.get("password"),
+      },
     };
   }
 

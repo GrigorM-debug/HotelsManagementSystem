@@ -28,6 +28,7 @@ export default function Register() {
               className={styles.input}
               required
               disabled={isPending}
+              defaultValue={state?.data?.firstName}
             />
             {state?.errors?.firstName && (
               <div className={styles.fieldError}>{state.errors.firstName}</div>
@@ -45,6 +46,7 @@ export default function Register() {
               className={styles.input}
               required
               disabled={isPending}
+              defaultValue={state?.data?.lastName}
             />
             {state?.errors?.lastName && (
               <div className={styles.fieldError}>{state.errors.lastName}</div>
@@ -63,6 +65,7 @@ export default function Register() {
             className={styles.input}
             required
             disabled={isPending}
+            defaultValue={state?.data?.userName}
           />
           {state?.errors?.userName && (
             <div className={styles.fieldError}>{state.errors.userName}</div>
@@ -80,6 +83,7 @@ export default function Register() {
             className={styles.input}
             required
             disabled={isPending}
+            defaultValue={state?.data?.email}
           />
           {state?.errors?.email && (
             <div className={styles.fieldError}>{state.errors.email}</div>
@@ -97,6 +101,7 @@ export default function Register() {
             className={styles.input}
             required
             disabled={isPending}
+            defaultValue={state?.data?.phoneNumber}
           />
           {state?.errors?.phoneNumber && (
             <div className={styles.fieldError}>{state.errors.phoneNumber}</div>

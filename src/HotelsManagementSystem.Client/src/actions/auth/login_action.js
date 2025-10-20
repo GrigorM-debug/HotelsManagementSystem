@@ -10,6 +10,10 @@ export async function loginAction(prevState, formData) {
       success: false,
       message: "Please fix the errors below.",
       errors: validation.errors,
+      data: {
+        userName: formData.get("userName"),
+        // password: formData.get("password"),
+      },
     };
   }
 
