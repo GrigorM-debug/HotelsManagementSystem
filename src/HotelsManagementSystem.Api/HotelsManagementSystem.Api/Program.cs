@@ -17,6 +17,12 @@ builder.Services.AddCorsConfiguration();
 // Added Rate Limiting configuration
 builder.Services.AddRateLimitingConfiguration();
 
+builder.Services.AddJWTAuthentication(builder.Configuration);
+builder.Services.AddAuthorization();
+
+// Add application services
+builder.Services.AddServices();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -50,6 +56,7 @@ app.UseCors(ServiceExtensions.MyAllowSpecificOrigins);
 
 app.UseRateLimiter();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();

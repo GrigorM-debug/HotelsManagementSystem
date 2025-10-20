@@ -1,9 +1,13 @@
 ﻿using HotelsManagementSystem.Api.Data;
 using HotelsManagementSystem.Api.Data.Models.Users;
+using HotelsManagementSystem.Api.Services.Auth;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using System.Security.Claims;
+using System.Text;
 using System.Threading.RateLimiting;
 
 namespace HotelsManagementSystem.Api.Extensions
@@ -44,6 +48,34 @@ namespace HotelsManagementSystem.Api.Extensions
             })
                 .AddEntityFrameworkStores<ApplicationDbContext>()
                 .AddDefaultTokenProviders();
+
+            return services;
+        }
+
+        // JWT Authentication configuration method
+        public static IServiceCollection AddJWTAuthentication(this IServiceCollection services, IConfiguration configuration)
+        {
+            services.AddAuthentication(options =>
+            {
+                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+            })
+            .AddJwtBearer(options =>
+            {
+                options.TokenValidationParameters.ValidIssuer = configuration.GetValue<string>("JWT:HotelsManagementSystemApi");
+                options.TokenValidationParameters.ValidAudience = configuration.GetValue<string>("JWT:HotelsManagementSystemApiClient");
+
+                options.TokenValidationParameters.IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration.GetValue<string>("JWT:SecretKey")));
+            });
+
+            return services;
+        }
+
+        // Additional services registration method
+        public static IServiceCollection AddServices(this IServiceCollection services)
+        {
+            services.AddScoped<ITokenProviderService, TokenProviderService>();
 
             return services;
         }
