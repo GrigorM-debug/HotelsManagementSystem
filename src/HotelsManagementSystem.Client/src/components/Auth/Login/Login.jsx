@@ -1,13 +1,25 @@
 import styles from "./Login.module.css";
 import { useActionState } from "react";
+import { validateLoginData } from "../../../validations/auth/login_form_validations";
 
 async function loginAction(prevState, formData) {
-  console.log("Login data: ", {
+  //Validate the form data
+  const validation = validateLoginData(formData);
+
+  if (!validation.isValid) {
+    return {
+      success: false,
+      message: "Please fix the errors below.",
+      errors: validation.errors,
+    };
+  }
+
+  console.log("Login data:", {
     userName: formData.get("userName"),
     password: formData.get("password"),
   });
 
-  //APi call
+  //Api call
 
   return { success: true, message: "Login successful!" };
 }
@@ -20,6 +32,12 @@ export default function Login() {
       <form className={styles.loginForm} action={formAction}>
         <h2 className={styles.title}>Login</h2>
 
+        {state?.message && (
+          <div className={state.success ? styles.success : styles.error}>
+            {state.message}
+          </div>
+        )}
+
         <div className={styles.inputGroup}>
           <label htmlFor="userName" className={styles.label}>
             Username
@@ -28,10 +46,15 @@ export default function Login() {
             type="text"
             id="userName"
             name="userName"
-            className={styles.input}
+            className={`${styles.input} ${
+              state?.errors?.userName ? styles.inputError : ""
+            }`}
             required
             disabled={isPending}
           />
+          {state?.errors?.userName && (
+            <div className={styles.fieldError}>{state.errors.userName}</div>
+          )}
         </div>
 
         <div className={styles.inputGroup}>
@@ -42,10 +65,15 @@ export default function Login() {
             type="password"
             id="password"
             name="password"
-            className={styles.input}
+            className={`${styles.input} ${
+              state?.errors?.password ? styles.inputError : ""
+            }`}
             required
             disabled={isPending}
           />
+          {state?.errors?.password && (
+            <div className={styles.fieldError}>{state.errors.password}</div>
+          )}
         </div>
 
         <button
@@ -55,12 +83,6 @@ export default function Login() {
         >
           {isPending ? "Logging in..." : "Login"}
         </button>
-
-        {state?.message && (
-          <div className={state.success ? styles.success : styles.error}>
-            {state.message}
-          </div>
-        )}
       </form>
     </div>
   );

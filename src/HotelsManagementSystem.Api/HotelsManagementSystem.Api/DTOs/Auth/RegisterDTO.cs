@@ -55,13 +55,16 @@ namespace HotelsManagementSystem.Api.DTOs.Auth
 
             var isPasswordContainsEmail = Password.ToLower().Contains(Email.ToLower());
 
+            var isPasswordContainsPhoneNumber = Password.ToLower().Contains(PhoneNumber.ToLower());
+
             if (
                 isPasswordContainsUserName == true || 
                 isPasswordContainsFirstName == true || 
                 isPasswordContainsLastName == true || 
-                isPasswordContainsEmail == true)
+                isPasswordContainsEmail == true || 
+                isPasswordContainsPhoneNumber == true)
             {
-                yield return new ValidationResult("Password should not contain the user name", new[] { nameof(Password) });
+                yield return new ValidationResult("Password should not contain any of the other data", new[] { nameof(Password) });
             }
         }
     }

@@ -1,7 +1,18 @@
 import styles from "./Register.module.css";
 import { useActionState } from "react";
+import { validateRegisterData } from "../../../validations/auth/register_form_validations";
 
 async function registerAction(prevState, formData) {
+  const validation = validateRegisterData(formData);
+
+  if (!validation.isValid) {
+    return {
+      success: false,
+      message: "Please fix the errors below.",
+      errors: validation.errors,
+    };
+  }
+
   console.log("Registration data: ", {
     firstName: formData.get("firstName"),
     lastName: formData.get("lastName"),
@@ -22,6 +33,12 @@ export default function Register() {
   return (
     <div className={styles.registerContainer}>
       <form className={styles.registerForm} action={formAction}>
+        {state?.message && (
+          <div className={state.success ? styles.success : styles.error}>
+            {state.message}
+          </div>
+        )}
+
         <h2 className={styles.title}>Register</h2>
 
         <div className={styles.inputRow}>
@@ -37,6 +54,9 @@ export default function Register() {
               required
               disabled={isPending}
             />
+            {state?.errors?.firstName && (
+              <div className={styles.fieldError}>{state.errors.firstName}</div>
+            )}
           </div>
 
           <div className={styles.inputGroup}>
@@ -51,6 +71,9 @@ export default function Register() {
               required
               disabled={isPending}
             />
+            {state?.errors?.lastName && (
+              <div className={styles.fieldError}>{state.errors.lastName}</div>
+            )}
           </div>
         </div>
 
@@ -66,6 +89,9 @@ export default function Register() {
             required
             disabled={isPending}
           />
+          {state?.errors?.userName && (
+            <div className={styles.fieldError}>{state.errors.userName}</div>
+          )}
         </div>
 
         <div className={styles.inputGroup}>
@@ -80,6 +106,9 @@ export default function Register() {
             required
             disabled={isPending}
           />
+          {state?.errors?.email && (
+            <div className={styles.fieldError}>{state.errors.email}</div>
+          )}
         </div>
 
         <div className={styles.inputGroup}>
@@ -94,6 +123,9 @@ export default function Register() {
             required
             disabled={isPending}
           />
+          {state?.errors?.phoneNumber && (
+            <div className={styles.fieldError}>{state.errors.phoneNumber}</div>
+          )}
         </div>
 
         <div className={styles.inputGroup}>
@@ -108,6 +140,9 @@ export default function Register() {
             required
             disabled={isPending}
           />
+          {state?.errors?.password && (
+            <div className={styles.fieldError}>{state.errors.password}</div>
+          )}
         </div>
 
         <button
@@ -117,12 +152,6 @@ export default function Register() {
         >
           {isPending ? "Registering..." : "Register"}
         </button>
-
-        {state?.message && (
-          <div className={state.success ? styles.success : styles.error}>
-            {state.message}
-          </div>
-        )}
       </form>
     </div>
   );
