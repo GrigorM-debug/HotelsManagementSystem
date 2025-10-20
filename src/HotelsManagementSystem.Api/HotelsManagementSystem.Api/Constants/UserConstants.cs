@@ -24,5 +24,8 @@
         public const int PhoneNumberMaxLength = 15;
         public const string PhoneNumberRegexPattern = @"^\s*(?:\+?(\d{1,3}))?[-. (]*(\d{3})[-. )]*(\d{3})[-. ]*(\d{4})(?: *x(\d+))?\s*$";
         public const string InvalidPhoneNumberErrorMessage = "The phone number is not in a valid format.";
+
+        public const int UserNameMinLength = 3;
+        public const int UserNameMaxLength = 30;
     }
 }
