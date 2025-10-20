@@ -262,7 +262,7 @@ namespace HotelsManagementSystem.Api.Data
                 .HasIndex(r => new { r.CustomerId, r.ReservationStatus });
 
             builder.Entity<Reservation>()
-                .HasIndex(r => new { r.RoomId, r.CheckInDate, r.CheckOutDate }); 
+                .HasIndex(r => new { r.RoomId, r.CheckInDate, r.CheckOutDate, r.ReservationStatus }); 
         }
 
         private static void ConfigureReviewIndexes(ModelBuilder builder)
