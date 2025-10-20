@@ -1,28 +1,6 @@
 import styles from "./Login.module.css";
 import { useActionState } from "react";
-import { validateLoginData } from "../../../validations/auth/login_form_validations";
-
-async function loginAction(prevState, formData) {
-  //Validate the form data
-  const validation = validateLoginData(formData);
-
-  if (!validation.isValid) {
-    return {
-      success: false,
-      message: "Please fix the errors below.",
-      errors: validation.errors,
-    };
-  }
-
-  console.log("Login data:", {
-    userName: formData.get("userName"),
-    password: formData.get("password"),
-  });
-
-  //Api call
-
-  return { success: true, message: "Login successful!" };
-}
+import { loginAction } from "../../../actions/auth/login_action";
 
 export default function Login() {
   const [state, formAction, isPending] = useActionState(loginAction, null);
