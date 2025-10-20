@@ -1,4 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc.Infrastructure;
+﻿using HotelsManagementSystem.Api.Data;
+using HotelsManagementSystem.Api.Data.Models.Users;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc.Infrastructure;
+using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
 using System.Threading.RateLimiting;
 
@@ -8,6 +12,41 @@ namespace HotelsManagementSystem.Api.Extensions
     {
         public const string MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
 
+        // Database configuration
+        public static IServiceCollection AddDatabaseConfiguration(this IServiceCollection services, IConfiguration configuration)
+        {
+            services.AddDbContext<ApplicationDbContext>(options =>
+                options.UseNpgsql(configuration.GetConnectionString("HotelsManagementSystemConnectionString")));
+            return services;
+        }
+
+        // Add Identity configuration
+        public static IServiceCollection AddIdentityConfiguration(this IServiceCollection services)
+        {
+            services.AddIdentity<ApplicationUser, IdentityRole<Guid>>(options =>
+            {
+                // Password settings.
+                options.Password.RequireDigit = true;
+                options.Password.RequireLowercase = true;
+                options.Password.RequireNonAlphanumeric = true;
+                options.Password.RequireUppercase = true;
+                options.Password.RequiredLength = 8;
+                options.Password.RequiredUniqueChars = 1;
+
+                // User settings.
+                options.User.AllowedUserNameCharacters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._@+";
+                options.User.RequireUniqueEmail = true;
+
+                // Default SignIn settings.
+                options.SignIn.RequireConfirmedEmail = false;
+                options.SignIn.RequireConfirmedAccount = false;
+                options.SignIn.RequireConfirmedPhoneNumber = false;
+            })
+                .AddEntityFrameworkStores<ApplicationDbContext>()
+                .AddDefaultTokenProviders();
+
+            return services;
+        }
 
         // CORS configuration method
         public static IServiceCollection AddCorsConfiguration(this IServiceCollection services)
