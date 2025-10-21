@@ -1,14 +1,17 @@
 import styles from "./Navigation.module.css";
 import { NavLink } from "react-router-dom";
 import { useAuth } from "../../hooks/useAuth";
+import { useNavigate } from "react-router-dom";
 
 export default function Navigation() {
   const { isAuthenticated, clearTokenAndUser, user } = useAuth();
+  const navigate = useNavigate();
 
   console.log("Navigation auth state:", { isAuthenticated, user });
 
   const handleLogout = () => {
     clearTokenAndUser();
+    navigate("/");
   };
 
   return (
@@ -32,24 +35,26 @@ export default function Navigation() {
             Home
           </NavLink>
 
-          <NavLink
-            to="/"
-            className={({ isActive }) =>
-              isActive
-                ? `${styles.navButton} ${styles.activeButton}`
-                : styles.navButton
-            }
-          >
-            Hotels
-          </NavLink>
-
           {isAuthenticated ? (
-            <button
-              onClick={handleLogout}
-              className={`${styles.navButton} ${styles.logoutButton}`}
-            >
-              Logout
-            </button>
+            <>
+              <button
+                onClick={handleLogout}
+                className={`${styles.navButton} ${styles.logoutButton}`}
+              >
+                Logout
+              </button>
+
+              <NavLink
+                to="/"
+                className={({ isActive }) =>
+                  isActive
+                    ? `${styles.navButton} ${styles.activeButton}`
+                    : styles.navButton
+                }
+              >
+                Hotels
+              </NavLink>
+            </>
           ) : (
             <>
               <NavLink

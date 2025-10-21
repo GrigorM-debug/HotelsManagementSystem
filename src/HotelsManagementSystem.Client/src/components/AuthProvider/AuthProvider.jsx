@@ -7,35 +7,37 @@ export default function AuthProvider({ children }) {
 
   useEffect(() => {
     const storedToken = localStorage.getItem("authToken");
-    if (storedToken) {
+    const storedUser = localStorage.getItem("authUser");
+    if (storedToken && storedUser) {
       setToken(storedToken);
+      setUser(JSON.parse(storedUser));
     }
   }, []);
 
   useEffect(() => {
-    if (token) {
+    if (token && user) {
       localStorage.setItem("authToken", token);
+      localStorage.setItem("authUser", JSON.stringify(user));
     } else {
       localStorage.removeItem("authToken");
+      localStorage.removeItem("authUser");
     }
-  }, [token]);
+  }, [token, user]);
 
   const clearTokenAndUser = () => {
     setToken(null);
     setUser(null);
     localStorage.removeItem("authToken");
+    localStorage.removeItem("authUser");
   };
 
   const setTokenAndUser = (data) => {
-    console.log("Data to be set: ", data);
     setToken(data.token);
     setUser(data.user);
     localStorage.setItem("authToken", data.token);
   };
 
   const isAuthenticated = !!token;
-
-  console.log("Data in the provider: ", { user, token, isAuthenticated });
 
   return (
     <AuthContext.Provider
