@@ -1,7 +1,6 @@
 import styles from "./Login.module.css";
 import { useActionState } from "react";
 import { loginAction } from "../../../actions/auth/login_action";
-
 import { useAuth } from "../../../hooks/useAuth";
 import { useNavigate } from "react-router-dom";
 
@@ -11,17 +10,21 @@ export default function Login() {
   const navigate = useNavigate();
 
   if (state?.success && state?.response) {
-    console.log("Login state:", state.response);
+    const user = {
+      userName: state.response.userName,
+      email: state.response.email,
+      roles: state.response.roles,
+    };
     setTokenAndUser({
       token: state.response.accessToken,
-      user: {
-        userName: state.response.userName,
-        email: state.response.email,
-        roles: state.response.roles,
-      },
+      user: user,
     });
 
-    navigate("/");
+    if (user.roles[0] === "Admin") {
+      navigate("/admin-dashboard");
+    } else {
+      navigate("/");
+    }
   }
 
   return (

@@ -6,23 +6,39 @@ import Footer from "./components/Footer/Footer";
 import Register from "./components/Auth/Register/Register";
 import Login from "./components/Auth/Login/Login";
 import ErrorBoundary from "./components/Error-Boundary/Error-Boundary";
+import AuthProvider from "./components/AuthProvider/AuthProvider";
+import AuthenticatedUser from "./components/Route-Guards/AuthenticatedUser";
+import AdminUser from "./components/Route-Guards/AdminUser";
+import AdminDashboard from "./components/Dashboards/AdminDashboard";
 
 function App() {
   return (
     <ErrorBoundary>
-      <div className="app">
-        <BrowserRouter>
-          <Navigation />
-          <main className="main-content">
-            <Routes>
-              <Route path="/" element={<Home />} />
-              <Route path="/register" element={<Register />} />
-              <Route path="/login" element={<Login />} />
-            </Routes>
-          </main>
-          <Footer />
-        </BrowserRouter>
-      </div>
+      <AuthProvider>
+        <div className="app">
+          <BrowserRouter>
+            <Navigation />
+            <main className="main-content">
+              <Routes>
+                <Route path="/" element={<Home />} />
+                <Route path="/register" element={<Register />} />
+                <Route path="/login" element={<Login />} />
+                <Route element={<AuthenticatedUser />}>
+                  {/* You have to put here all the routes that require authentication */}
+                  <Route element={<AdminUser />}>
+                    {/* You have to put here all the routes that require admin role */}
+                    <Route
+                      path="/admin-dashboard"
+                      element={<AdminDashboard />}
+                    />
+                  </Route>
+                </Route>
+              </Routes>
+            </main>
+            <Footer />
+          </BrowserRouter>
+        </div>
+      </AuthProvider>
     </ErrorBoundary>
   );
 }
