@@ -4,8 +4,9 @@ import { useAuth } from "../../hooks/useAuth";
 export default function AdminUser() {
   const { isAuthenticated, user } = useAuth();
 
-  if (!isAuthenticated && !user.roles[0] === "Admin") {
+  if (!isAuthenticated && user == null && !user.roles[0] === "Admin") {
     return <Navigate to="/login" />;
   }
+
   return <Outlet />;
 }
