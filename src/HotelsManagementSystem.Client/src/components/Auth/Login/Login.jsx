@@ -22,6 +22,8 @@ export default function Login() {
 
     if (user.roles[0] === "Admin") {
       navigate("/admin-dashboard");
+    } else if (user.roles[0] === "Receptionist") {
+      navigate("/receptionist-dashboard");
     } else {
       navigate("/");
     }
@@ -32,11 +34,11 @@ export default function Login() {
       <form className={styles.loginForm} action={formAction}>
         <h2 className={styles.title}>Login</h2>
 
-        {/* {state?.message && (
+        {state?.message && (
           <div className={state.success ? styles.success : styles.error}>
             {state.message}
           </div>
-        )} */}
+        )}
 
         <div className={styles.inputGroup}>
           <label htmlFor="userName" className={styles.label}>

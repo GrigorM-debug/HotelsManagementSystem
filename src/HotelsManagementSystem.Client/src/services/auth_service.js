@@ -16,3 +16,17 @@ export async function login(loginData) {
   const data = await response.json();
   return data;
 }
+
+export async function register(registerData) {
+  const response = await fetch(`${API_BASE_URL}/auth/register`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(registerData),
+  });
+
+  if (!response.ok) {
+    throw new Error("Failed to register");
+  }
+}

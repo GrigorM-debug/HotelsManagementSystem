@@ -1,9 +1,15 @@
 import styles from "./Register.module.css";
 import { useActionState } from "react";
 import { registerAction } from "../../../actions/auth/register_action";
+import { useNavigate } from "react-router-dom";
 
 export default function Register() {
   const [state, formAction, isPending] = useActionState(registerAction, null);
+  const navigate = useNavigate();
+
+  if (state?.success) {
+    navigate("/login");
+  }
 
   return (
     <div className={styles.registerContainer}>

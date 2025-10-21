@@ -9,7 +9,9 @@ import ErrorBoundary from "./components/Error-Boundary/Error-Boundary";
 import AuthProvider from "./components/AuthProvider/AuthProvider";
 import AuthenticatedUser from "./components/Route-Guards/AuthenticatedUser";
 import AdminUser from "./components/Route-Guards/AdminUser";
-import AdminDashboard from "./components/Dashboards/AdminDashboard";
+import ReceptionistUser from "./components/Route-Guards/ReceptionistUser";
+import AdminDashboard from "./components/Dashboards/AdminDashBoard/AdminDashboard";
+import ReceptionistDashBoard from "./components/Dashboards/ReceptionistDashBoard/ReceptionistDashBoard";
 
 function App() {
   return (
@@ -30,6 +32,13 @@ function App() {
                     <Route
                       path="/admin-dashboard"
                       element={<AdminDashboard />}
+                    />
+                  </Route>
+                  <Route element={<ReceptionistUser />}>
+                    {/* You have to put here all the routes that require receptionist role */}
+                    <Route
+                      path="/receptionist-dashboard"
+                      element={<ReceptionistDashBoard />}
                     />
                   </Route>
                 </Route>
