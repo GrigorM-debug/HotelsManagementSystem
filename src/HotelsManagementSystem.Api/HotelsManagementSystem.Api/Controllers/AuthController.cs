@@ -42,14 +42,14 @@ namespace HotelsManagementSystem.Api.Controllers
 
             if (user is null)
             {
-                return NotFound("User not found");
+                return NotFound(new { error = "User not found"});
             }
 
             var isPasswordValid = await _userManager.CheckPasswordAsync(user, loginDTO.Password);
 
             if (isPasswordValid == false)
             {
-                return Unauthorized("Invalid password");
+                return Unauthorized(new {error = "Wrong password"});
             }
 
             var roles = await _userManager.GetRolesAsync(user);
@@ -61,7 +61,8 @@ namespace HotelsManagementSystem.Api.Controllers
             {
                 UserName = user.UserName,
                 Email = user.Email,
-                AccessToken = token
+                AccessToken = token,
+                Roles = roles.ToList()
             };
 
             return Ok(response);
@@ -77,7 +78,7 @@ namespace HotelsManagementSystem.Api.Controllers
 
             if(user != null)
             {
-                return BadRequest("User already exists");
+                return BadRequest(new {error = "User already exists" });
             }
 
             var newUser = new ApplicationUser

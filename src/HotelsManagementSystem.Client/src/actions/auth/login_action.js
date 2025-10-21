@@ -1,5 +1,5 @@
-// import { validateLoginData } from "../../../validations/auth/login_form_validations";
 import { validateLoginData } from "../../validations/auth/login_form_validations";
+import { login } from "../../services/auth_service";
 
 export async function loginAction(prevState, formData) {
   //Validate the form data
@@ -17,12 +17,13 @@ export async function loginAction(prevState, formData) {
     };
   }
 
-  console.log("Login data:", {
+  //Api call
+  const loginData = {
     userName: formData.get("userName"),
     password: formData.get("password"),
-  });
+  };
 
-  //Api call
+  const result = await login(loginData);
 
-  return { success: true, message: "Login successful!" };
+  return { success: true, message: "Login successful!", response: result };
 }

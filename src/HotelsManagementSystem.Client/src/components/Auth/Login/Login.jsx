@@ -2,21 +2,38 @@ import styles from "./Login.module.css";
 import { useActionState } from "react";
 import { loginAction } from "../../../actions/auth/login_action";
 
+import { useAuth } from "../../../hooks/useAuth";
+import { useNavigate } from "react-router-dom";
+
 export default function Login() {
   const [state, formAction, isPending] = useActionState(loginAction, null);
+  const { setTokenAndUser } = useAuth();
+  const navigate = useNavigate();
 
-  console.log("Login state:", state);
+  if (state?.success && state?.response) {
+    console.log("Login state:", state.response);
+    setTokenAndUser({
+      token: state.response.accessToken,
+      user: {
+        userName: state.response.userName,
+        email: state.response.email,
+        roles: state.response.roles,
+      },
+    });
+
+    navigate("/");
+  }
 
   return (
     <div className={styles.loginContainer}>
       <form className={styles.loginForm} action={formAction}>
         <h2 className={styles.title}>Login</h2>
 
-        {state?.message && (
+        {/* {state?.message && (
           <div className={state.success ? styles.success : styles.error}>
             {state.message}
           </div>
-        )}
+        )} */}
 
         <div className={styles.inputGroup}>
           <label htmlFor="userName" className={styles.label}>
