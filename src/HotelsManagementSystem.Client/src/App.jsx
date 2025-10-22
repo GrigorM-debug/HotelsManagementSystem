@@ -10,6 +10,7 @@ import AuthProvider from "./components/AuthProvider/AuthProvider";
 import AuthenticatedUser from "./components/Route-Guards/AuthenticatedUser";
 import AdminUser from "./components/Route-Guards/AdminUser";
 import ReceptionistUser from "./components/Route-Guards/ReceptionistUser";
+import NonAuthenticatedUser from "./components/Route-Guards/NonAuthenticatedUser";
 import AdminDashboard from "./components/Dashboards/AdminDashBoard/AdminDashboard";
 import ReceptionistDashBoard from "./components/Dashboards/ReceptionistDashBoard/ReceptionistDashBoard";
 
@@ -23,8 +24,10 @@ function App() {
             <main className="main-content">
               <Routes>
                 <Route path="/" element={<Home />} />
-                <Route path="/register" element={<Register />} />
-                <Route path="/login" element={<Login />} />
+                <Route element={<NonAuthenticatedUser />}>
+                  <Route path="/register" element={<Register />} />
+                  <Route path="/login" element={<Login />} />
+                </Route>
                 <Route element={<AuthenticatedUser />}>
                   {/* You have to put here all the routes that require authentication */}
                   <Route element={<AdminUser />}>
