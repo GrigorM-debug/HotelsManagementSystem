@@ -30,7 +30,22 @@ export async function registerAction(prevState, formData) {
     password: formData.get("password"),
   };
 
-  await register(registerData);
+  const result = await register(registerData);
+
+  if (result.error) {
+    return {
+      success: false,
+      message: result.error,
+      errors: [],
+      data: {
+        firstName: formData.get("firstName"),
+        lastName: formData.get("lastName"),
+        userName: formData.get("userName"),
+        email: formData.get("email"),
+        phoneNumber: formData.get("phoneNumber"),
+      },
+    };
+  }
 
   return {
     success: true,

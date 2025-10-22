@@ -10,7 +10,15 @@ export async function login(loginData) {
   });
 
   if (!response.ok) {
-    throw new Error("Failed to login");
+    if (response.status === 400) {
+      const errorData = await response.json();
+      return errorData;
+    } else if (response.status === 404) {
+      const errorData = await response.json();
+      return errorData;
+    } else {
+      throw new Error("Failed to login");
+    }
   }
 
   const data = await response.json();
@@ -27,6 +35,11 @@ export async function register(registerData) {
   });
 
   if (!response.ok) {
-    throw new Error("Failed to register");
+    if (response.status === 400) {
+      const errorData = await response.json();
+      return errorData;
+    } else {
+      throw new Error("Failed to register");
+    }
   }
 }
