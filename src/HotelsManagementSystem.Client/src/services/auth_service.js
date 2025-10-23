@@ -10,10 +10,13 @@ export async function login(loginData) {
   });
 
   if (!response.ok) {
-    if (response.status === 400) {
+    if (response.status === 401) {
       const errorData = await response.json();
       return errorData;
     } else if (response.status === 404) {
+      const errorData = await response.json();
+      return errorData;
+    } else if (response.status === 400) {
       const errorData = await response.json();
       return errorData;
     } else {
@@ -37,9 +40,30 @@ export async function register(registerData) {
   if (!response.ok) {
     if (response.status === 400) {
       const errorData = await response.json();
-      return errorData;
+      return errorData.error;
     } else {
       throw new Error("Failed to register");
     }
   }
+}
+
+export async function logout(token) {
+  const response = await fetch(`${API_BASE_URL}/auth/logout`, {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
+  if (!response.ok) {
+    switch (response.status) {
+      case 401:
+        throw new Error("401 Unauthorized");
+      case 404:
+        throw new Error("404 User Not Found");
+      default:
+        throw new Error("Failed to logout");
+    }
+  }
+  return;
 }

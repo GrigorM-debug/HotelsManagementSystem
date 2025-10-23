@@ -2,16 +2,31 @@ import styles from "./Navigation.module.css";
 import { NavLink } from "react-router-dom";
 import { useAuth } from "../../hooks/useAuth";
 import { useNavigate } from "react-router-dom";
+import { logout } from "../../services/auth_service";
 
 export default function Navigation() {
-  const { isAuthenticated, clearTokenAndUser, user } = useAuth();
+  const { isAuthenticated, clearTokenAndUser, token } = useAuth();
   const navigate = useNavigate();
 
-  console.log("Navigation auth state:", { isAuthenticated, user });
-
-  const handleLogout = () => {
-    clearTokenAndUser();
-    navigate("/");
+  const handleLogoutCallback = async () => {
+    if (token) {
+      try {
+        await logout(token);
+        clearTokenAndUser();
+        navigate("/");
+      } catch (error) {
+        switch (error.message) {
+          case "401 Unauthorized":
+            clearTokenAndUser();
+            navigate("/login");
+            break;
+          case "404 User Not Found":
+            clearTokenAndUser();
+            navigate("/404");
+            break;
+        }
+      }
+    }
   };
 
   return (
@@ -38,7 +53,7 @@ export default function Navigation() {
           {isAuthenticated ? (
             <>
               <button
-                onClick={handleLogout}
+                onClick={handleLogoutCallback}
                 className={`${styles.navButton} ${styles.logoutButton}`}
               >
                 Logout
