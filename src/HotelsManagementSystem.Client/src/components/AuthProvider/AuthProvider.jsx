@@ -24,6 +24,7 @@ export default function AuthProvider({ children }) {
     }
   }, [token, user]);
 
+  //Used on logout to clear token and user info
   const clearTokenAndUser = () => {
     setToken(null);
     setUser(null);
@@ -31,6 +32,7 @@ export default function AuthProvider({ children }) {
     localStorage.removeItem("authUser");
   };
 
+  //Used on login to set token and user info
   const setTokenAndUser = (data) => {
     setToken(data.token);
     setUser(data.user);

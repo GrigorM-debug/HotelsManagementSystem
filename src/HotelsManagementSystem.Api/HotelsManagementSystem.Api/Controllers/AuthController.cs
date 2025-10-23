@@ -36,6 +36,7 @@ namespace HotelsManagementSystem.Api.Controllers
         [HttpPost("login")]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(AuthResponse), StatusCodes.Status200OK)]
         public async Task<IActionResult> Login([FromBody] LoginDTO loginDTO)
         {
@@ -55,7 +56,7 @@ namespace HotelsManagementSystem.Api.Controllers
 
             if (isPasswordValid == false)
             {
-                return Unauthorized(new {error = "Wrong password"});
+                return BadRequest(new {error = "Wrong password"});
             }
 
             var roles = await _userManager.GetRolesAsync(user);

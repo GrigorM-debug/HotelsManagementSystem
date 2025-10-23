@@ -24,13 +24,23 @@ export async function loginAction(prevState, formData) {
   };
 
   const result = await login(loginData);
-  console.log("Login action result:", result);
 
   if (result.error) {
     return {
       success: false,
       message: result.error,
       errors: [],
+      data: {
+        userName: formData.get("userName"),
+      },
+    };
+  }
+
+  if (result.errors) {
+    return {
+      success: false,
+      message: "Please fix the errors below.",
+      errors: result.errors,
       data: {
         userName: formData.get("userName"),
       },

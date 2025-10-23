@@ -47,6 +47,21 @@ export async function registerAction(prevState, formData) {
     };
   }
 
+  if (result.errors) {
+    return {
+      success: false,
+      message: "Please fix the errors below.",
+      errors: result.errors,
+      data: {
+        firstName: formData.get("firstName"),
+        lastName: formData.get("lastName"),
+        userName: formData.get("userName"),
+        email: formData.get("email"),
+        phoneNumber: formData.get("phoneNumber"),
+      },
+    };
+  }
+
   return {
     success: true,
     message: "Registration successful!",
