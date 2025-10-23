@@ -1,4 +1,5 @@
 using HotelsManagementSystem.Api.Extensions;
+using HotelsManagementSystem.Api.Middlewares;
 using Scalar.AspNetCore;
 
 
@@ -9,6 +10,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 
 builder.Services.AddDatabaseConfiguration(builder.Configuration);
+builder.Services.AddRedis(builder.Configuration);
 builder.Services.AddIdentityConfiguration();
 builder.Services.AddProblemDetailsConfiguration();
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
@@ -55,6 +57,8 @@ app.UseHttpsRedirection();
 app.UseCors(ServiceExtensions.MyAllowSpecificOrigins);
 
 app.UseRateLimiter();
+
+app.UseMiddleware<TokenValidator>();
 
 app.UseAuthentication();
 app.UseAuthorization();

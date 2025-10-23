@@ -12,5 +12,9 @@ namespace HotelsManagementSystem.Api.Services.Auth
         /// <param name="roles">Array of the user roles</param>
         /// <returns>Returns the generated token</returns>
         public string GenerateToken(ApplicationUser user, IList<string> roles);
+
+        public Task AddTokenToBlackList(string token);
+
+        public Task<bool> IsTokenBlackListed(string token);
     }
 }

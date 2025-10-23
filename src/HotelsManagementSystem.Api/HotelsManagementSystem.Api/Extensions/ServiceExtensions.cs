@@ -1,5 +1,6 @@
 ﻿using HotelsManagementSystem.Api.Data;
 using HotelsManagementSystem.Api.Data.Models.Users;
+using HotelsManagementSystem.Api.Middlewares;
 using HotelsManagementSystem.Api.Services.Auth;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
@@ -7,6 +8,7 @@ using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.Security.Claims;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.RateLimiting;
 
@@ -21,6 +23,17 @@ namespace HotelsManagementSystem.Api.Extensions
         {
             services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseNpgsql(configuration.GetConnectionString("HotelsManagementSystemConnectionString")));
+            return services;
+        }
+
+        // Add redis configuration
+        public static IServiceCollection AddRedis(this IServiceCollection services, IConfiguration configuration)
+        {
+            services.AddStackExchangeRedisCache(options =>
+            {
+                options.Configuration = configuration.GetValue<string>("Redis:ConnectionString");
+                options.InstanceName = configuration.GetValue<string>("Redis:InstanceName");
+            });
             return services;
         }
 
@@ -63,8 +76,14 @@ namespace HotelsManagementSystem.Api.Extensions
             })
             .AddJwtBearer(options =>
             {
-                options.TokenValidationParameters.ValidIssuer = configuration.GetValue<string>("JWT:HotelsManagementSystemApi");
-                options.TokenValidationParameters.ValidAudience = configuration.GetValue<string>("JWT:HotelsManagementSystemApiClient");
+                options.TokenValidationParameters.ValidIssuer = configuration.GetValue<string>("JWT:Issuer");
+                options.TokenValidationParameters.ValidAudience = configuration.GetValue<string>("JWT:Audience");
+
+                options.TokenValidationParameters.ValidateIssuer = true;
+                options.TokenValidationParameters.ValidateAudience = true;
+                options.TokenValidationParameters.ValidateLifetime = true;
+                options.TokenValidationParameters.ValidateIssuerSigningKey = true;
+                options.TokenValidationParameters.ClockSkew = TimeSpan.Zero;
 
                 options.TokenValidationParameters.IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration.GetValue<string>("JWT:SecretKey")));
             });
@@ -76,6 +95,7 @@ namespace HotelsManagementSystem.Api.Extensions
         public static IServiceCollection AddServices(this IServiceCollection services)
         {
             services.AddScoped<ITokenProviderService, TokenProviderService>();
+            services.AddScoped<TokenValidator>();
 
             return services;
         }

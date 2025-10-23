@@ -7,10 +7,10 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace HotelsManagementSystem.Api.Controllers
 {
-    [AllowAnonymous]
     [Route("api/v1/[controller]")]
     [ApiController]
     public class AuthController : ControllerBase
@@ -32,12 +32,18 @@ namespace HotelsManagementSystem.Api.Controllers
             _context = context;
         }
 
+        [AllowAnonymous]
         [HttpPost("login")]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(typeof(AuthResponse), StatusCodes.Status200OK)]
         public async Task<IActionResult> Login([FromBody] LoginDTO loginDTO)
         {
+            if(User.Identity != null && User.Identity.IsAuthenticated)
+            {
+                return Forbid();
+            }
+
             var user = await _userManager.FindByNameAsync(loginDTO.UserName);
 
             if (user is null)
@@ -68,11 +74,17 @@ namespace HotelsManagementSystem.Api.Controllers
             return Ok(response);
         }
 
+        [AllowAnonymous]
         [HttpPost("register")]
         [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status201Created)]
         public async Task<IActionResult> Register ([FromBody] RegisterDTO registerDTO)
         {
+            if(User.Identity != null && User.Identity.IsAuthenticated)
+            {
+                return Forbid();
+            }
+
             // Check if user with the same username already exists
             var user = await _userManager.FindByNameAsync(registerDTO.UserName);
 
@@ -113,5 +125,33 @@ namespace HotelsManagementSystem.Api.Controllers
 
             return Created();
         }
+
+        [Authorize]
+        [HttpPost("logout")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesDefaultResponseType]
+        public async Task<IActionResult> Logout()
+        {
+            var userId = _userManager.GetUserId(User);
+
+            var user = await _userManager.FindByIdAsync(userId);
+
+            if(user == null)
+            {
+                return NotFound(new {error = "User not found"});
+            }
+
+            var token = Request.Headers["Authorization"].FirstOrDefault()?.Split(" ").Last();
+
+            if (string.IsNullOrEmpty(token))
+            {
+                return Unauthorized();
+            }
+
+            await _tokenProviderService.AddTokenToBlackList(token);
+
+            return Ok(new { message = "Successfully logged out" });
+        }   
     }
 }
