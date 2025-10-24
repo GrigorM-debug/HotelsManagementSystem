@@ -34,7 +34,7 @@ namespace HotelsManagementSystem.Api.Controllers
 
         [AllowAnonymous]
         [HttpPost("login")]
-        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(AuthResponse), StatusCodes.Status200OK)]
@@ -43,7 +43,7 @@ namespace HotelsManagementSystem.Api.Controllers
             if(User.Identity != null && User.Identity.IsAuthenticated)
             {
                 return Forbid();
-            }
+            }       
 
             var user = await _userManager.FindByNameAsync(loginDTO.UserName);
 
@@ -77,7 +77,8 @@ namespace HotelsManagementSystem.Api.Controllers
 
         [AllowAnonymous]
         [HttpPost("register")]
-        [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status201Created)]
         public async Task<IActionResult> Register ([FromBody] RegisterDTO registerDTO)
         {
@@ -129,6 +130,7 @@ namespace HotelsManagementSystem.Api.Controllers
 
         [Authorize]
         [HttpPost("logout")]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesDefaultResponseType]

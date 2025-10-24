@@ -10,10 +10,7 @@ export async function login(loginData) {
   });
 
   if (!response.ok) {
-    if (response.status === 401) {
-      const errorData = await response.json();
-      return errorData;
-    } else if (response.status === 404) {
+    if (response.status === 404) {
       const errorData = await response.json();
       return errorData;
     } else if (response.status === 400) {
@@ -40,7 +37,8 @@ export async function register(registerData) {
   if (!response.ok) {
     if (response.status === 400) {
       const errorData = await response.json();
-      return errorData.error;
+      console.log(errorData);
+      return errorData;
     } else {
       throw new Error("Failed to register");
     }

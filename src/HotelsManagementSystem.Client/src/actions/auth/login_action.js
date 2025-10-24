@@ -25,27 +25,27 @@ export async function loginAction(prevState, formData) {
 
   const result = await login(loginData);
 
-  if (result.error) {
-    return {
-      success: false,
-      message: result.error,
-      errors: [],
-      data: {
-        userName: formData.get("userName"),
-      },
-    };
+  if (result) {
+    if (result.error) {
+      return {
+        success: false,
+        message: result.error,
+        errors: [],
+        data: {
+          userName: formData.get("userName"),
+        },
+      };
+    } else if (result.errors) {
+      return {
+        success: false,
+        message: "Please fix the errors below.",
+        errors: result.errors,
+        data: {
+          userName: formData.get("userName"),
+        },
+      };
+    } else {
+      return { success: true, message: "Login successful!", response: result };
+    }
   }
-
-  if (result.errors) {
-    return {
-      success: false,
-      message: "Please fix the errors below.",
-      errors: result.errors,
-      data: {
-        userName: formData.get("userName"),
-      },
-    };
-  }
-
-  return { success: true, message: "Login successful!", response: result };
 }
