@@ -1,35 +1,61 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import "./App.css";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import Navigation from "./components/Navigation/Navigation";
+import Home from "./components/Home/Home";
+import Footer from "./components/Footer/Footer";
+import Register from "./components/Auth/Register/Register";
+import Login from "./components/Auth/Login/Login";
+import ErrorBoundary from "./components/Error-Boundary/Error-Boundary";
+import AuthProvider from "./components/AuthProvider/AuthProvider";
+import AuthenticatedUser from "./components/Route-Guards/AuthenticatedUser";
+import AdminUser from "./components/Route-Guards/AdminUser";
+import ReceptionistUser from "./components/Route-Guards/ReceptionistUser";
+import NonAuthenticatedUser from "./components/Route-Guards/NonAuthenticatedUser";
+import AdminDashboard from "./components/Dashboards/AdminDashBoard/AdminDashboard";
+import ReceptionistDashBoard from "./components/Dashboards/ReceptionistDashBoard/ReceptionistDashBoard";
+import NotFound404 from "./components/StatusCodePages/404";
 
 function App() {
-  const [count, setCount] = useState(0)
-
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+    <ErrorBoundary>
+      <AuthProvider>
+        <div className="app">
+          <BrowserRouter>
+            <Navigation />
+            <main className="main-content">
+              <Routes>
+                <Route path="/" element={<Home />} />
+                <Route path="/404" element={<NotFound404 />} />
+                <Route path="*" element={<NotFound404 />} />
+                <Route element={<NonAuthenticatedUser />}>
+                  <Route path="/register" element={<Register />} />
+                  <Route path="/login" element={<Login />} />
+                </Route>
+                <Route element={<AuthenticatedUser />}>
+                  {/* You have to put here all the routes that require authentication */}
+                  <Route element={<AdminUser />}>
+                    {/* You have to put here all the routes that require admin role */}
+                    <Route
+                      path="/admin-dashboard"
+                      element={<AdminDashboard />}
+                    />
+                  </Route>
+                  <Route element={<ReceptionistUser />}>
+                    {/* You have to put here all the routes that require receptionist role */}
+                    <Route
+                      path="/receptionist-dashboard"
+                      element={<ReceptionistDashBoard />}
+                    />
+                  </Route>
+                </Route>
+              </Routes>
+            </main>
+            <Footer />
+          </BrowserRouter>
+        </div>
+      </AuthProvider>
+    </ErrorBoundary>
+  );
 }
 
-export default App
+export default App;

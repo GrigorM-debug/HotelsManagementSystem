@@ -1,0 +1,95 @@
+.navbar {
+  background-color: #fff;
+  border-bottom: 1px solid #e5e5e5;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+
+.navContainer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1rem;
+  height: 70px;
+}
+
+.siteName {
+  flex: 1;
+}
+
+.logo {
+  margin: 0;
+  font-weight: bold;
+  color: #007bff;
+  cursor: pointer;
+  transition: color 0.3s ease;
+}
+
+.logo:hover {
+  color: #0056b3;
+}
+
+.navButtons {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.navButton {
+  padding: 0.5rem 1rem;
+  border: 1px solid #ddd;
+  background-color: transparent;
+  color: #333;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.navButton:hover {
+  background-color: #f8f9fa;
+  border-color: #007bff;
+  color: #007bff;
+}
+
+.loginButton {
+  background-color: #007bff;
+  color: white;
+  border-color: #007bff;
+}
+
+.loginButton:hover {
+  background-color: #0056b3;
+  border-color: #0056b3;
+  color: white;
+}
+
+.navButton:active {
+  transform: translateY(1px);
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .navContainer {
+    padding: 0 0.5rem;
+    height: 60px;
+  }
+
+  .logo {
+    font-size: 1.25rem;
+  }
+
+  .navButtons {
+    gap: 0.5rem;
+  }
+
+  .navButton {
+    padding: 0.4rem 0.8rem;
+    font-size: 0.8rem;
+  }
+}
