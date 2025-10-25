@@ -23,7 +23,7 @@ builder.Services.AddJWTAuthentication(builder.Configuration);
 builder.Services.AddAuthorization();
 
 // Add application services
-builder.Services.AddServices();
+builder.Services.AddServices(builder.Configuration);
 
 var app = builder.Build();
 
