@@ -4,15 +4,37 @@ using System.Text;
 
 namespace HotelsManagementSystem.Api.Services.Contact
 {
+    /// <summary>
+    /// Service responsible for handling contact form submissions and email notifications.
+    /// Implements the <see cref="IContactService"/> interface to provide contact-related functionality.
+    /// </summary>
     public class ContactService : IContactService
     {
+        /// <summary>
+        /// The email provider used to send contact form emails.
+        /// </summary>
         private readonly IEmailProvider _emailProvider;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ContactService"/> class.
+        /// </summary>
+        /// <param name="emailProvider">The email provider service used to send emails.</param>
+        /// <exception cref="ArgumentNullException">Thrown when <paramref name="emailProvider"/> is null.</exception>
         public ContactService(IEmailProvider emailProvider)
         {
             _emailProvider = emailProvider;
         }
 
+        /// <summary>
+        /// Sends a contact form email asynchronously with the provided contact data.
+        /// Creates a formatted HTML email containing the contact information and sends it to the specified recipient.
+        /// </summary>
+        /// <param name="contactData">The contact form data containing user information and message.</param>
+        /// <param name="toEmail">The recipient email address where the contact form will be sent.</param>
+        /// <param name="senderEmail">The sender email address used to send the contact form.</param>
+        /// <returns>A <see cref="Task"/> representing the asynchronous email sending operation.</returns>
+        /// <exception cref="ArgumentNullException">Thrown when any of the parameters is null.</exception>
+        /// <exception cref="ArgumentException">Thrown when email addresses are in invalid format.</exception>
         public async Task SendContactFormEmailAsync(ContactDTO contactData, string toEmail, string senderEmail)
         {
             var subject = $"New Contact Form Submission from {contactData.FirstName} {contactData.LastName}";
@@ -22,6 +44,20 @@ namespace HotelsManagementSystem.Api.Services.Contact
             await _emailProvider.SendEmailAsync(toEmail, subject, body, senderEmail);
         }
 
+        /// <summary>
+        /// Builds a formatted HTML email body containing the contact form data.
+        /// Creates a professional-looking HTML email template with styling and contact information.
+        /// </summary>
+        /// <param name="contactData">The contact form data to be formatted into HTML.</param>
+        /// <returns>A formatted HTML string containing the contact form information with styling and structure.</returns>
+        /// <remarks>
+        /// The generated HTML includes:
+        /// - Professional styling with CSS
+        /// - Contact person's full name, email, and phone number
+        /// - The submitted message with proper formatting
+        /// - Timestamp of submission
+        /// - Hotel management system branding
+        /// </remarks>
         private string BuildEmailHtmlBody(ContactDTO contactData)
         {
             var htmlBody = new StringBuilder();
