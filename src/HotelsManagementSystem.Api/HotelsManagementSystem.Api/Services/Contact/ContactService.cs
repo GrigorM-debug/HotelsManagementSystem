@@ -83,7 +83,7 @@ namespace HotelsManagementSystem.Api.Services.Contact
 
             htmlBody.AppendLine("<div class='container'>");
             htmlBody.AppendLine("    <div class='header'>");
-            htmlBody.AppendLine("        <h1>🏨 Hotel Management System</h1>");
+            htmlBody.AppendLine("        <h1>🏨 Hotels Management System</h1>");
             htmlBody.AppendLine("        <h2>New Contact Form Submission</h2>");
             htmlBody.AppendLine("    </div>");
 
