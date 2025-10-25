@@ -108,7 +108,7 @@ export default function Contact() {
           className={styles.submitButton}
           disabled={isPending}
         >
-          {isPending ? "Sending..." : "Send Message"}
+          {isPending ? "Sending..." : "Send"}
         </button>
       </form>
     </div>
