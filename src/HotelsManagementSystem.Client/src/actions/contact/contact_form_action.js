@@ -29,11 +29,20 @@ export async function contactFormAction(prevState, formData) {
 
   const result = await sendContactMessage(contactData);
 
+  // Validate errors from the API response
   if (result.errors) {
+    const errors = {
+      firstName: result.errors.FirstName || null,
+      lastName: result.errors.LastName || null,
+      email: result.errors.Email || null,
+      phoneNumber: result.errors.PhoneNumber || null,
+      message: result.errors.Message || null,
+    };
+
     return {
       success: false,
       message: "Please fix the errors below.",
-      errors: result.errors,
+      errors: errors,
       data: {
         firstName: formData.get("firstName"),
         lastName: formData.get("lastName"),

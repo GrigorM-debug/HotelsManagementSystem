@@ -36,10 +36,15 @@ export async function loginAction(prevState, formData) {
         },
       };
     } else if (result.errors) {
+      const errors = {
+        userName: result.errors.UserName || null,
+        password: result.errors.Password || null,
+      };
+
       return {
         success: false,
         message: "Please fix the errors below.",
-        errors: result.errors,
+        errors: errors,
         data: {
           userName: formData.get("userName"),
         },
