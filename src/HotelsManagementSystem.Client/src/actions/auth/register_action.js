@@ -15,7 +15,6 @@ export async function registerAction(prevState, formData) {
         userName: formData.get("userName"),
         email: formData.get("email"),
         phoneNumber: formData.get("phoneNumber"),
-        // password: formData.get("password"),
       },
     };
   }
@@ -34,7 +33,6 @@ export async function registerAction(prevState, formData) {
 
   if (result) {
     if (result.error) {
-      console.log(result.error);
       return {
         success: false,
         message: result.error,
@@ -47,13 +45,20 @@ export async function registerAction(prevState, formData) {
           phoneNumber: formData.get("phoneNumber"),
         },
       };
-    }
+    } else if (result.errors) {
+      const errors = {
+        firstName: result.errors.FirstName || null,
+        lastName: result.errors.LastName || null,
+        userName: result.errors.UserName || null,
+        email: result.errors.Email || null,
+        phoneNumber: result.errors.PhoneNumber || null,
+        password: result.errors.Password || null,
+      };
 
-    if (result.errors) {
       return {
         success: false,
         message: "Please fix the errors below.",
-        errors: result.errors,
+        errors: errors,
         data: {
           firstName: formData.get("firstName"),
           lastName: formData.get("lastName"),

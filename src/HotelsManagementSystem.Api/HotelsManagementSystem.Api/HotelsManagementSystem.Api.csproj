@@ -5,6 +5,7 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
 	<IncludeOpenAPIAnalyzers>true</IncludeOpenAPIAnalyzers>
+	<UserSecretsId>b1a126a6-7072-46a3-9d86-786502ac5bef</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>
@@ -22,6 +23,7 @@
     <PackageReference Include="Microsoft.Extensions.Caching.StackExchangeRedis" Version="9.0.10" />
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="9.0.4" />
     <PackageReference Include="Scalar.AspNetCore" Version="2.9.0" />
+    <PackageReference Include="Smtp2Go.ApiClient" Version="0.0.5" />
   </ItemGroup>
 
 </Project>

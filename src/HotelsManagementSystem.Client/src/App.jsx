@@ -14,6 +14,7 @@ import NonAuthenticatedUser from "./components/Route-Guards/NonAuthenticatedUser
 import AdminDashboard from "./components/Dashboards/AdminDashBoard/AdminDashboard";
 import ReceptionistDashBoard from "./components/Dashboards/ReceptionistDashBoard/ReceptionistDashBoard";
 import NotFound404 from "./components/StatusCodePages/404";
+import Contact from "./components/Contact/Contact";
 
 function App() {
   return (
@@ -25,6 +26,7 @@ function App() {
             <main className="main-content">
               <Routes>
                 <Route path="/" element={<Home />} />
+                <Route path="/contact" element={<Contact />} />
                 <Route path="/404" element={<NotFound404 />} />
                 <Route path="*" element={<NotFound404 />} />
                 <Route element={<NonAuthenticatedUser />}>

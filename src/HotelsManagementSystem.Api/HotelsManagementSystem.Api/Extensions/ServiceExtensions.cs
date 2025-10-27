@@ -2,11 +2,14 @@
 using HotelsManagementSystem.Api.Data.Models.Users;
 using HotelsManagementSystem.Api.Middlewares;
 using HotelsManagementSystem.Api.Services.Auth;
+using HotelsManagementSystem.Api.Services.Contact;
+using HotelsManagementSystem.Api.Services.EmailProvider;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using Smtp2Go.Api;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
@@ -92,8 +95,12 @@ namespace HotelsManagementSystem.Api.Extensions
         }
 
         // Additional services registration method
-        public static IServiceCollection AddServices(this IServiceCollection services)
+        public static IServiceCollection AddServices(this IServiceCollection services, IConfiguration configuration)
         {
+           var smtpApiKey = configuration.GetValue<string>("Smtp2Go:ApiKey");
+            services.AddSingleton<Smtp2GoApiService>(x => new Smtp2GoApiService(smtpApiKey)); 
+            services.AddSingleton<IEmailProvider, EmailProvider>();
+            services.AddScoped<IContactService, ContactService>();
             services.AddScoped<ITokenProviderService, TokenProviderService>();
             services.AddScoped<TokenValidator>();
 
