@@ -1,6 +1,7 @@
 ﻿using HotelsManagementSystem.Api.Data;
 using HotelsManagementSystem.Api.Data.Models.Users;
 using HotelsManagementSystem.Api.Middlewares;
+using HotelsManagementSystem.Api.Services.Admin.Hotels.Amentity;
 using HotelsManagementSystem.Api.Services.Auth;
 using HotelsManagementSystem.Api.Services.Contact;
 using HotelsManagementSystem.Api.Services.EmailProvider;
@@ -103,6 +104,7 @@ namespace HotelsManagementSystem.Api.Extensions
             services.AddScoped<IContactService, ContactService>();
             services.AddScoped<ITokenProviderService, TokenProviderService>();
             services.AddScoped<TokenValidator>();
+            services.AddScoped<IAmenityService, AmenityService>();
 
             return services;
         }
