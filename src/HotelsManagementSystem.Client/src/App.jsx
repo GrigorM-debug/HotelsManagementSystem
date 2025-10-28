@@ -15,6 +15,7 @@ import AdminDashboard from "./components/Dashboards/AdminDashBoard/AdminDashboar
 import ReceptionistDashBoard from "./components/Dashboards/ReceptionistDashBoard/ReceptionistDashBoard";
 import NotFound404 from "./components/StatusCodePages/404";
 import Contact from "./components/Contact/Contact";
+import CreateHotel from "./components/Admin/Hotels/CreateHotel/CreateHotel";
 
 function App() {
   return (
@@ -40,6 +41,10 @@ function App() {
                     <Route
                       path="/admin-dashboard"
                       element={<AdminDashboard />}
+                    />
+                    <Route
+                      path="hotels/create-hotel"
+                      element={<CreateHotel />}
                     />
                   </Route>
                   <Route element={<ReceptionistUser />}>

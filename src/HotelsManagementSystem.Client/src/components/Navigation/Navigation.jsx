@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { logout } from "../../services/auth_service";
 
 export default function Navigation() {
-  const { isAuthenticated, clearTokenAndUser, token } = useAuth();
+  const { isAuthenticated, clearTokenAndUser, token, user } = useAuth();
   const navigate = useNavigate();
 
   const handleLogoutCallback = async () => {
@@ -63,23 +63,25 @@ export default function Navigation() {
 
           {isAuthenticated ? (
             <>
+              {user.roles[0] === "Admin" && (
+                <NavLink
+                  to="/hotels/create-hotel"
+                  className={({ isActive }) =>
+                    isActive
+                      ? `${styles.navButton} ${styles.activeButton}`
+                      : styles.navButton
+                  }
+                >
+                  Create Hotel
+                </NavLink>
+              )}
+
               <button
                 onClick={handleLogoutCallback}
                 className={`${styles.navButton} ${styles.logoutButton}`}
               >
                 Logout
               </button>
-
-              <NavLink
-                to="/"
-                className={({ isActive }) =>
-                  isActive
-                    ? `${styles.navButton} ${styles.activeButton}`
-                    : styles.navButton
-                }
-              >
-                Hotels
-              </NavLink>
             </>
           ) : (
             <>
