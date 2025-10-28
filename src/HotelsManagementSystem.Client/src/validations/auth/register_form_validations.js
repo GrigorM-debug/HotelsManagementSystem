@@ -130,11 +130,13 @@ export function validatePhoneNumber(phoneNumber) {
   return null;
 }
 
-export function validatePassword(password) {
+export function validatePassword(password, formData) {
+  // Check if password is provided
   if (!password || password.trim() === "") {
     return "Password is required.";
   }
 
+  //Check password length
   if (
     password.length < PASSWORD_MIN_LENGTH ||
     password.length > PASSWORD_MAX_LENGTH
@@ -142,8 +144,49 @@ export function validatePassword(password) {
     return PASSWORD_LENGTH_ERROR_MESSAGE;
   }
 
+  //Check password pattern
   if (!PASSWORD_REGEX_PATTERN.test(password)) {
     return PASSWORD_PATTERN_ERROR_MESSAGE;
+  }
+
+  if (password.toLowerCase().includes("password")) {
+    return "Password cannot contain the word 'password'.";
+  }
+
+  // Check if password contains any of the other data
+  const isPasswordContainsUsername = password
+    .toLowerCase()
+    .includes(formData.get("userName").toLowerCase());
+  if (isPasswordContainsUsername) {
+    return "Password cannot contain the username.";
+  }
+
+  const isPasswordContainsFirstName = password
+    .toLowerCase()
+    .includes(formData.get("firstName").toLowerCase());
+  if (isPasswordContainsFirstName) {
+    return "Password cannot contain the first name.";
+  }
+
+  const isPasswordContainsLastName = password
+    .toLowerCase()
+    .includes(formData.get("lastName").toLowerCase());
+  if (isPasswordContainsLastName) {
+    return "Password cannot contain the last name.";
+  }
+
+  const isPasswordContainsEmail = password
+    .toLowerCase()
+    .includes(formData.get("email").toLowerCase());
+  if (isPasswordContainsEmail) {
+    return "Password cannot contain the email address.";
+  }
+
+  const isPasswordContainsPhoneNumber = password
+    .toLowerCase()
+    .includes(formData.get("phoneNumber").toLowerCase());
+  if (isPasswordContainsPhoneNumber) {
+    return "Password cannot contain the phone number.";
   }
 
   return null;
@@ -190,7 +233,7 @@ export function validateRegisterData(formData) {
   }
 
   // Validate password
-  const passwordError = validatePassword(password);
+  const passwordError = validatePassword(password, formData);
   if (passwordError) {
     errors.password = passwordError;
   }

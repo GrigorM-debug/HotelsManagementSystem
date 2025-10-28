@@ -48,23 +48,33 @@ namespace HotelsManagementSystem.Api.DTOs.Auth
             }
 
             var isPasswordContainsUserName = Password.ToLower().Contains(UserName.ToLower());
+            if (isPasswordContainsUserName == true)
+            {
+                yield return new ValidationResult("Password should not contain the Username", new[] { nameof(Password) });
+            }
 
             var isPasswordContainsFirstName = Password.ToLower().Contains(FirstName.ToLower());
+            if (isPasswordContainsFirstName == true)
+            {
+                yield return new ValidationResult("Password should not contain the Firstname", new[] { nameof(Password) });
+            }
 
             var isPasswordContainsLastName = Password.ToLower().Contains(LastName.ToLower());
+            if (isPasswordContainsLastName == true)
+            {
+                yield return new ValidationResult("Password should not contain the Lastname", new[] { nameof(Password) });
+            }
 
             var isPasswordContainsEmail = Password.ToLower().Contains(Email.ToLower());
+            if (isPasswordContainsEmail == true)
+            {
+                yield return new ValidationResult("Password should not contain the Email", new[] { nameof(Password) });
+            }
 
             var isPasswordContainsPhoneNumber = Password.ToLower().Contains(PhoneNumber.ToLower());
-
-            if (
-                isPasswordContainsUserName == true || 
-                isPasswordContainsFirstName == true || 
-                isPasswordContainsLastName == true || 
-                isPasswordContainsEmail == true || 
-                isPasswordContainsPhoneNumber == true)
+            if (isPasswordContainsPhoneNumber == true)
             {
-                yield return new ValidationResult("Password should not contain any of the other data", new[] { nameof(Password) });
+                yield return new ValidationResult("Password should not contain the Phone number", new[] { nameof(Password) });
             }
         }
     }
