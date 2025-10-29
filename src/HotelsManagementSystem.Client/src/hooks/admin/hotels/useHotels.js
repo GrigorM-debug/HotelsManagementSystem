@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { validateHotelForm } from "../../../validations/hotel/hotel_forms_validations";
 
 export function useCreateHotel() {
   const [formData, setFormData] = useState({
@@ -16,6 +17,7 @@ export function useCreateHotel() {
 
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [validationErrors, setValidationErrors] = useState({});
   const [imagePreviews, setImagePreviews] = useState([]);
 
   const handleInputChange = (e) => {
@@ -39,7 +41,7 @@ export function useCreateHotel() {
     const validFiles = files.filter((file) => validTypes.includes(file.type));
 
     if (validFiles.length !== files.length) {
-      alert("Please select only image files (JPEG, PNG, WebP)");
+      setError("Please select only image files (JPEG, PNG, WebP)");
       return;
     }
 
@@ -81,6 +83,13 @@ export function useCreateHotel() {
   };
 
   const handleSubmit = (hotelData) => {
+    const validation = validateHotelForm(hotelData);
+
+    if (!validation.isValid) {
+      setValidationErrors(validation.errors);
+      return;
+    }
+
     console.log("Submitting hotel data:", hotelData);
   };
 
@@ -88,6 +97,7 @@ export function useCreateHotel() {
     isLoading,
     handleSubmit,
     error,
+    validationErrors,
     imagePreviews,
     removeImage,
     handleImageChange,
