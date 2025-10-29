@@ -157,6 +157,17 @@ export function validateAddress(address) {
   return null;
 }
 
+export function validateCheckInAndCheckOut(checkIn, checkOut) {
+  // Check-out time cannot be earlier than check-in time
+  if (checkIn && checkOut) {
+    const checkInTime = new Date(`1970-01-01T${checkIn}:00`);
+    const checkOutTime = new Date(`1970-01-01T${checkOut}:00`);
+    if (checkOutTime <= checkInTime) {
+      return "Check-out time cannot be earlier than or equal to check-in time.";
+    }
+  }
+}
+
 export function validateHotelForm(formData) {
   const errors = {};
 
@@ -166,6 +177,8 @@ export function validateHotelForm(formData) {
   const city = formData.get("city");
   const country = formData.get("country");
   const address = formData.get("address");
+  const checkIn = formData.get("checkIn");
+  const checkOut = formData.get("checkOut");
 
   // Validate Hotel Name
   const hotelNameError = validateHotelName(hotelName);
@@ -201,6 +214,12 @@ export function validateHotelForm(formData) {
   const addressError = validateAddress(address);
   if (addressError) {
     errors.address = addressError;
+  }
+
+  // Validate Check-In and Check-Out times
+  const checkInCheckOutError = validateCheckInAndCheckOut(checkIn, checkOut);
+  if (checkInCheckOutError) {
+    errors.checkOut = checkInCheckOutError;
   }
 
   return {

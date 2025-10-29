@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace HotelsManagementSystem.Api.DTOs.Admin.Hotels
 {
-    public class CreateHotelDto
+    public class CreateHotelDto : IValidatableObject
     {
         [Required(ErrorMessage = GeneralConstants.ValueRequiredErrorMessage)]
         [StringLength(HotelConstants.NameMaxLength,
@@ -42,5 +42,13 @@ namespace HotelsManagementSystem.Api.DTOs.Admin.Hotels
         public TimeSpan CheckOutTime { get; set; }
 
         public List<Guid> AmenityIds { get; set; } = new List<Guid>();
+
+        public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
+        {
+            if(CheckOutTime <= CheckInTime)
+            {
+                yield return new ValidationResult("Check-out time cannot be earlier than or equal to check-in time.", new[] { nameof(CheckOutTime), nameof(CheckInTime) });
+            }
+        }
     }
 }
