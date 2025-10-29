@@ -43,6 +43,11 @@ export function useCreateHotel() {
       return;
     }
 
+    if (validFiles.length > 3) {
+      setError("You can upload a maximum of 3 images.");
+      return;
+    }
+
     setFormData((prev) => ({
       ...prev,
       images: [...prev.images, ...validFiles],
