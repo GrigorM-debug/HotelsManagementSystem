@@ -24,6 +24,12 @@
   margin-bottom: 1rem;
 }
 
+.validationError {
+  color: #dc2626;
+  font-size: 0.875rem;
+  margin-top: 0.25rem;
+}
+
 .form {
   display: flex;
   flex-direction: column;

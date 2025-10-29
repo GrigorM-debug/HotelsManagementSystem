@@ -8,6 +8,7 @@ export default function CreateHotel() {
     isLoading: isCreating,
     handleSubmit,
     error,
+    validationErrors,
     imagePreviews,
     removeImage,
     handleImageChange,
@@ -37,6 +38,11 @@ export default function CreateHotel() {
             required
             disabled={isCreating}
           />
+          {validationErrors.name && (
+            <div className={styles.validationError}>
+              {validationErrors.name}
+            </div>
+          )}
         </div>
 
         <div className={styles.formGroup}>
@@ -52,6 +58,11 @@ export default function CreateHotel() {
             rows="4"
             disabled={isCreating}
           />
+          {validationErrors.description && (
+            <div className={styles.validationError}>
+              {validationErrors.description}
+            </div>
+          )}
         </div>
 
         <div className={styles.formRow}>
@@ -69,6 +80,11 @@ export default function CreateHotel() {
               required
               disabled={isCreating}
             />
+            {validationErrors.address && (
+              <div className={styles.validationError}>
+                {validationErrors.address}
+              </div>
+            )}
           </div>
 
           <div className={styles.formGroup}>
@@ -85,6 +101,11 @@ export default function CreateHotel() {
               required
               disabled={isCreating}
             />
+            {validationErrors.city && (
+              <div className={styles.validationError}>
+                {validationErrors.city}
+              </div>
+            )}
           </div>
         </div>
 
@@ -103,6 +124,11 @@ export default function CreateHotel() {
               required
               disabled={isCreating}
             />
+            {validationErrors.country && (
+              <div className={styles.validationError}>
+                {validationErrors.country}
+              </div>
+            )}
           </div>
 
           <div className={styles.formGroup}>
@@ -121,6 +147,11 @@ export default function CreateHotel() {
               required
               disabled={isCreating}
             />
+            {validationErrors.stars && (
+              <div className={styles.validationError}>
+                {validationErrors.stars}
+              </div>
+            )}
           </div>
         </div>
 
@@ -155,6 +186,11 @@ export default function CreateHotel() {
               required
               disabled={isCreating}
             />
+            {validationErrors.checkOut && (
+              <div className={styles.validationError}>
+                {validationErrors.checkOut}
+              </div>
+            )}
           </div>
         </div>
 
