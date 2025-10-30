@@ -1,5 +1,9 @@
 import { useState } from "react";
 import { validateHotelForm } from "../../../validations/hotel/hotel_forms_validations";
+import {
+  HOTEL_MAX_IMAGES_UPLOAD,
+  HOTEL_ALLOWED_IMAGE_TYPES,
+} from "../../../constants/hotel_constants";
 
 export function useCreateHotel() {
   const [formData, setFormData] = useState({
@@ -37,7 +41,7 @@ export function useCreateHotel() {
   const handleImageChange = (e) => {
     const files = Array.from(e.target.files);
 
-    const validTypes = ["image/jpeg", "image/jpg", "image/png", "image/webp"];
+    const validTypes = HOTEL_ALLOWED_IMAGE_TYPES;
     const validFiles = files.filter((file) => validTypes.includes(file.type));
 
     if (validFiles.length !== files.length) {
@@ -45,8 +49,10 @@ export function useCreateHotel() {
       return;
     }
 
-    if (validFiles.length > 3) {
-      setError("You can upload a maximum of 3 images.");
+    if (validFiles.length > HOTEL_MAX_IMAGES_UPLOAD) {
+      setError(
+        `You can upload a maximum of ${HOTEL_MAX_IMAGES_UPLOAD} images.`
+      );
       return;
     }
 

@@ -43,11 +43,31 @@ namespace HotelsManagementSystem.Api.DTOs.Admin.Hotels
 
         public List<Guid> AmenityIds { get; set; } = new List<Guid>();
 
+        public List<IFormFile> Images { get; set; } = new List<IFormFile>();
+
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
-            if(CheckOutTime <= CheckInTime)
+            if (CheckOutTime <= CheckInTime)
             {
                 yield return new ValidationResult("Check-out time cannot be earlier than or equal to check-in time.", new[] { nameof(CheckOutTime), nameof(CheckInTime) });
+            }
+
+            if (Images.Count > GeneralConstants.ImageUploadMaxCount)
+            {
+                yield return new ValidationResult($"A hotel cannot have more than {GeneralConstants.ImageUploadMaxCount} images.", new[] { nameof(Images) });
+            }
+
+            foreach (var image in Images)
+            {
+                if (!GeneralConstants.AllowedImageTypes.Contains(image.ContentType))
+                {
+                    yield return new ValidationResult($"Image type {image.ContentType} is not allowed. Allowed types are: {string.Join(", ", GeneralConstants.AllowedImageTypes)}", new[] { nameof(Images) });
+                }
+            }
+
+            if (AmenityIds.Count() == 0)
+            {
+                yield return new ValidationResult("At least one amenity must be selected.", new[] { nameof(AmenityIds) });
             }
         }
     }

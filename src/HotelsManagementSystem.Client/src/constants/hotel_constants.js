@@ -46,3 +46,9 @@ export const COUNTRY_LENGTH_ERROR_MESSAGE = `Country name must be between ${COUN
 export const ADDRESS_MIN_LENGTH = 5;
 export const ADDRESS_MAX_LENGTH = 250;
 export const ADDRESS_LENGTH_ERROR_MESSAGE = `Address must be between ${ADDRESS_MIN_LENGTH} and ${ADDRESS_MAX_LENGTH} characters long.`;
+export const HOTEL_MAX_IMAGES_UPLOAD = 3;
+export const HOTEL_ALLOWED_IMAGE_TYPES = [
+  "image/jpeg",
+  "image/jpg",
+  "image/png",
+];
