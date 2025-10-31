@@ -41,9 +41,9 @@ namespace HotelsManagementSystem.Api.DTOs.Admin.Hotels
 
         public TimeSpan CheckOutTime { get; set; }
 
-        public List<Guid> AmenityIds { get; set; } = new List<Guid>();
+        public IEnumerable<Guid> AmenityIds { get; set; } = new List<Guid>();
 
-        public List<IFormFile> Images { get; set; } = new List<IFormFile>();
+        public IEnumerable<IFormFile> Images { get; set; } = new List<IFormFile>();
 
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
@@ -52,7 +52,7 @@ namespace HotelsManagementSystem.Api.DTOs.Admin.Hotels
                 yield return new ValidationResult("Check-out time cannot be earlier than or equal to check-in time.", new[] { nameof(CheckOutTime), nameof(CheckInTime) });
             }
 
-            if (Images.Count > GeneralConstants.ImageUploadMaxCount)
+            if (Images.Count() > GeneralConstants.ImageUploadMaxCount)
             {
                 yield return new ValidationResult($"A hotel cannot have more than {GeneralConstants.ImageUploadMaxCount} images.", new[] { nameof(Images) });
             }
