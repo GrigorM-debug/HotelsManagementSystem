@@ -171,14 +171,14 @@ export function validateCheckInAndCheckOut(checkIn, checkOut) {
 export function validateHotelForm(formData) {
   const errors = {};
 
-  const hotelName = formData.get("hotelName");
-  const description = formData.get("description");
-  const stars = formData.get("stars");
-  const city = formData.get("city");
-  const country = formData.get("country");
-  const address = formData.get("address");
-  const checkIn = formData.get("checkIn");
-  const checkOut = formData.get("checkOut");
+  const hotelName = formData.name;
+  const description = formData.description;
+  const stars = formData.stars;
+  const city = formData.city;
+  const country = formData.country;
+  const address = formData.address;
+  const checkIn = formData.checkIn;
+  const checkOut = formData.checkOut;
 
   // Validate Hotel Name
   const hotelNameError = validateHotelName(hotelName);

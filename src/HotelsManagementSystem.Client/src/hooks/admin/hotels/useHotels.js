@@ -88,10 +88,13 @@ export function useCreateHotel() {
     );
   };
 
-  const handleSubmit = (hotelData) => {
+  const handleSubmit = (e, hotelData) => {
+    e.preventDefault();
+
     const validation = validateHotelForm(hotelData);
 
     if (!validation.isValid) {
+      setError("Please fix the errors below.");
       setValidationErrors(validation.errors);
       return;
     }
