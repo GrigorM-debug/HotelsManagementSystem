@@ -80,25 +80,28 @@ namespace HotelsManagementSystem.Api.Services.Admin.Hotels
             return newHotel.Id;
         }
 
-        public async Task<IEnumerable<HotelListDto>> GetAdminHotelsAsync(Guid adminId, HotelsFilterDto filter)
+        public async Task<IEnumerable<HotelListDto>> GetAdminHotelsAsync(Guid adminId, HotelsFilterDto? filter)
         {
             var query = _context.Hotels
                 .AsNoTracking()
                 .Where(h => !h.IsDeleted && h.CreatorId == adminId);
 
-            if(!string.IsNullOrEmpty(filter.Name))
+            if(filter != null)
             {
-                query = query.Where(h => h.Name.ToLower().Contains(filter.Name.ToLower()));
-            }
+                if (!string.IsNullOrEmpty(filter.Name))
+                {
+                    query = query.Where(h => h.Name.ToLower().Contains(filter.Name.ToLower()));
+                }
 
-            if(!string.IsNullOrEmpty(filter.City))
-            {
-                query = query.Where(h => h.City.ToLower().Contains(filter.City.ToLower()));
-            }
+                if (!string.IsNullOrEmpty(filter.City))
+                {
+                    query = query.Where(h => h.City.ToLower().Contains(filter.City.ToLower()));
+                }
 
-            if(!string.IsNullOrEmpty(filter.Country))
-            {
-                query = query.Where(h => h.Country.ToLower().Contains(filter.Country.ToLower()));
+                if (!string.IsNullOrEmpty(filter.Country))
+                {
+                    query = query.Where(h => h.Country.ToLower().Contains(filter.Country.ToLower()));
+                }
             }
 
             var adminHotels = await query
@@ -108,6 +111,7 @@ namespace HotelsManagementSystem.Api.Services.Admin.Hotels
                     Id = h.Id,
                     Name = h.Name,
                     CreatedOn = h.CreatedOn,
+                    UpdatedOn = h.UpdatedOn,
                     Address = h.Address,
                     City = h.City,
                     Country = h.Country,
