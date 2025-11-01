@@ -16,6 +16,7 @@ import ReceptionistDashBoard from "./components/Dashboards/ReceptionistDashBoard
 import NotFound404 from "./components/StatusCodePages/404";
 import Contact from "./components/Contact/Contact";
 import CreateHotel from "./components/Admin/Hotels/CreateHotel/CreateHotel";
+import HotelsList from "./components/Admin/Hotels/HotelsList/HotelsList";
 
 function App() {
   return (
@@ -43,9 +44,10 @@ function App() {
                       element={<AdminDashboard />}
                     />
                     <Route
-                      path="hotels/create-hotel"
+                      path="/admin/hotels/create-hotel"
                       element={<CreateHotel />}
                     />
+                    <Route path="/admin/hotels" element={<HotelsList />} />
                   </Route>
                   <Route element={<ReceptionistUser />}>
                     {/* You have to put here all the routes that require receptionist role */}

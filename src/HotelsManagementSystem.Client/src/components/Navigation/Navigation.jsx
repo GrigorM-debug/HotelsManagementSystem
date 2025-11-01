@@ -65,7 +65,7 @@ export default function Navigation() {
             <>
               {user.roles[0] === "Admin" && (
                 <NavLink
-                  to="/hotels/create-hotel"
+                  to="/admin/hotels/create-hotel"
                   className={({ isActive }) =>
                     isActive
                       ? `${styles.navButton} ${styles.activeButton}`

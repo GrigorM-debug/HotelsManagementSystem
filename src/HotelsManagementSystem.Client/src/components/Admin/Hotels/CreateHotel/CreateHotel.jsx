@@ -23,7 +23,7 @@ export default function CreateHotel() {
 
       {error && <div className={styles.error}>{error}</div>}
 
-      <form onSubmit={handleSubmit} className={styles.form}>
+      <form onSubmit={(e) => handleSubmit(e, formData)} className={styles.form}>
         <div className={styles.formGroup}>
           <label htmlFor="name" className={styles.label}>
             Hotel Name *

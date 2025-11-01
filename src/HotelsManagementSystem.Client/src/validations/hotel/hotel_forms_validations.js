@@ -79,7 +79,7 @@ export function validateStars(stars) {
   }
 
   //Check if stars is an integer
-  if (!Number.isInteger(stars)) {
+  if (!isNaN(stars) && !Number.isInteger(Number(stars))) {
     return "Stars rating must be an integer.";
   }
 

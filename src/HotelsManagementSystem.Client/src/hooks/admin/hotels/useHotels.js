@@ -1,9 +1,12 @@
 import { useState } from "react";
 import { validateHotelForm } from "../../../validations/hotel/hotel_forms_validations";
+import { useAuth } from "../../useAuth";
+import { useNavigate } from "react-router-dom";
 import {
   HOTEL_MAX_IMAGES_UPLOAD,
   HOTEL_ALLOWED_IMAGE_TYPES,
 } from "../../../constants/hotel_constants";
+import { createHotel } from "../../../services/admin/hotels/hotel_service";
 
 export function useCreateHotel() {
   const [formData, setFormData] = useState({
@@ -18,11 +21,12 @@ export function useCreateHotel() {
     selectedAmenities: [],
     images: [],
   });
-
+  const { token, clearTokenAndUser } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
   const [validationErrors, setValidationErrors] = useState({});
   const [imagePreviews, setImagePreviews] = useState([]);
+  const navigate = useNavigate();
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -88,7 +92,7 @@ export function useCreateHotel() {
     );
   };
 
-  const handleSubmit = (e, hotelData) => {
+  const handleSubmit = async (e, hotelData) => {
     e.preventDefault();
 
     const validation = validateHotelForm(hotelData);
@@ -99,7 +103,60 @@ export function useCreateHotel() {
       return;
     }
 
-    console.log("Submitting hotel data:", hotelData);
+    try {
+      const hotelDataAsFormData = new FormData();
+      hotelDataAsFormData.append("Name", formData.name);
+      hotelDataAsFormData.append("Description", formData.description);
+      hotelDataAsFormData.append("Address", formData.address);
+      hotelDataAsFormData.append("City", formData.city);
+      hotelDataAsFormData.append("Country", formData.country);
+      hotelDataAsFormData.append("Stars", formData.stars);
+      hotelDataAsFormData.append("CheckInTime", formData.checkIn);
+      hotelDataAsFormData.append("CheckOutTime", formData.checkOut);
+      formData.selectedAmenities.forEach((amenity) => {
+        hotelDataAsFormData.append("AmenityIds", amenity);
+      });
+      formData.images.forEach((imageFile) => {
+        hotelDataAsFormData.append("Images", imageFile);
+      });
+
+      setIsLoading(true);
+
+      const result = await createHotel(hotelDataAsFormData, token);
+
+      if (result.error) {
+        setError(result.error);
+        return;
+      }
+
+      if (result.errors) {
+        setValidationErrors(result.errors);
+        setError("Please fix the errors below.");
+        return;
+      }
+
+      // On success, redirect to hotels list or hotel details page
+      const createdHotelId = result.hotelId;
+      console.log("Hotel created with ID:", createdHotelId);
+      navigate("/admin/hotels");
+    } catch (err) {
+      switch (err.message) {
+        case "401 Unauthorized":
+          clearTokenAndUser();
+          navigate("/login");
+          break;
+        case "403 Forbidden":
+          clearTokenAndUser();
+          navigate("/login");
+          break;
+        case "404 Not Found":
+          clearTokenAndUser();
+          navigate("/404");
+          break;
+      }
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return {
