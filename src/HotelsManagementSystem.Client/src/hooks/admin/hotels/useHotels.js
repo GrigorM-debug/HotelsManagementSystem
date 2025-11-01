@@ -1,12 +1,16 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { validateHotelForm } from "../../../validations/hotel/hotel_forms_validations";
+import { validateHotelsFilter } from "../../../validations/hotel/hotels_filter_validations";
 import { useAuth } from "../../useAuth";
 import { useNavigate } from "react-router-dom";
 import {
   HOTEL_MAX_IMAGES_UPLOAD,
   HOTEL_ALLOWED_IMAGE_TYPES,
 } from "../../../constants/hotel_constants";
-import { createHotel } from "../../../services/admin/hotels/hotel_service";
+import {
+  createHotel,
+  getAdminHotels,
+} from "../../../services/admin/hotels/hotel_service";
 
 export function useCreateHotel() {
   const [formData, setFormData] = useState({
@@ -170,5 +174,93 @@ export function useCreateHotel() {
     handleAmenityChange,
     handleInputChange,
     formData,
+  };
+}
+
+export function useGetAdminHotels() {
+  const initialFilterState = {
+    name: "",
+    country: "",
+    city: "",
+  };
+  const [hotels, setHotels] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const { token, clearTokenAndUser } = useAuth();
+  const navigate = useNavigate();
+  const [filter, setFilter] = useState(initialFilterState);
+  const [appliedFilters, setAppliedFilters] = useState(initialFilterState);
+  const [validationErrors, setValidationErrors] = useState({});
+
+  const handleFilterChange = (e) => {
+    setFilter({
+      ...filter,
+      [e.target.name]: e.target.value,
+    });
+  };
+
+  const handleFilterReset = () => {
+    setFilter(initialFilterState);
+    setAppliedFilters(initialFilterState);
+  };
+
+  const handleApplyFilters = () => {
+    //Validte filters
+    const validation = validateHotelsFilter(filter);
+
+    if (!validation.isValid) {
+      setValidationErrors(validation.errors);
+      return;
+    } else {
+      setAppliedFilters({ ...filter });
+    }
+  };
+
+  useEffect(() => {
+    const fetchHotels = async () => {
+      setIsLoading(true);
+      try {
+        const fetchedHotels = await getAdminHotels(token, appliedFilters);
+
+        // Filter validation errors from the api
+        if (fetchedHotels.errors) {
+          setValidationErrors(fetchedHotels.errors);
+          return;
+        }
+        setHotels(fetchedHotels);
+      } catch (err) {
+        switch (err.message) {
+          case "401 Unauthorized":
+            clearTokenAndUser();
+            navigate("/login");
+            break;
+          case "403 Forbidden":
+            clearTokenAndUser();
+            navigate("/login");
+            break;
+          case "404 Not Found":
+            clearTokenAndUser();
+            navigate("/404");
+            break;
+          default:
+            setError("Failed to fetch hotels");
+        }
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchHotels();
+  }, [token, clearTokenAndUser, navigate, appliedFilters]);
+
+  return {
+    hotels,
+    isLoading,
+    error,
+    handleFilterChange,
+    handleFilterReset,
+    handleApplyFilters,
+    validationErrors,
+    filter,
   };
 }

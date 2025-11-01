@@ -64,16 +64,28 @@ export default function Navigation() {
           {isAuthenticated ? (
             <>
               {user.roles[0] === "Admin" && (
-                <NavLink
-                  to="/admin/hotels/create-hotel"
-                  className={({ isActive }) =>
-                    isActive
-                      ? `${styles.navButton} ${styles.activeButton}`
-                      : styles.navButton
-                  }
-                >
-                  Create Hotel
-                </NavLink>
+                <>
+                  <NavLink
+                    to="/admin/hotels/create-hotel"
+                    className={({ isActive }) =>
+                      isActive
+                        ? `${styles.navButton} ${styles.activeButton}`
+                        : styles.navButton
+                    }
+                  >
+                    Create Hotel
+                  </NavLink>
+                  <NavLink
+                    to="/admin/hotels"
+                    className={({ isActive }) =>
+                      isActive
+                        ? `${styles.navButton} ${styles.activeButton}`
+                        : styles.navButton
+                    }
+                  >
+                    Manage Hotels
+                  </NavLink>
+                </>
               )}
 
               <button
