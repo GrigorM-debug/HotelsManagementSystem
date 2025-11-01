@@ -3,7 +3,9 @@ using HotelsManagementSystem.Api.Data;
 using HotelsManagementSystem.Api.Data.Models.Hotels;
 using HotelsManagementSystem.Api.Data.Models.Images;
 using HotelsManagementSystem.Api.DTOs.Admin.Hotels;
+using HotelsManagementSystem.Api.DTOs.Hotels;
 using HotelsManagementSystem.Api.DTOs.Images;
+using HotelsManagementSystem.Api.Enums;
 using HotelsManagementSystem.Api.Services.Image;
 using Microsoft.EntityFrameworkCore;
 
@@ -78,6 +80,49 @@ namespace HotelsManagementSystem.Api.Services.Admin.Hotels
             return newHotel.Id;
         }
 
+        public async Task<IEnumerable<HotelListDto>> GetAdminHotelsAsync(Guid adminId, HotelsFilterDto filter)
+        {
+            var query = _context.Hotels
+                .AsNoTracking()
+                .Where(h => !h.IsDeleted && h.CreatorId == adminId);
+
+            if(!string.IsNullOrEmpty(filter.Name))
+            {
+                query = query.Where(h => h.Name.ToLower().Contains(filter.Name.ToLower()));
+            }
+
+            if(!string.IsNullOrEmpty(filter.City))
+            {
+                query = query.Where(h => h.City.ToLower().Contains(filter.City.ToLower()));
+            }
+
+            if(!string.IsNullOrEmpty(filter.Country))
+            {
+                query = query.Where(h => h.Country.ToLower().Contains(filter.Country.ToLower()));
+            }
+
+            var adminHotels = await query
+                .OrderByDescending(h => h.Stars)
+                .Select(h => new HotelListDto
+                {
+                    Id = h.Id,
+                    Name = h.Name,
+                    CreatedOn = h.CreatedOn,
+                    Address = h.Address,
+                    City = h.City,
+                    Country = h.Country,
+                })
+                .ToListAsync();
+
+            foreach (var hotel in adminHotels)
+            {
+                var isHotelDeletable = await IsHotelDeletableAsync(hotel.Id);
+                hotel.IsDeletable = isHotelDeletable;
+            }
+
+            return adminHotels;
+        }
+
         public async Task<bool> HotelExistsByNameAsync(string hotelName)
         {
             var hotelExists = await _context.Hotels
@@ -86,6 +131,39 @@ namespace HotelsManagementSystem.Api.Services.Admin.Hotels
                 .AnyAsync(h => h.Name.ToLower() == hotelName.ToLower());
 
             return hotelExists;
+        }
+
+        public async Task<bool> IsHotelDeletableAsync(Guid hotelId)
+        {
+            // Check if all rooms in the hotel are available
+            var areAllRoomsAvaiable = await _context.Rooms
+                .AsNoTracking()
+                .Where(r => r.HotelId == hotelId && !r.IsDeleted)
+                .AllAsync(r => r.IsAvailable);
+
+            // Check if there are any receptionist assignments for the hotel
+            var receptionists = await _context.Receptionists
+                .AsNoTracking()
+                .Where(r => r.HotelId == hotelId)
+                .ToListAsync();
+
+            var currentDate = DateTime.UtcNow.Date;
+
+            var activeReservationCount = await _context.Reservations
+                .AsNoTracking()
+                .Where(r => r.Room.HotelId == hotelId)
+                .Where(r => r.ReservationStatus == ReservationStatus.Pending ||
+                           r.ReservationStatus == ReservationStatus.Confirmed ||
+                           r.ReservationStatus == ReservationStatus.CheckedIn ||
+                           (r.CheckOutDate >= currentDate && r.ReservationStatus != ReservationStatus.Cancelled))
+                .CountAsync();
+
+            if (!areAllRoomsAvaiable && receptionists.Any() && activeReservationCount > 0)
+            {
+                return false;
+            }
+
+            return true;
         }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using HotelsManagementSystem.Api.Constants;
 using HotelsManagementSystem.Api.Data.Models.Users;
 using HotelsManagementSystem.Api.DTOs.Admin.Hotels;
+using HotelsManagementSystem.Api.DTOs.Hotels;
 using HotelsManagementSystem.Api.Services.Admin.Hotels;
 using HotelsManagementSystem.Api.Services.Admin.Hotels.Amentity;
 using Microsoft.AspNetCore.Authorization;
@@ -81,6 +82,35 @@ namespace HotelsManagementSystem.Api.Controllers.Admin.Hotels
             }
 
             return CreatedAtAction(nameof(CreateHotel), new { hotelId = newHotelId });
+        }
+
+        [HttpGet]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesDefaultResponseType]
+        public async Task<IActionResult> GetAdminHotels([FromQuery] HotelsFilterDto? filter)
+        {
+            var adminId = _userManager.GetUserId(User);
+            var admin = await _userManager.FindByIdAsync(adminId);
+            if (admin == null)
+            {
+                return NotFound(new { error = "User not found." });
+            }
+
+            var isAdmin = await _userManager.IsInRoleAsync(admin, UserRoles.Admin);
+            if (!isAdmin)
+            {
+                return Forbid();
+            }
+
+            var adminIdToGuid = Guid.Parse(adminId);
+
+            var hotels = await _hotelService.GetAdminHotelsAsync(adminIdToGuid, filter);
+         
+            return Ok(hotels);
         }
     }
 }
