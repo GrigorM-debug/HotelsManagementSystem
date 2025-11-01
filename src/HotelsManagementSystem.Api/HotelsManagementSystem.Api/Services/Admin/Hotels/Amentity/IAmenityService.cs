@@ -9,5 +9,13 @@ namespace HotelsManagementSystem.Api.Services.Admin.Hotels.Amentity
         /// </summary>
         /// <returns>A task that represents the asynchronous operation. The task result contains an enumerable collection of amenity response DTOs.</returns>
         public Task<IEnumerable<AmenityResponseDto>> GetAllAmentitiesAsync();
+
+        /// <summary>
+        /// Determines whether all amenities with the specified IDs exist in the system.
+        /// </summary>
+        /// <param name="ids">A collection of unique identifiers representing the amenities to check. Cannot be null or empty.</param>
+        /// <returns>A task that represents the asynchronous operation. The task result is <see langword="true"/> if all
+        /// specified amenities exist; otherwise, <see langword="false"/>.</returns>
+        public Task<bool> AmenitiesExistsByIdsAsync(IEnumerable<Guid> ids);
     }
 }
