@@ -112,5 +112,59 @@ namespace HotelsManagementSystem.Api.Controllers.Admin.Hotels
          
             return Ok(hotels);
         }
+
+        [HttpDelete("{hotelId}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesDefaultResponseType]
+        public async Task<IActionResult> DeleteHotel(Guid hotelId)
+        {
+            var adminId = _userManager.GetUserId(User);
+
+            var admin = await _userManager.FindByIdAsync(adminId);
+            if (admin == null)
+            {
+                return NotFound(new { error = "User not found." });
+            }
+
+            var isAdmin = await _userManager.IsInRoleAsync(admin, UserRoles.Admin);
+            if (!isAdmin)
+            {
+                return Forbid();
+            }
+
+            var adminIdToGuid = Guid.Parse(adminId);
+
+            //Check if the hotelId is valid Guid
+            bool isHotelIdValidGuid = Guid.TryParse(hotelId.ToString(), out _);
+            if (!isHotelIdValidGuid)
+            {
+                return BadRequest(new { error = "Invalid hotel ID format." });
+            }
+
+            var hotelExists = await _hotelService.HotelExistsByHotelIdAndAdminIdAsync(hotelId, adminIdToGuid);
+            if(!hotelExists)
+            {
+                return NotFound(new { error = "Hotel not found." });
+            }
+
+            var isDeletable = await _hotelService.IsHotelDeletableAsync(hotelId);
+            if (!isDeletable)
+            {
+                return BadRequest(new { error = "The hotel cannot be deleted due to existing dependencies." });
+            }
+
+            bool isDeleted = await _hotelService.DeleteHotelAsync(hotelId, adminIdToGuid);
+
+            if (!isDeleted)
+            {
+                return BadRequest(new { error = "Failed to delete the hotel. Please try again later." });
+            }
+
+            return Ok(new {success = "Hotel successfully deleted."});
+        }
     }
 }

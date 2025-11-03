@@ -12,5 +12,9 @@ namespace HotelsManagementSystem.Api.Services.Admin.Hotels
         public Task<IEnumerable<HotelListDto>> GetAdminHotelsAsync(Guid adminId, HotelsFilterDto? filter);
 
         public Task<bool> IsHotelDeletableAsync(Guid hotelId);
+
+        public Task<bool> HotelExistsByHotelIdAndAdminIdAsync(Guid hotelId, Guid adminId);
+
+        public Task<bool> DeleteHotelAsync(Guid hotelId, Guid adminId);
     }
 }

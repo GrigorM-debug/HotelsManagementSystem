@@ -80,6 +80,23 @@ namespace HotelsManagementSystem.Api.Services.Admin.Hotels
             return newHotel.Id;
         }
 
+        public async Task<bool> DeleteHotelAsync(Guid hotelId, Guid adminId)
+        {
+            var hotel = await _context.Hotels
+                .FirstOrDefaultAsync(h => 
+                    h.Id == hotelId && 
+                    h.CreatorId == adminId && 
+                    !h.IsDeleted);
+
+            if (hotel != null)
+            {
+                hotel.IsDeleted = true;
+                await _context.SaveChangesAsync();
+                return true;
+            }
+            return false;
+        }
+
         public async Task<IEnumerable<HotelListDto>> GetAdminHotelsAsync(Guid adminId, HotelsFilterDto? filter)
         {
             var query = _context.Hotels
@@ -125,6 +142,16 @@ namespace HotelsManagementSystem.Api.Services.Admin.Hotels
             }
 
             return adminHotels;
+        }
+
+        public Task<bool> HotelExistsByHotelIdAndAdminIdAsync(Guid hotelId, Guid adminId)
+        {
+            var hotelExists = _context.Hotels
+                .AsNoTracking()
+                .Where(h => !h.IsDeleted)
+                .AnyAsync(h => h.Id == hotelId && h.CreatorId == adminId);
+
+            return hotelExists;
         }
 
         public async Task<bool> HotelExistsByNameAsync(string hotelName)
