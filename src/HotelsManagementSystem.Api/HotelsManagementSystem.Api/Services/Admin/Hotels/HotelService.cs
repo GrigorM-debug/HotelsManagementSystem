@@ -122,7 +122,8 @@ namespace HotelsManagementSystem.Api.Services.Admin.Hotels
             }
 
             var adminHotels = await query
-                .OrderByDescending(h => h.Stars)
+                .OrderByDescending(h => h.CreatedOn)
+                .ThenByDescending(h => h.Stars)
                 .Select(h => new HotelListDto
                 {
                     Id = h.Id,
