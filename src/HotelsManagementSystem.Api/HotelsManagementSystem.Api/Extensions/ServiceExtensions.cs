@@ -7,6 +7,7 @@ using HotelsManagementSystem.Api.Services.Admin.Hotels.Amentity;
 using HotelsManagementSystem.Api.Services.Auth;
 using HotelsManagementSystem.Api.Services.Contact;
 using HotelsManagementSystem.Api.Services.EmailProvider;
+using HotelsManagementSystem.Api.Services.Hotels;
 using HotelsManagementSystem.Api.Services.Image;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
@@ -110,7 +111,8 @@ namespace HotelsManagementSystem.Api.Extensions
             services.AddScoped<TokenValidator>();
             services.AddScoped<IAmenityService, AmenityService>();
             services.AddScoped<IImageService, ImageService>();
-            services.AddScoped<IHotelService, HotelService>();
+            services.AddScoped<Services.Admin.Hotels.IHotelService, Services.Admin.Hotels.HotelService>();
+            services.AddScoped<Services.Hotels.IHotelService, Services.Hotels.HotelService>();
 
             return services;
         }

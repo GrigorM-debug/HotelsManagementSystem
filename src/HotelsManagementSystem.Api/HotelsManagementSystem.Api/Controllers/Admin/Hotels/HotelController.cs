@@ -84,7 +84,7 @@ namespace HotelsManagementSystem.Api.Controllers.Admin.Hotels
             return CreatedAtAction(nameof(CreateHotel), new { hotelId = newHotelId });
         }
 
-        [HttpGet]
+        [HttpGet("admin-hotels")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
