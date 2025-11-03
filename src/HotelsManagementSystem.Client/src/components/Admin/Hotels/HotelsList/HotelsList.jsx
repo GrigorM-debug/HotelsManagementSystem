@@ -1,6 +1,10 @@
 import styles from "./HotelsList.module.css";
-import { useGetAdminHotels } from "../../../../hooks/admin/hotels/useHotels";
+import {
+  useGetAdminHotels,
+  useDeleteHotel,
+} from "../../../../hooks/admin/hotels/useHotels";
 import HotelsFilter from "../../../Hotels/HotelsFilter/HotelsFilter";
+import DeleteModal from "../../../Modals/DeleteModal/DeleteModal";
 
 export default function HotelsList() {
   const {
@@ -12,7 +16,16 @@ export default function HotelsList() {
     handleApplyFilters,
     validationErrors,
     filter,
+    refreshHotels,
   } = useGetAdminHotels();
+
+  const {
+    isDeleteModalOpen,
+    toggleDeleteModal,
+    closeDeleteModal,
+    hotelToDeleteInfo,
+    onConfirmDeletion,
+  } = useDeleteHotel(refreshHotels);
 
   if (isLoading) {
     return (
@@ -43,9 +56,8 @@ export default function HotelsList() {
     console.log("Edit hotel ID:", hotelId);
   };
 
-  const handleDelete = (hotelId) => {
-    // Implement hotel deletion logic
-    console.log("Delete hotel ID:", hotelId);
+  const handleDelete = (hotelToDeleteInfo) => {
+    toggleDeleteModal(hotelToDeleteInfo);
   };
 
   const formatDate = (dateString) => {
@@ -61,6 +73,13 @@ export default function HotelsList() {
 
   return (
     <div className={styles.container}>
+      {isDeleteModalOpen && (
+        <DeleteModal
+          onClose={closeDeleteModal}
+          entityInfo={hotelToDeleteInfo}
+          onConfirmDeletion={onConfirmDeletion}
+        />
+      )}
       <div className={styles.header}>
         <div className={styles.headerContent}>
           <div>
@@ -165,7 +184,12 @@ export default function HotelsList() {
                             {hotel.isDeletable && (
                               <button
                                 className={`${styles.actionBtn} ${styles.deleteBtn}`}
-                                onClick={() => handleDelete(hotel.id)}
+                                onClick={() =>
+                                  handleDelete({
+                                    name: hotel.name,
+                                    id: hotel.id,
+                                  })
+                                }
                                 title="Delete Hotel"
                               >
                                 🗑️ Delete

@@ -10,6 +10,7 @@ import {
 import {
   createHotel,
   getAdminHotels,
+  deleteHotel,
 } from "../../../services/admin/hotels/hotel_service";
 
 export function useCreateHotel() {
@@ -253,6 +254,32 @@ export function useGetAdminHotels() {
     fetchHotels();
   }, [token, clearTokenAndUser, navigate, appliedFilters]);
 
+  const refreshHotels = async () => {
+    setIsLoading(true);
+    try {
+      const fetchedHotels = await getAdminHotels(token, appliedFilters);
+      setHotels(fetchedHotels);
+    } catch (err) {
+      switch (err.message) {
+        case "401 Unauthorized":
+          clearTokenAndUser();
+          navigate("/login");
+          break;
+        case "403 Forbidden":
+          clearTokenAndUser();
+          navigate("/login");
+          break;
+        case "404 Not Found":
+          clearTokenAndUser();
+          navigate("/404");
+          break;
+        default:
+          setError("Failed to fetch hotels");
+      }
+    } finally {
+      setIsLoading(false);
+    }
+  };
   return {
     hotels,
     isLoading,
@@ -262,5 +289,58 @@ export function useGetAdminHotels() {
     handleApplyFilters,
     validationErrors,
     filter,
+    refreshHotels,
+  };
+}
+
+export function useDeleteHotel(refreshHotels) {
+  const { token, clearTokenAndUser } = useAuth();
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [hotelToDeleteInfo, setHotelToDeleteInfo] = useState({});
+  const navigate = useNavigate();
+
+  const toggleDeleteModal = (hotelToDeleteData) => {
+    setHotelToDeleteInfo(hotelToDeleteData);
+    setIsDeleteModalOpen(true);
+  };
+
+  const closeDeleteModal = () => {
+    setHotelToDeleteInfo({});
+    setIsDeleteModalOpen(false);
+  };
+
+  const onConfirmDeletion = async () => {
+    try {
+      const result = await deleteHotel(hotelToDeleteInfo.id, token);
+
+      if (result.success) {
+        if (refreshHotels) {
+          await refreshHotels();
+          closeDeleteModal();
+        }
+      }
+    } catch (error) {
+      switch (error.message) {
+        case "401 Unauthorized":
+          clearTokenAndUser();
+          navigate("/login");
+          break;
+        case "403 Forbidden":
+          clearTokenAndUser();
+          navigate("/login");
+          break;
+        case "404 Not Found":
+          navigate("/404");
+          break;
+      }
+    }
+  };
+
+  return {
+    isDeleteModalOpen,
+    toggleDeleteModal,
+    closeDeleteModal,
+    hotelToDeleteInfo,
+    onConfirmDeletion,
   };
 }

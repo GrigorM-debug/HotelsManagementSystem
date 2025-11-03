@@ -65,3 +65,27 @@ export async function getAdminHotels(token, appliedFilters) {
 
   return response.json();
 }
+
+export async function deleteHotel(hotelId, token) {
+  const response = await fetch(`${API_BASE_URL}/hotel/${hotelId}`, {
+    method: "DELETE",
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
+  if (!response.ok) {
+    switch (response.status) {
+      case 401:
+        throw new Error("401 Unauthorized");
+      case 403:
+        throw new Error("403 Forbidden");
+      case 404:
+        throw new Error("404 Not Found");
+      default:
+        throw new Error("Failed to delete hotel");
+    }
+  }
+
+  return response.json();
+}
