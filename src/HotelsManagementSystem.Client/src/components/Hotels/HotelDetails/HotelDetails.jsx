@@ -1,0 +1,117 @@
+import { useParams } from "react-router-dom";
+import { useGetHotelDetails } from "../../../hooks/hotels/useHotels";
+import { Swiper, SwiperSlide } from "swiper/react";
+import "swiper/css";
+import "swiper/css/effect-fade";
+import "swiper/css/navigation";
+import "swiper/css/pagination";
+import { EffectFade, Navigation, Pagination } from "swiper/modules";
+import styles from "./HotelDetails.module.css";
+
+export default function HotelDetails() {
+  const { id } = useParams();
+  const { hotel, isLoading, error } = useGetHotelDetails(id);
+
+  console.log("Hotel Details:", hotel);
+
+  if (isLoading) {
+    return (
+      <div className={styles.loadingContainer}>
+        <div className={styles.spinner}></div>
+        <p>Loading hotels...</p>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className={styles.errorContainer}>
+        <div className={styles.errorIcon}>⚠️</div>
+        <h3>Something went wrong</h3>
+        <p>{error}</p>
+      </div>
+    );
+  }
+
+  const renderStars = (stars) => {
+    const starsArray = [];
+    for (let i = 0; i < stars; i++) {
+      starsArray.push(<span key={i}>⭐</span>);
+    }
+    return starsArray;
+  };
+
+  return (
+    <div className={styles.hotelDetails}>
+      {/* Hotel Header Information */}
+      <div className={styles.hotelHeader}>
+        <div className={styles.hotelRating}>
+          {renderStars(hotel.stars || 0)}
+        </div>
+        <h1 className={styles.hotelName}>{hotel.name}</h1>
+        <div className={styles.hotelLocation}>
+          <p className={styles.address}>{hotel.address}</p>
+          <p className={styles.cityCountry}>
+            {hotel.city}, {hotel.country}
+          </p>
+        </div>
+      </div>
+
+      {/* Image Gallery */}
+      <div className={styles.gallerySection}>
+        <Swiper
+          style={{
+            "--swiper-navigation-color": "#fff",
+            "--swiper-pagination-color": "#fff",
+          }}
+          spaceBetween={30}
+          effect={"fade"}
+          navigation={true}
+          pagination={{
+            clickable: true,
+          }}
+          modules={[EffectFade, Navigation, Pagination]}
+          className={styles.hotelSwiper}
+        >
+          {hotel.images &&
+            hotel.images.map((image) => (
+              <SwiperSlide key={image.id}>
+                <img
+                  src={image.imageUrl}
+                  alt={`${hotel.name} - Image ${image.id}`}
+                  className={styles.galleryImage}
+                />
+              </SwiperSlide>
+            ))}
+        </Swiper>
+      </div>
+
+      {/* Hotel Description */}
+      <div className={styles.descriptionSection}>
+        <h2>About this hotel</h2>
+        <p className={styles.description}>
+          {hotel.description || "Hotel description not available."}
+        </p>
+      </div>
+
+      {/* Hotel Amenities */}
+      <div className={styles.amenitiesSection}>
+        <h2>Amenities</h2>
+        {hotel.amenities && hotel.amenities.length > 0 ? (
+          <div className={styles.amenitiesList}>
+            {hotel.amenities.map((amenity) => (
+              <div key={amenity.id} className={styles.amenityItem}>
+                <span className={styles.amenityIcon}>✓</span>
+                <span className={styles.amenityText}>{amenity.name}</span>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <p className={styles.noAmenities}>
+            No amenities information available.
+          </p>
+        )}
+      </div>
+    </div>
+  );
+}

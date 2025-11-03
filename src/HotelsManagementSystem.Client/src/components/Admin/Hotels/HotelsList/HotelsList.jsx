@@ -5,8 +5,10 @@ import {
 } from "../../../../hooks/admin/hotels/useHotels";
 import HotelsFilter from "../../../Hotels/HotelsFilter/HotelsFilter";
 import DeleteModal from "../../../Modals/DeleteModal/DeleteModal";
+import { useNavigate } from "react-router-dom";
 
 export default function HotelsList() {
+  const navigate = useNavigate();
   const {
     hotels,
     isLoading,
@@ -45,10 +47,8 @@ export default function HotelsList() {
       </div>
     );
   }
-
   const handleDetails = (hotelId) => {
-    // Implement navigation to hotel details page
-    console.log("View details for hotel ID:", hotelId);
+    navigate(`/hotels/${hotelId}`);
   };
 
   const handleEdit = (hotelId) => {
@@ -168,8 +168,8 @@ export default function HotelsList() {
                         <td className={styles.actions}>
                           <div className={styles.actionButtons}>
                             <button
-                              className={`${styles.actionBtn} ${styles.detailsBtn}`}
                               onClick={() => handleDetails(hotel.id)}
+                              className={`${styles.actionBtn} ${styles.detailsBtn}`}
                               title="View Details"
                             >
                               👁️ Details

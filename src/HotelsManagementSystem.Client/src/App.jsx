@@ -17,6 +17,7 @@ import NotFound404 from "./components/StatusCodePages/404";
 import Contact from "./components/Contact/Contact";
 import CreateHotel from "./components/Admin/Hotels/CreateHotel/CreateHotel";
 import HotelsList from "./components/Admin/Hotels/HotelsList/HotelsList";
+import HotelDetails from "./components/Hotels/HotelDetails/HotelDetails";
 
 function App() {
   return (
@@ -29,6 +30,7 @@ function App() {
               <Routes>
                 <Route path="/" element={<Home />} />
                 <Route path="/contact" element={<Contact />} />
+                <Route path="/hotels/:id" element={<HotelDetails />} />
                 <Route path="/404" element={<NotFound404 />} />
                 <Route path="*" element={<NotFound404 />} />
                 <Route element={<NonAuthenticatedUser />}>
@@ -37,6 +39,7 @@ function App() {
                 </Route>
                 <Route element={<AuthenticatedUser />}>
                   {/* You have to put here all the routes that require authentication */}
+
                   <Route element={<AdminUser />}>
                     {/* You have to put here all the routes that require admin role */}
                     <Route

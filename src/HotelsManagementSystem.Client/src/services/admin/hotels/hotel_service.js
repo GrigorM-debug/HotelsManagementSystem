@@ -1,3 +1,5 @@
+// The logic in this service is only for admin related logic
+
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 export async function createHotel(hotelDataAsFormData, token) {
@@ -37,7 +39,7 @@ export async function createHotel(hotelDataAsFormData, token) {
 
 export async function getAdminHotels(token, appliedFilters) {
   const response = await fetch(
-    `${API_BASE_URL}/hotel?Name=${appliedFilters.name}&City=${appliedFilters.city}&Country=${appliedFilters.country}`,
+    `${API_BASE_URL}/hotel/admin-hotels?Name=${appliedFilters.name}&City=${appliedFilters.city}&Country=${appliedFilters.country}`,
     {
       method: "GET",
       headers: {
