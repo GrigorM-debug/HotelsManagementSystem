@@ -1,0 +1,22 @@
+.errorContainer {
+  text-align: center;
+  padding: 3rem;
+  background: white;
+  border-radius: 16px;
+  margin: 2rem 0;
+  box-shadow: 0 4px 25px rgba(0, 0, 0, 0.08);
+}
+
+.errorIcon {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+}
+
+.errorContainer h3 {
+  color: #dc2626;
+  margin-bottom: 0.5rem;
+}
+
+.errorContainer p {
+  color: #718096;
+}

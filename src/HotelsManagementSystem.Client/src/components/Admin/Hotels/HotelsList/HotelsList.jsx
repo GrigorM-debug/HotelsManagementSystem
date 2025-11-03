@@ -5,6 +5,8 @@ import {
 } from "../../../../hooks/admin/hotels/useHotels";
 import HotelsFilter from "../../../Hotels/HotelsFilter/HotelsFilter";
 import DeleteModal from "../../../Modals/DeleteModal/DeleteModal";
+import ErrorComponent from "../../../ErrorComponent/ErrorComponent";
+import SpinnerComponent from "../../../SpinnerComponent/SpinnerComponent";
 import { useNavigate } from "react-router-dom";
 
 export default function HotelsList() {
@@ -30,22 +32,11 @@ export default function HotelsList() {
   } = useDeleteHotel(refreshHotels);
 
   if (isLoading) {
-    return (
-      <div className={styles.loadingContainer}>
-        <div className={styles.spinner}></div>
-        <p>Loading hotels...</p>
-      </div>
-    );
+    return <SpinnerComponent message="Loading hotels..." />;
   }
 
   if (error) {
-    return (
-      <div className={styles.errorContainer}>
-        <div className={styles.errorIcon}>⚠️</div>
-        <h3>Something went wrong</h3>
-        <p>{error}</p>
-      </div>
-    );
+    return <ErrorComponent error={error} />;
   }
   const handleDetails = (hotelId) => {
     navigate(`/hotels/${hotelId}`);

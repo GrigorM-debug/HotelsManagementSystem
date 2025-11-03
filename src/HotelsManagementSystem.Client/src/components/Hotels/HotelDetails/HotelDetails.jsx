@@ -6,6 +6,8 @@ import "swiper/css/effect-fade";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
 import { EffectFade, Navigation, Pagination } from "swiper/modules";
+import ErrorComponent from "../../ErrorComponent/ErrorComponent";
+import SpinnerComponent from "../../SpinnerComponent/SpinnerComponent";
 import styles from "./HotelDetails.module.css";
 
 export default function HotelDetails() {
@@ -15,22 +17,11 @@ export default function HotelDetails() {
   console.log("Hotel Details:", hotel);
 
   if (isLoading) {
-    return (
-      <div className={styles.loadingContainer}>
-        <div className={styles.spinner}></div>
-        <p>Loading hotels...</p>
-      </div>
-    );
+    return <SpinnerComponent message="Loading hotel details..." />;
   }
 
   if (error) {
-    return (
-      <div className={styles.errorContainer}>
-        <div className={styles.errorIcon}>⚠️</div>
-        <h3>Something went wrong</h3>
-        <p>{error}</p>
-      </div>
-    );
+    return <ErrorComponent error={error} />;
   }
 
   const renderStars = (stars) => {
