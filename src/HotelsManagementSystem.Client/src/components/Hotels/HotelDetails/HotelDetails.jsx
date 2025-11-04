@@ -14,8 +14,6 @@ export default function HotelDetails() {
   const { id } = useParams();
   const { hotel, isLoading, error } = useGetHotelDetails(id);
 
-  console.log("Hotel Details:", hotel);
-
   if (isLoading) {
     return <SpinnerComponent message="Loading hotel details..." />;
   }

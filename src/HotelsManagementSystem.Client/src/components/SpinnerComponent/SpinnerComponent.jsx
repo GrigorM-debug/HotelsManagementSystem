@@ -4,7 +4,7 @@ export default function SpinnerComponent({ message }) {
   return (
     <div className={styles.loadingContainer}>
       <div className={styles.spinner}></div>
-      <p>Loading {message}</p>
+      <p>{message}</p>
     </div>
   );
 }
