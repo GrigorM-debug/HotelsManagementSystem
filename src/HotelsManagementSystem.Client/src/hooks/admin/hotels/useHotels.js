@@ -140,10 +140,8 @@ export function useCreateHotel() {
         return;
       }
 
-      // On success, redirect to hotels list or hotel details page
       const createdHotelId = result.hotelId;
-      console.log("Hotel created with ID:", createdHotelId);
-      navigate("/admin/hotels");
+      navigate(`/hotels/${createdHotelId}`);
     } catch (err) {
       switch (err.message) {
         case "401 Unauthorized":

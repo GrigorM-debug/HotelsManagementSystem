@@ -179,6 +179,7 @@ export function validateHotelForm(formData) {
   const address = formData.address;
   const checkIn = formData.checkIn;
   const checkOut = formData.checkOut;
+  const selectedAmenities = formData.selectedAmenities;
 
   // Validate Hotel Name
   const hotelNameError = validateHotelName(hotelName);
@@ -220,6 +221,10 @@ export function validateHotelForm(formData) {
   const checkInCheckOutError = validateCheckInAndCheckOut(checkIn, checkOut);
   if (checkInCheckOutError) {
     errors.checkOut = checkInCheckOutError;
+  }
+
+  if (selectedAmenities.length === 0) {
+    errors.selectedAmenities = "At least one amenity must be selected.";
   }
 
   return {

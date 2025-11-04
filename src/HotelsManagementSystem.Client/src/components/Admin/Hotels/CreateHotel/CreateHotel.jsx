@@ -204,6 +204,11 @@ export default function CreateHotel() {
             className={styles.fileInput}
             disabled={isCreating}
           />
+          {validationErrors.images && (
+            <div className={styles.validationError}>
+              {validationErrors.images}
+            </div>
+          )}
           <div className={styles.fileInputHelper}>
             Select multiple images (JPEG, PNG, WebP)
           </div>
@@ -249,6 +254,11 @@ export default function CreateHotel() {
                   >
                     {amenity.name}
                   </label>
+                  {validationErrors.selectedAmenities && (
+                    <div className={styles.validationError}>
+                      {validationErrors.selectedAmenities}
+                    </div>
+                  )}
                 </div>
               ))}
             </div>
