@@ -3,6 +3,7 @@ using HotelsManagementSystem.Api.Data;
 using HotelsManagementSystem.Api.Data.Models.Hotels;
 using HotelsManagementSystem.Api.Data.Models.Images;
 using HotelsManagementSystem.Api.DTOs.Admin.Hotels;
+using HotelsManagementSystem.Api.DTOs.Admin.Hotels.Edit;
 using HotelsManagementSystem.Api.DTOs.Hotels;
 using HotelsManagementSystem.Api.DTOs.Images;
 using HotelsManagementSystem.Api.Enums;
@@ -97,6 +98,11 @@ namespace HotelsManagementSystem.Api.Services.Admin.Hotels
             return false;
         }
 
+        public Task<bool> EditHotelPostAsync(EditHotelPostDto inputDto, Guid adminId)
+        {
+            throw new NotImplementedException();
+        }
+
         public async Task<IEnumerable<HotelListDto>> GetAdminHotelsAsync(Guid adminId, HotelsFilterDto? filter)
         {
             var query = _context.Hotels
@@ -143,6 +149,41 @@ namespace HotelsManagementSystem.Api.Services.Admin.Hotels
             }
 
             return adminHotels;
+        }
+
+        public async Task<EditHotelGetDto> GetHotelForEditByIdAsync(Guid hotelId, Guid adminId)
+        {
+            var hotel = await _context.Hotels
+                .AsNoTracking()
+                .Where(h => h.Id == hotelId && h.CreatorId == adminId && !h.IsDeleted)
+                .Select(h => new EditHotelGetDto
+                {
+                    Name = h.Name,
+                    Description = h.Description,
+                    Address = h.Address,
+                    City = h.City,
+                    Country = h.Country,
+                    Stars = h.Stars,
+                    CheckInTime = h.CheckInTime,
+                    CheckOutTime = h.CheckOutTime,
+                    SelectedAmenitiesIds = h.HotelAmenities
+                        .Select(ha => new AmenityResponseDto
+                        {
+                            Id = ha.Amenity.Id,
+                            Name = ha.Amenity.Name
+                        })
+                        .ToList(),
+                    Images = h.Images
+                        .Select(img => new ImageResponseDto
+                        {
+                            Id = img.Id,
+                            ImageUrl = img.Url
+                        })
+                        .ToList()
+                })
+                .FirstOrDefaultAsync();
+
+            return hotel;
         }
 
         public Task<bool> HotelExistsByHotelIdAndAdminIdAsync(Guid hotelId, Guid adminId)

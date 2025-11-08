@@ -1,4 +1,5 @@
 ﻿using HotelsManagementSystem.Api.DTOs.Admin.Hotels;
+using HotelsManagementSystem.Api.DTOs.Admin.Hotels.Edit;
 using HotelsManagementSystem.Api.DTOs.Hotels;
 
 namespace HotelsManagementSystem.Api.Services.Admin.Hotels
@@ -16,5 +17,9 @@ namespace HotelsManagementSystem.Api.Services.Admin.Hotels
         public Task<bool> HotelExistsByHotelIdAndAdminIdAsync(Guid hotelId, Guid adminId);
 
         public Task<bool> DeleteHotelAsync(Guid hotelId, Guid adminId);
+
+        public Task<EditHotelGetDto> GetHotelForEditByIdAsync(Guid hotelId, Guid adminId);
+
+        public Task<bool> EditHotelPostAsync(EditHotelPostDto inputDto, Guid adminId);
     }
 }

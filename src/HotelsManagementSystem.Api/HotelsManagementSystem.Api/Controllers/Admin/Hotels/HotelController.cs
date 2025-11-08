@@ -1,6 +1,7 @@
 ﻿using HotelsManagementSystem.Api.Constants;
 using HotelsManagementSystem.Api.Data.Models.Users;
 using HotelsManagementSystem.Api.DTOs.Admin.Hotels;
+using HotelsManagementSystem.Api.DTOs.Admin.Hotels.Edit;
 using HotelsManagementSystem.Api.DTOs.Hotels;
 using HotelsManagementSystem.Api.Services.Admin.Hotels;
 using HotelsManagementSystem.Api.Services.Admin.Hotels.Amentity;
@@ -165,6 +166,50 @@ namespace HotelsManagementSystem.Api.Controllers.Admin.Hotels
             }
 
             return Ok(new {success = "Hotel successfully deleted."});
+        }
+
+        [HttpGet("edit/{hotelId}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesDefaultResponseType]
+        public async Task<IActionResult> GetHotelForEditById(Guid hotelId)
+        {
+            var adminId = _userManager.GetUserId(User);
+            var admin = await _userManager.FindByIdAsync(adminId);
+            if (admin == null)
+            {
+                return Unauthorized(new { error = "User not found." });
+            }
+
+            var isAdmin = await _userManager.IsInRoleAsync(admin, UserRoles.Admin);
+            if (!isAdmin)
+            {
+                return Forbid();
+            }
+
+            var adminIdToGuid = Guid.Parse(adminId);
+            var hotelForEdit = await _hotelService.GetHotelForEditByIdAsync(hotelId, adminIdToGuid);
+            if (hotelForEdit == null)
+            {
+                return NotFound(new { error = "Hotel not found." });
+            }
+
+            return Ok(hotelForEdit);
+        }
+
+        [HttpPut("edit/{hotelId}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesDefaultResponseType]
+        public async Task<IActionResult> EditHotelPost([FromForm] EditHotelPostDto inputDto, Guid hotelId)
+        {
+            
+            return Ok(new { success = "Hotel successfully edited." });
         }
     }
 }
