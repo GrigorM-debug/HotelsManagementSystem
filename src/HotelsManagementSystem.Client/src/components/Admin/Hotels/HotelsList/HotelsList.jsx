@@ -38,13 +38,17 @@ export default function HotelsList() {
   if (error) {
     return <ErrorComponent error={error} />;
   }
+
+  const handleAddNewHotel = () => {
+    navigate("/admin/hotels/create-hotel");
+  };
+
   const handleDetails = (hotelId) => {
     navigate(`/hotels/${hotelId}`);
   };
 
   const handleEdit = (hotelId) => {
-    // Implement navigation to hotel edit page
-    console.log("Edit hotel ID:", hotelId);
+    navigate(`/admin/hotels/edit-hotel/${hotelId}`);
   };
 
   const handleDelete = (hotelToDeleteInfo) => {
@@ -77,7 +81,7 @@ export default function HotelsList() {
             <h1 className={styles.title}>Hotels Management</h1>
             <p className={styles.subtitle}>Manage your hotel properties</p>
           </div>
-          <button className={styles.addButton}>
+          <button onClick={handleAddNewHotel} className={styles.addButton}>
             <span className={styles.addIcon}>+</span>
             Add New Hotel
           </button>
