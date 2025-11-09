@@ -21,5 +21,7 @@ namespace HotelsManagementSystem.Api.Services.Admin.Hotels
         public Task<EditHotelGetDto> GetHotelForEditByIdAsync(Guid hotelId, Guid adminId);
 
         public Task<bool> EditHotelPostAsync(EditHotelPostDto inputDto, Guid adminId, Guid hotelId);
+
+        public Task<HotelDto> GetHotelByIdAndAdminIdAsync(Guid hotelId, Guid adminId);
     }
 }

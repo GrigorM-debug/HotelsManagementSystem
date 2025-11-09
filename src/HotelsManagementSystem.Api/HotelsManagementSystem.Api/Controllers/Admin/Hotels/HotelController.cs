@@ -8,6 +8,7 @@ using HotelsManagementSystem.Api.Services.Admin.Hotels.Amentity;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore.Query.SqlExpressions;
 
 namespace HotelsManagementSystem.Api.Controllers.Admin.Hotels
 {
@@ -224,9 +225,9 @@ namespace HotelsManagementSystem.Api.Controllers.Admin.Hotels
             }
 
             var adminIdToGuid = Guid.Parse(adminId);
-            var hotelExists = await _hotelService.HotelExistsByHotelIdAndAdminIdAsync(hotelId, adminIdToGuid);
+            var exitingHotel = await _hotelService.GetHotelByIdAndAdminIdAsync(hotelId, adminIdToGuid);
 
-            if (!hotelExists)
+            if (exitingHotel != null)
             {
                 return NotFound(new { error = "Hotel not found." });
             }
@@ -239,7 +240,7 @@ namespace HotelsManagementSystem.Api.Controllers.Admin.Hotels
             }
 
             // If the name is changed, check for uniqueness
-            if (!string.IsNullOrEmpty(inputDto.Name))
+            if (!string.IsNullOrEmpty(inputDto.Name) && inputDto.Name.ToLower() != exitingHotel.Name.ToLower())
             {
                 var hotelWithSameNameExists = await _hotelService.HotelExistsByNameAsync(inputDto.Name);
                 if (hotelWithSameNameExists)

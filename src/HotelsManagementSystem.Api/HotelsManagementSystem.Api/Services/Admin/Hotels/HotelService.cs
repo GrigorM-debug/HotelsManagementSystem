@@ -261,6 +261,21 @@ namespace HotelsManagementSystem.Api.Services.Admin.Hotels
             return adminHotels;
         }
 
+        public async Task<HotelDto> GetHotelByIdAndAdminIdAsync(Guid hotelId, Guid adminId)
+        {
+            var hotel = await _context.Hotels
+                .AsNoTracking()
+                .Where(h => h.Id == hotelId && h.CreatorId == adminId && !h.IsDeleted)
+                .Select(h => new HotelDto
+                {
+                    Id = h.Id,
+                    Name = h.Name,
+                })
+                .FirstOrDefaultAsync();
+
+            return hotel;
+        }
+
         public async Task<EditHotelGetDto> GetHotelForEditByIdAsync(Guid hotelId, Guid adminId)
         {
             var hotel = await _context.Hotels
