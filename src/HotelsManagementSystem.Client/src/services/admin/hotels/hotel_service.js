@@ -125,7 +125,7 @@ export async function editGetHotel(hotelId, token) {
 }
 
 export async function editPostHotel(hotelId, hotelDataAsFormData, token) {
-  const response = await fetch(`${API_BASE_URL}/hotel/${hotelId}`, {
+  const response = await fetch(`${API_BASE_URL}/hotel/edit/${hotelId}`, {
     method: "PUT",
     headers: {
       //   "Content-Type": "multipart/form-data",
@@ -146,6 +146,12 @@ export async function editPostHotel(hotelId, hotelDataAsFormData, token) {
         throw new Error("403 Forbidden");
       case 404:
         throw new Error("404 Not Found");
+      case 409: {
+        const errorData = await response.json();
+        return errorData;
+      }
+      case 429:
+        throw new Error("429 Too Many Requests");
       default:
         throw new Error("Failed to edit hotel");
     }

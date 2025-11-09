@@ -12,6 +12,7 @@ import {
   getAdminHotels,
   deleteHotel,
   editGetHotel,
+  editPostHotel,
 } from "../../../services/admin/hotels/hotel_service";
 
 export function useCreateHotel() {
@@ -59,7 +60,9 @@ export function useCreateHotel() {
       return;
     }
 
-    if (validFiles.length > HOTEL_MAX_IMAGES_UPLOAD) {
+    const totalImages = formData.images.length + validFiles.length;
+
+    if (totalImages > HOTEL_MAX_IMAGES_UPLOAD) {
       setError(
         `You can upload a maximum of ${HOTEL_MAX_IMAGES_UPLOAD} images.`
       );
@@ -372,6 +375,7 @@ export function useEditHotel(hotelId) {
     stars: 1,
     selectedAmenities: [],
     images: [],
+    newImages: [],
   });
 
   useEffect(() => {
@@ -391,6 +395,7 @@ export function useEditHotel(hotelId) {
           stars: hotelData.stars,
           selectedAmenities: hotelData.amenities.map((a) => a.id),
           images: hotelData.images,
+          newImages: [],
         });
 
         setImagePreviews(
@@ -398,6 +403,7 @@ export function useEditHotel(hotelId) {
             id: image.id,
             url: image.imageUrl,
             file: null,
+            isExisting: true,
           }))
         );
       } catch (err) {
@@ -451,20 +457,25 @@ export function useEditHotel(hotelId) {
     const validFiles = files.filter((file) => validTypes.includes(file.type));
 
     if (validFiles.length !== files.length) {
-      setError("Please select only image files (JPEG, PNG, WebP)");
+      setError("Please select only image files (JPEG, PNG, JPG)");
       return;
     }
 
-    if (validFiles.length > HOTEL_MAX_IMAGES_UPLOAD) {
+    const totalImages =
+      formData.images.length + formData.newImages.length + validFiles.length;
+
+    if (totalImages > HOTEL_MAX_IMAGES_UPLOAD) {
       setError(
-        `You can upload a maximum of ${HOTEL_MAX_IMAGES_UPLOAD} images.`
+        `You can upload a maximum of ${HOTEL_MAX_IMAGES_UPLOAD} images total. You currently have ${
+          formData.images.length + formData.newImages.length
+        } images.`
       );
       return;
     }
 
     setFormData((prev) => ({
       ...prev,
-      images: [...prev.images, ...validFiles],
+      newImages: [...prev.newImages, ...validFiles],
     }));
 
     // Create image previews
@@ -477,6 +488,7 @@ export function useEditHotel(hotelId) {
             id: Date.now() + Math.random(),
             url: e.target.result,
             file: file,
+            isExisting: false,
           },
         ]);
       };
@@ -485,10 +497,25 @@ export function useEditHotel(hotelId) {
   };
 
   const removeImage = (indexToRemove) => {
-    setFormData((prev) => ({
-      ...prev,
-      images: prev.images.filter((_, index) => index !== indexToRemove),
-    }));
+    const imageToRemove = imagePreviews[indexToRemove];
+
+    if (imageToRemove.isExisting) {
+      setFormData((prev) => ({
+        ...prev,
+        images: prev.images.filter((img) => img.id !== imageToRemove.id),
+      }));
+    } else {
+      const newImageIndex =
+        imagePreviews
+          .slice(0, indexToRemove + 1)
+          .filter((img) => !img.isExisting).length - 1;
+
+      setFormData((prev) => ({
+        ...prev,
+        newImages: prev.newImages.filter((_, index) => index !== newImageIndex),
+      }));
+    }
+
     setImagePreviews((prev) =>
       prev.filter((_, index) => index !== indexToRemove)
     );
@@ -504,8 +531,69 @@ export function useEditHotel(hotelId) {
       setError("Please fix the errors below.");
       return;
     }
-    console.log("Submitting edited hotel data:", hotelData);
-    //Before submitting, prepare FormData
+
+    const hotelDataAsFormData = new FormData();
+    hotelDataAsFormData.append("Name", formData.name);
+    hotelDataAsFormData.append("Description", formData.description);
+    hotelDataAsFormData.append("Address", formData.address);
+    hotelDataAsFormData.append("City", formData.city);
+    hotelDataAsFormData.append("Country", formData.country);
+    hotelDataAsFormData.append("Stars", formData.stars);
+    hotelDataAsFormData.append("CheckInTime", formData.checkIn);
+    hotelDataAsFormData.append("CheckOutTime", formData.checkOut);
+    formData.selectedAmenities.forEach((amenity) => {
+      hotelDataAsFormData.append("AmenityIds", amenity);
+    });
+    formData.images.forEach((image) => {
+      hotelDataAsFormData.append("ExistingImagesIds", image.id);
+    });
+    formData.newImages.forEach((imageFile) => {
+      hotelDataAsFormData.append("NewImages", imageFile);
+    });
+
+    try {
+      setIsLoading(true);
+
+      const result = await editPostHotel(hotelId, hotelDataAsFormData, token);
+
+      if (result) {
+        if (result.error) {
+          setError(result.error);
+          return;
+        }
+
+        if (result.errors) {
+          setValidationErrors(result.errors);
+          setError("Please fix the errors below.");
+          return;
+        }
+
+        if (result.success) {
+          navigate(`/hotels/${hotelId}`);
+        }
+      }
+    } catch (err) {
+      switch (err.message) {
+        case "401 Unauthorized":
+          clearTokenAndUser();
+          navigate("/login");
+          break;
+        case "403 Forbidden":
+          clearTokenAndUser();
+          navigate("/login");
+          break;
+        case "404 Not Found":
+          navigate("/404");
+          break;
+        case "429 Too Many Requests":
+          navigate("/429");
+          break;
+        default:
+          setError("Failed to edit hotel");
+      }
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return {
