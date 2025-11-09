@@ -25,6 +25,9 @@ export function useGetAmenities() {
           case "403 Forbidden":
             navigate("/login");
             break;
+          case "429 Too Many Requests":
+            navigate("/429");
+            break;
         }
       } finally {
         setIsLoading(false);

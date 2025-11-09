@@ -180,6 +180,7 @@ export function validateHotelForm(formData) {
   const checkIn = formData.checkIn;
   const checkOut = formData.checkOut;
   const selectedAmenities = formData.selectedAmenities;
+  const images = formData.images;
 
   // Validate Hotel Name
   const hotelNameError = validateHotelName(hotelName);
@@ -225,6 +226,10 @@ export function validateHotelForm(formData) {
 
   if (selectedAmenities.length === 0) {
     errors.selectedAmenities = "At least one amenity must be selected.";
+  }
+
+  if (images.length === 0) {
+    errors.images = "At least one image must be uploaded.";
   }
 
   return {

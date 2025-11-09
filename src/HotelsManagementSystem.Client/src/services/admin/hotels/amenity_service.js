@@ -16,6 +16,8 @@ export async function getAmenities(token) {
         throw new Error("404 Not Found");
       case 403:
         throw new Error("403 Forbidden");
+      case 429:
+        throw new Error("429 Too Many Requests");
       default:
         throw new Error("Failed to fetch amenities");
     }

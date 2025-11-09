@@ -19,6 +19,9 @@ export function useGetHotelDetails(hotelId) {
           case "404 Not Found":
             navigate("/404");
             break;
+          case "429 Too Many Requests":
+            navigate("/429");
+            break;
           default:
             setError("Failed to fetch hotel details");
         }

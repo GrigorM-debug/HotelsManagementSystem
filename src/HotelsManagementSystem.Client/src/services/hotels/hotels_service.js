@@ -9,6 +9,8 @@ export async function getHotelDetails(hotelId) {
     switch (response.status) {
       case 404:
         throw new Error("404 Not Found");
+      case 429:
+        throw new Error("429 Too Many Requests");
       default:
         throw new Error("Failed to fetch hotel details");
     }
