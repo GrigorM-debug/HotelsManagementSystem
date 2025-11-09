@@ -31,10 +31,10 @@ export default function HotelsFilter({
             type="text"
             className={styles.filterInput}
             onChange={(e) => onFilterChange(e)}
-            defaultValue={filterValues.name}
+            defaultValue={filterValues?.name}
           />
-          {validationErrors.name && (
-            <span className={styles.error}>{validationErrors.name}</span>
+          {validationErrors?.name && (
+            <span className={styles.error}>{validationErrors?.name}</span>
           )}
         </div>
 
@@ -48,10 +48,10 @@ export default function HotelsFilter({
             type="text"
             className={styles.filterInput}
             onChange={(e) => onFilterChange(e)}
-            defaultValue={filterValues.city}
+            defaultValue={filterValues?.city}
           />
-          {validationErrors.city && (
-            <span className={styles.error}>{validationErrors.city}</span>
+          {validationErrors?.city && (
+            <span className={styles.error}>{validationErrors?.city}</span>
           )}
         </div>
 
@@ -65,10 +65,10 @@ export default function HotelsFilter({
             type="text"
             className={styles.filterInput}
             onChange={(e) => onFilterChange(e)}
-            defaultValue={filterValues.country}
+            defaultValue={filterValues?.country}
           />
-          {validationErrors.country && (
-            <span className={styles.error}>{validationErrors.country}</span>
+          {validationErrors?.country && (
+            <span className={styles.error}>{validationErrors?.country}</span>
           )}
         </div>
       </div>

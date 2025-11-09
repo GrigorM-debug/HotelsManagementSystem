@@ -208,7 +208,7 @@ export function useGetAdminHotels() {
   };
 
   const handleApplyFilters = () => {
-    //Validte filters
+    //Validate filters
     const validation = validateHotelsFilter(filter);
 
     if (!validation.isValid) {
