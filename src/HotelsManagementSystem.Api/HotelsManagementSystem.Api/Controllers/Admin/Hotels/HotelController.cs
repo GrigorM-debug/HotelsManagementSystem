@@ -227,7 +227,7 @@ namespace HotelsManagementSystem.Api.Controllers.Admin.Hotels
             var adminIdToGuid = Guid.Parse(adminId);
             var exitingHotel = await _hotelService.GetHotelByIdAndAdminIdAsync(hotelId, adminIdToGuid);
 
-            if (exitingHotel != null)
+            if (exitingHotel == null)
             {
                 return NotFound(new { error = "Hotel not found." });
             }
