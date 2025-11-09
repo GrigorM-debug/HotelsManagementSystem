@@ -98,9 +98,119 @@ namespace HotelsManagementSystem.Api.Services.Admin.Hotels
             return false;
         }
 
-        public Task<bool> EditHotelPostAsync(EditHotelPostDto inputDto, Guid adminId)
+        public async Task<bool> EditHotelPostAsync(EditHotelPostDto inputDto, Guid adminId, Guid hotelId)
         {
-            throw new NotImplementedException();
+            var hotel = await _context.Hotels
+                .Include(h => h.HotelAmenities)
+                .Include(h => h.Images)
+                .FirstOrDefaultAsync(h => 
+                    h.Id == hotelId && 
+                    h.CreatorId == adminId && 
+                    !h.IsDeleted);
+
+            if (hotel != null)
+            {
+                if (!string.IsNullOrEmpty(inputDto.Name) && inputDto.Name.ToLower() != hotel.Name.ToLower())
+                {
+                    hotel.Name = inputDto.Name;
+                }
+
+                if (!string.IsNullOrEmpty(inputDto.Description) && inputDto.Description.ToLower() != hotel.Description.ToLower())
+                {
+                    hotel.Description = inputDto.Description; 
+                }
+
+                if (!string.IsNullOrEmpty(inputDto.Address) && inputDto.Address.ToLower() != hotel.Address.ToLower())
+                {
+                    hotel.Address = inputDto.Address;
+                }
+
+                if (!string.IsNullOrEmpty(inputDto.City) && inputDto.City.ToLower() != hotel.City.ToLower())
+                {
+                    hotel.City = inputDto.City;
+                }
+
+                if (!string.IsNullOrEmpty(inputDto.Country) && inputDto.Country.ToLower() != hotel.Country.ToLower())
+                {
+                    hotel.Country = inputDto.Country;
+                }
+
+                if (inputDto.Stars.HasValue && inputDto.Stars.Value != hotel.Stars)
+                {
+                    hotel.Stars = inputDto.Stars.Value;
+                }
+
+                if (inputDto.CheckInTime.HasValue && inputDto.CheckInTime.Value != hotel.CheckInTime)
+                {
+                    hotel.CheckInTime = inputDto.CheckInTime.Value;
+                }
+
+                if (inputDto.CheckOutTime.HasValue && inputDto.CheckOutTime.Value != hotel.CheckOutTime)
+                {
+                    hotel.CheckOutTime = inputDto.CheckOutTime.Value;
+                }
+                
+                // Update amenities
+                var existingAmenityIds = hotel.HotelAmenities.Select(ha => ha.AmenityId).ToList();
+                var amenitiesToAdd = inputDto.AmenityIds.Except(existingAmenityIds).ToList();
+                var amenitiesToRemove = existingAmenityIds.Except(inputDto.AmenityIds).ToList();
+
+                foreach (var amenityId in amenitiesToAdd)
+                {
+                    var hotelAmenity = new HotelAmenity()
+                    {
+                        HotelId = hotel.Id,
+                        AmenityId = amenityId
+                    };
+                    await _context.HotelAmenities.AddAsync(hotelAmenity);
+                }
+
+                foreach (var amenityId in amenitiesToRemove)
+                {
+                    var hotelAmenity = hotel.HotelAmenities.FirstOrDefault(ha => ha.AmenityId == amenityId);
+                    if (hotelAmenity != null)
+                    {
+                        _context.HotelAmenities.Remove(hotelAmenity);
+                    }
+                }
+
+                var existingImagesIds = await _context.HotelImages
+                    .Where(img => img.HotelId == hotel.Id)
+                    .Select(img => img.Id)
+                    .ToListAsync();
+                var imagesToAdd = inputDto.NewImages;
+                var imagesToRemoveIds = existingImagesIds.Except(inputDto.ExistingImagesIds).ToList();
+
+                // Remove images
+                foreach (var imageId in imagesToRemoveIds)
+                {
+                    var image = hotel.Images.FirstOrDefault(img => img.Id == imageId);
+                    if (image != null)
+                    {
+                        await _imageService.DeleteImageAsync(image.PublicId);
+                        _context.HotelImages.Remove(image);
+                    }
+                }
+
+                // Add new images
+                foreach (var image in imagesToAdd)
+                {
+                    var uploadedImage = await _imageService.UploadHotelImageAsync(hotel.Id, image);
+                    var hotelImage = new HotelImage()
+                    {
+                        HotelId = hotel.Id,
+                        Url = uploadedImage.Url,
+                        PublicId = uploadedImage.PublicId
+                    };
+                    await _context.HotelImages.AddAsync(hotelImage);
+                }
+
+                hotel.UpdatedOn = DateTime.UtcNow;
+                await _context.SaveChangesAsync();
+                return true;
+            }
+
+            return false;
         }
 
         public async Task<IEnumerable<HotelListDto>> GetAdminHotelsAsync(Guid adminId, HotelsFilterDto? filter)

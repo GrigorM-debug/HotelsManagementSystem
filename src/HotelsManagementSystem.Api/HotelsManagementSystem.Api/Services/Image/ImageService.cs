@@ -20,6 +20,17 @@ namespace HotelsManagementSystem.Api.Services.Image
             _claudinary = new Cloudinary(account);
         }
 
+        public async Task<bool> DeleteImageAsync(string publicId)
+        {
+           var deletionParams = new DeletionParams(publicId);
+            var deletionResult = await _claudinary.DestroyAsync(deletionParams);
+            if(deletionResult.StatusCode != System.Net.HttpStatusCode.OK && deletionResult.Result != "not found")
+            {
+                throw new Exception("Image deletion failed.");
+            }
+            return await Task.FromResult(true);
+        }
+
         public async Task<HotelImageUploadResponse> UploadHotelImageAsync(Guid hotelId, IFormFile imageFile)
         {
             if(imageFile.Length <= 0)

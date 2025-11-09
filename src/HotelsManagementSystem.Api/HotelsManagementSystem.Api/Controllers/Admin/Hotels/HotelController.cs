@@ -205,11 +205,65 @@ namespace HotelsManagementSystem.Api.Controllers.Admin.Hotels
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status409Conflict)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [ProducesDefaultResponseType]
         public async Task<IActionResult> EditHotelPost([FromForm] EditHotelPostDto inputDto, Guid hotelId)
         {
-            
-            return Ok(new { success = "Hotel successfully edited." });
+            var adminId = _userManager.GetUserId(User);
+            var admin = await _userManager.FindByIdAsync(adminId);
+            if (admin == null)
+            {
+                return Unauthorized(new { error = "User not found." });
+            }
+
+            var isAdmin = await _userManager.IsInRoleAsync(admin, UserRoles.Admin);
+            if (!isAdmin)
+            {
+                return Forbid();
+            }
+
+            var adminIdToGuid = Guid.Parse(adminId);
+            var hotelExists = await _hotelService.HotelExistsByHotelIdAndAdminIdAsync(hotelId, adminIdToGuid);
+
+            if (!hotelExists)
+            {
+                return NotFound(new { error = "Hotel not found." });
+            }
+
+            // Check if amenities exist
+            var amenitiesExist = await _amenityService.AmenitiesExistsByIdsAsync(inputDto.AmenityIds);
+            if (!amenitiesExist)
+            {
+                return BadRequest(new { error = "One or more selected amenities are invalid." });
+            }
+
+            // If the name is changed, check for uniqueness
+            if (!string.IsNullOrEmpty(inputDto.Name))
+            {
+                var hotelWithSameNameExists = await _hotelService.HotelExistsByNameAsync(inputDto.Name);
+                if (hotelWithSameNameExists)
+                {
+                    return Conflict(new { error = "A hotel with the same name already exists." });
+                }
+            }
+
+            try
+            {
+                var isEdited = await _hotelService.EditHotelPostAsync(inputDto, adminIdToGuid, hotelId);
+
+                if (!isEdited)
+                {
+                    return BadRequest(new { error = "Failed to edit the hotel. Please try again later." });
+                }
+
+                return Ok(new { success = "Hotel successfully edited." });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An error occurred while editing the hotel.");
+                return StatusCode(StatusCodes.Status500InternalServerError, new { error = "An error occurred while editing the hotel. Please try again later." });
+            }
         }
     }
 }
