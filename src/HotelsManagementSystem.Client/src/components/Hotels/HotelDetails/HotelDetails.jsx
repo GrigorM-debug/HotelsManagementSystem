@@ -83,6 +83,21 @@ export default function HotelDetails() {
         </p>
       </div>
 
+      {/* Check-in/Check-out Information */}
+      <div className={styles.checkInOutSection}>
+        <h2>Check-in & Check-out</h2>
+        <div className={styles.checkInOutInfo}>
+          <div className={styles.checkInInfo}>
+            <span className={styles.checkInOutLabel}>Check-in:</span>
+            <span className={styles.checkInOutTime}>{hotel.checkInTime}</span>
+          </div>
+          <div className={styles.checkOutInfo}>
+            <span className={styles.checkInOutLabel}>Check-out:</span>
+            <span className={styles.checkInOutTime}>{hotel.checkOutTime}</span>
+          </div>
+        </div>
+      </div>
+
       {/* Hotel Amenities */}
       <div className={styles.amenitiesSection}>
         <h2>Amenities</h2>
