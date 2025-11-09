@@ -41,7 +41,6 @@ export default function EditHotel() {
             value={formData.name}
             onChange={handleInputChange}
             className={styles.input}
-            required
             disabled={isEditing}
           />
           {validationErrors.name && (
@@ -83,7 +82,6 @@ export default function EditHotel() {
               value={formData.address}
               onChange={handleInputChange}
               className={styles.input}
-              required
               disabled={isEditing}
             />
             {validationErrors.address && (
@@ -104,7 +102,6 @@ export default function EditHotel() {
               value={formData.city}
               onChange={handleInputChange}
               className={styles.input}
-              required
               disabled={isEditing}
             />
             {validationErrors.city && (
@@ -127,7 +124,6 @@ export default function EditHotel() {
               value={formData.country}
               onChange={handleInputChange}
               className={styles.input}
-              required
               disabled={isEditing}
             />
             {validationErrors.country && (
@@ -148,9 +144,6 @@ export default function EditHotel() {
               value={formData.stars}
               onChange={handleInputChange}
               className={styles.input}
-              min="1"
-              max="5"
-              required
               disabled={isEditing}
             />
             {validationErrors.stars && (
@@ -173,7 +166,6 @@ export default function EditHotel() {
               value={formData.checkIn}
               onChange={handleInputChange}
               className={styles.input}
-              required
               disabled={isEditing}
             />
           </div>
@@ -189,7 +181,6 @@ export default function EditHotel() {
               value={formData.checkOut}
               onChange={handleInputChange}
               className={styles.input}
-              required
               disabled={isEditing}
             />
             {validationErrors.checkOut && (

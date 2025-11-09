@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { validateHotelForm } from "../../../validations/hotel/hotel_forms_validations";
+import { validateEditHotelForm } from "../../../validations/hotel/edit_hotel_form_validations";
 import { validateHotelsFilter } from "../../../validations/hotel/hotels_filter_validations";
 import { useAuth } from "../../useAuth";
 import { useNavigate } from "react-router-dom";
@@ -374,7 +375,7 @@ export function useEditHotel(hotelId) {
     checkOut: "",
     stars: 1,
     selectedAmenities: [],
-    images: [],
+    images: [], // The existing images
     newImages: [],
   });
 
@@ -461,8 +462,7 @@ export function useEditHotel(hotelId) {
       return;
     }
 
-    const totalImages =
-      formData.images.length + formData.newImages.length + validFiles.length;
+    const totalImages = formData.images.length + validFiles.length;
 
     if (totalImages > HOTEL_MAX_IMAGES_UPLOAD) {
       setError(
@@ -524,7 +524,7 @@ export function useEditHotel(hotelId) {
   const handleFormSubmit = async (e, hotelData) => {
     e.preventDefault();
 
-    const validation = validateHotelForm(hotelData);
+    const validation = validateEditHotelForm(hotelData);
 
     if (!validation.isValid) {
       setValidationErrors(validation.errors);
