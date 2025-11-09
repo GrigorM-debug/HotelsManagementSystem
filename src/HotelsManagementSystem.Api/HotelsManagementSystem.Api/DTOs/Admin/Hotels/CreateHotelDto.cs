@@ -52,6 +52,11 @@ namespace HotelsManagementSystem.Api.DTOs.Admin.Hotels
                 yield return new ValidationResult("Check-out time cannot be earlier than or equal to check-in time.", new[] { nameof(CheckOutTime), nameof(CheckInTime) });
             }
 
+            if(Images.Count() == 0)
+            {
+                yield return new ValidationResult("At least one image must be uploaded.", new[] { nameof(Images) });
+            }
+
             if (Images.Count() > GeneralConstants.ImageUploadMaxCount)
             {
                 yield return new ValidationResult($"A hotel cannot have more than {GeneralConstants.ImageUploadMaxCount} images.", new[] { nameof(Images) });

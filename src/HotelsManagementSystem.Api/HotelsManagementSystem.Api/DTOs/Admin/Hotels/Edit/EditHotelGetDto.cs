@@ -10,7 +10,7 @@
         public int Stars { get; set; }
         public TimeSpan CheckInTime { get; set; }
         public TimeSpan CheckOutTime { get; set; }
-        public IEnumerable<AmenityResponseDto> SelectedAmenitiesIds { get; set; } = new List<AmenityResponseDto>();
+        public IEnumerable<AmenityDto> SelectedAmenitiesIds { get; set; } = new List<AmenityDto>();
         public IEnumerable<ImageResponseDto> Images { get; set; } = new List<ImageResponseDto>();
     }
 
@@ -18,5 +18,10 @@
     {
         public Guid Id { get; set; }
         public string ImageUrl { get; set; } = string.Empty;
+    }
+
+    public class AmenityDto
+    {
+        public Guid Id { get; set; }
     }
 }

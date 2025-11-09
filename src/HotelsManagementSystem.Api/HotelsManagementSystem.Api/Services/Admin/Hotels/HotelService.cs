@@ -167,10 +167,9 @@ namespace HotelsManagementSystem.Api.Services.Admin.Hotels
                     CheckInTime = h.CheckInTime,
                     CheckOutTime = h.CheckOutTime,
                     SelectedAmenitiesIds = h.HotelAmenities
-                        .Select(ha => new AmenityResponseDto
+                        .Select(ha => new AmenityDto
                         {
                             Id = ha.Amenity.Id,
-                            Name = ha.Amenity.Name
                         })
                         .ToList(),
                     Images = h.Images
