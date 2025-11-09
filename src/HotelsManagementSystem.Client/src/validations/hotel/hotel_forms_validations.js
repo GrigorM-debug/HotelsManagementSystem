@@ -158,6 +158,16 @@ export function validateAddress(address) {
 }
 
 export function validateCheckInAndCheckOut(checkIn, checkOut) {
+  // Check-in time is required validation
+  if (!checkIn) {
+    return "Check-in time is required.";
+  }
+
+  // Check-out time is required validation
+  if (!checkOut) {
+    return "Check-out time is required.";
+  }
+
   // Check-out time cannot be earlier than check-in time
   if (checkIn && checkOut) {
     const checkInTime = new Date(`1970-01-01T${checkIn}:00`);
