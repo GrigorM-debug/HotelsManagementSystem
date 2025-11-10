@@ -284,6 +284,24 @@
   box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
 }
 
+.manageRoomsBtn {
+  background-color: #8b5cf6;
+  color: white;
+}
+
+.manageRoomsBtn:hover {
+  background-color: #7c3aed;
+}
+
+.addRoomBtn {
+  background-color: #10b981;
+  color: white;
+}
+
+.addRoomBtn:hover {
+  background-color: #059669;
+}
+
 @media (max-width: 768px) {
   .container {
     padding: 1rem;

@@ -55,6 +55,14 @@ export default function HotelsList() {
     toggleDeleteModal(hotelToDeleteInfo);
   };
 
+  const handleManageRooms = (hotelId) => {
+    navigate(`/admin/hotels/${hotelId}/rooms`);
+  };
+
+  const handleAddRoom = (hotelId) => {
+    navigate(`/admin/hotels/${hotelId}/rooms/add-room`);
+  };
+
   const formatDate = (dateString) => {
     const options = {
       weekday: "long",
@@ -193,6 +201,20 @@ export default function HotelsList() {
                                 🗑️ Delete
                               </button>
                             )}
+                            <button
+                              className={`${styles.actionBtn} ${styles.manageRoomsBtn}`}
+                              onClick={() => handleManageRooms(hotel.id)}
+                              title="Manage Rooms"
+                            >
+                              🏠 Rooms
+                            </button>
+                            <button
+                              className={`${styles.actionBtn} ${styles.addRoomBtn}`}
+                              onClick={() => handleAddRoom(hotel.id)}
+                              title="Add Room"
+                            >
+                              🏠 Add Room
+                            </button>
                           </div>
                         </td>
                       </tr>

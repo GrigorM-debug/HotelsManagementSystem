@@ -20,6 +20,8 @@ import HotelsList from "./components/Admin/Hotels/HotelsList/HotelsList";
 import HotelDetails from "./components/Hotels/HotelDetails/HotelDetails";
 import EditHotel from "./components/Admin/Hotels/EditHotel/EditHotel";
 import TooManyRequests429 from "./components/StatusCodePages/429/429";
+import ManageRooms from "./components/Admin/Rooms/ManageRooms/ManageRooms";
+import CreateRoom from "./components/Admin/Rooms/CreateRoom/CreateRoom";
 
 function App() {
   return (
@@ -58,6 +60,14 @@ function App() {
                       element={<EditHotel />}
                     />
                     <Route path="/admin/hotels" element={<HotelsList />} />
+                    <Route
+                      path="/admin/hotels/:id/rooms"
+                      element={<ManageRooms />}
+                    />
+                    <Route
+                      path="/admin/hotels/:id/rooms/add-room"
+                      element={<CreateRoom />}
+                    />
                   </Route>
                   <Route element={<ReceptionistUser />}>
                     {/* You have to put here all the routes that require receptionist role */}
