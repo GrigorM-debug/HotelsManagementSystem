@@ -4,6 +4,7 @@ using HotelsManagementSystem.Api.Helpers;
 using HotelsManagementSystem.Api.Middlewares;
 using HotelsManagementSystem.Api.Services.Admin.Hotels;
 using HotelsManagementSystem.Api.Services.Admin.Hotels.Amentity;
+using HotelsManagementSystem.Api.Services.Admin.Rooms;
 using HotelsManagementSystem.Api.Services.Auth;
 using HotelsManagementSystem.Api.Services.Contact;
 using HotelsManagementSystem.Api.Services.EmailProvider;
@@ -113,6 +114,7 @@ namespace HotelsManagementSystem.Api.Extensions
             services.AddScoped<IImageService, ImageService>();
             services.AddScoped<Services.Admin.Hotels.IHotelService, Services.Admin.Hotels.HotelService>();
             services.AddScoped<Services.Hotels.IHotelService, Services.Hotels.HotelService>();
+            services.AddScoped<IRoomService, RoomService>();
 
             return services;
         }
