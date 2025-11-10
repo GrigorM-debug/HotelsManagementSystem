@@ -104,7 +104,10 @@ export default function HotelsList() {
             <div className={styles.emptyIcon}>🏨</div>
             <h3>No hotels yet</h3>
             <p>Start by adding your first hotel property</p>
-            <button className={styles.emptyStateButton}>
+            <button
+              className={styles.emptyStateButton}
+              onClick={handleAddNewHotel}
+            >
               + Add Your First Hotel
             </button>
           </div>
