@@ -110,44 +110,44 @@ namespace HotelsManagementSystem.Api.Services.Admin.Hotels
 
             if (hotel != null)
             {
-                if (!string.IsNullOrEmpty(inputDto.Name) && inputDto.Name.ToLower() != hotel.Name.ToLower())
+                if (inputDto.Name.ToLower() != hotel.Name.ToLower())
                 {
                     hotel.Name = inputDto.Name;
                 }
 
-                if (!string.IsNullOrEmpty(inputDto.Description) && inputDto.Description.ToLower() != hotel.Description.ToLower())
+                if (inputDto.Description.ToLower() != hotel.Description.ToLower())
                 {
                     hotel.Description = inputDto.Description; 
                 }
 
-                if (!string.IsNullOrEmpty(inputDto.Address) && inputDto.Address.ToLower() != hotel.Address.ToLower())
+                if (inputDto.Address.ToLower() != hotel.Address.ToLower())
                 {
                     hotel.Address = inputDto.Address;
                 }
 
-                if (!string.IsNullOrEmpty(inputDto.City) && inputDto.City.ToLower() != hotel.City.ToLower())
+                if (inputDto.City.ToLower() != hotel.City.ToLower())
                 {
                     hotel.City = inputDto.City;
                 }
 
-                if (!string.IsNullOrEmpty(inputDto.Country) && inputDto.Country.ToLower() != hotel.Country.ToLower())
+                if (inputDto.Country.ToLower() != hotel.Country.ToLower())
                 {
                     hotel.Country = inputDto.Country;
                 }
 
-                if (inputDto.Stars.HasValue && inputDto.Stars.Value != hotel.Stars)
+                if (inputDto.Stars != hotel.Stars)
                 {
-                    hotel.Stars = inputDto.Stars.Value;
+                    hotel.Stars = inputDto.Stars;
                 }
 
-                if (inputDto.CheckInTime.HasValue && inputDto.CheckInTime.Value != hotel.CheckInTime)
+                if (inputDto.CheckInTime != hotel.CheckInTime)
                 {
-                    hotel.CheckInTime = inputDto.CheckInTime.Value;
+                    hotel.CheckInTime = inputDto.CheckInTime;
                 }
 
-                if (inputDto.CheckOutTime.HasValue && inputDto.CheckOutTime.Value != hotel.CheckOutTime)
+                if (inputDto.CheckOutTime != hotel.CheckOutTime)
                 {
-                    hotel.CheckOutTime = inputDto.CheckOutTime.Value;
+                    hotel.CheckOutTime = inputDto.CheckOutTime;
                 }
                 
                 // Update amenities

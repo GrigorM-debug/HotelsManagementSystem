@@ -28,105 +28,124 @@ import {
 } from "../../constants/hotel_constants.js";
 
 export function validateHotelName(hotelName) {
-  if (hotelName && hotelName.trim() !== "") {
-    // Hotel Name length validation
-    if (
-      hotelName.length < HOTEL_NAME_MIN_LENGTH ||
-      hotelName.length > HOTEL_NAME_MAX_LENGTH
-    ) {
-      return HOTEL_NAME_LENGTH_ERROR_MESSAGE;
-    }
+  if (!hotelName || hotelName.trim() === "") {
+    return "Hotel Name is required.";
+  }
 
-    // Hotel Name format validation
-    if (!HOTEL_NAME_REGEX_PATTERN.test(hotelName)) {
-      return INVALID_HOTEL_NAME_ERROR_MESSAGE;
-    }
+  // Hotel Name length validation
+  if (
+    hotelName.length < HOTEL_NAME_MIN_LENGTH ||
+    hotelName.length > HOTEL_NAME_MAX_LENGTH
+  ) {
+    return HOTEL_NAME_LENGTH_ERROR_MESSAGE;
+  }
+
+  // Hotel Name format validation
+  if (!HOTEL_NAME_REGEX_PATTERN.test(hotelName)) {
+    return INVALID_HOTEL_NAME_ERROR_MESSAGE;
   }
   return null;
 }
 
 export function validateDescription(description) {
-  if (description && description.trim() !== "") {
-    // Description length validation
-    const trimmedDescription = description.trim();
-    if (
-      trimmedDescription.length < DESCRIPTION_MIN_LENGTH ||
-      trimmedDescription.length > DESCRIPTION_MAX_LENGTH
-    ) {
-      return DESCRIPTION_LENGTH_ERROR_MESSAGE;
-    }
+  if (!description || description.trim() === "") {
+    return "Description is required.";
+  }
+
+  // Description length validation
+  const trimmedDescription = description.trim();
+  if (
+    trimmedDescription.length < DESCRIPTION_MIN_LENGTH ||
+    trimmedDescription.length > DESCRIPTION_MAX_LENGTH
+  ) {
+    return DESCRIPTION_LENGTH_ERROR_MESSAGE;
   }
   return null;
 }
 
 export function validateStars(stars) {
-  if (stars !== undefined && stars !== null) {
-    // Stars value validation
-    if (stars < STARS_MIN_VALUE || stars > STARS_MAX_VALUE) {
-      return STARS_VALUE_ERROR_MESSAGE;
-    }
+  if (stars == null || stars === "") {
+    return "Stars rating is required.";
+  }
+
+  // Stars value validation
+  if (stars < STARS_MIN_VALUE || stars > STARS_MAX_VALUE) {
+    return STARS_VALUE_ERROR_MESSAGE;
   }
   return null;
 }
 
 export function validateCity(city) {
-  if (city && city.trim() !== "") {
-    // City length validation
-    if (city.length < CITY_MIN_LENGTH || city.length > CITY_MAX_LENGTH) {
-      return CITY_LENGTH_ERROR_MESSAGE;
-    }
+  if (!city || city.trim() === "") {
+    return "City is required.";
+  }
 
-    // City format validation
-    if (!CITY_REGEX_PATTERN.test(city)) {
-      return INVALID_CITY_ERROR_MESSAGE;
-    }
+  // City length validation
+  if (city.length < CITY_MIN_LENGTH || city.length > CITY_MAX_LENGTH) {
+    return CITY_LENGTH_ERROR_MESSAGE;
+  }
+
+  // City format validation
+  if (!CITY_REGEX_PATTERN.test(city)) {
+    return INVALID_CITY_ERROR_MESSAGE;
   }
   return null;
 }
 
 export function validateCountry(country) {
-  if (country && country.trim() !== "") {
-    // Country length validation
-    if (
-      country.length < COUNTRY_MIN_LENGTH ||
-      country.length > COUNTRY_MAX_LENGTH
-    ) {
-      return COUNTRY_LENGTH_ERROR_MESSAGE;
-    }
+  if (!country || country.trim() === "") {
+    return "Country is required.";
+  }
 
-    // Country format validation
-    if (!COUNTRY_REGEX_PATTERN.test(country)) {
-      return INVALID_COUNTRY_ERROR_MESSAGE;
-    }
+  // Country length validation
+  if (
+    country.length < COUNTRY_MIN_LENGTH ||
+    country.length > COUNTRY_MAX_LENGTH
+  ) {
+    return COUNTRY_LENGTH_ERROR_MESSAGE;
+  }
+
+  // Country format validation
+  if (!COUNTRY_REGEX_PATTERN.test(country)) {
+    return INVALID_COUNTRY_ERROR_MESSAGE;
   }
   return null;
 }
 
 export function validateAddress(address) {
-  if (address && address.trim() !== "") {
-    // Address length validation
-    if (
-      address.length < ADDRESS_MIN_LENGTH ||
-      address.length > ADDRESS_MAX_LENGTH
-    ) {
-      return ADDRESS_LENGTH_ERROR_MESSAGE;
-    }
+  if (!address || address.trim() === "") {
+    return "Address is required.";
+  }
 
-    // Address format validation
-    if (!ADDRESS_REGEX_PATTERN.test(address)) {
-      return INVALID_ADDRESS_ERROR_MESSAGE;
-    }
+  // Address length validation
+  if (
+    address.length < ADDRESS_MIN_LENGTH ||
+    address.length > ADDRESS_MAX_LENGTH
+  ) {
+    return ADDRESS_LENGTH_ERROR_MESSAGE;
+  }
+
+  // Address format validation
+  if (!ADDRESS_REGEX_PATTERN.test(address)) {
+    return INVALID_ADDRESS_ERROR_MESSAGE;
   }
   return null;
 }
 
 export function validateCheckInAndCheckOut(checkIn, checkOut) {
-  if (checkIn && checkOut) {
-    const checkInTime = new Date(`1970-01-01T${checkIn}:00`);
-    const checkOutTime = new Date(`1970-01-01T${checkOut}:00`);
-    if (checkInTime >= checkOutTime) {
-      return "Check-out time must be after check-in time.";
-    }
+  // Check-in time is required validation
+  if (!checkIn) {
+    return "Check-in time is required.";
+  }
+  // Check-out time is required validation
+  if (!checkOut) {
+    return "Check-out time is required.";
+  }
+
+  const checkInTime = new Date(`1970-01-01T${checkIn}:00`);
+  const checkOutTime = new Date(`1970-01-01T${checkOut}:00`);
+  if (checkInTime >= checkOutTime) {
+    return "Check-out time must be after check-in time.";
   }
   return null;
 }
@@ -178,6 +197,11 @@ export function validateEditHotelForm(formData) {
     formData.selectedAmenities.length === 0
   ) {
     errors.selectedAmenities = "At least one amenity must be selected.";
+  }
+
+  const totalImages = formData.images.length + formData.newImages.length;
+  if (totalImages === 0) {
+    errors.images = "At least one image must be uploaded.";
   }
 
   return {

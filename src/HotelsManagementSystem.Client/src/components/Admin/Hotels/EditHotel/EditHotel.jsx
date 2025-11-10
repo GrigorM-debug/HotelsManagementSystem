@@ -42,6 +42,7 @@ export default function EditHotel() {
             onChange={handleInputChange}
             className={styles.input}
             disabled={isEditing}
+            required
           />
           {validationErrors.name && (
             <div className={styles.validationError}>
@@ -62,6 +63,7 @@ export default function EditHotel() {
             className={styles.textarea}
             rows="4"
             disabled={isEditing}
+            required
           />
           {validationErrors.description && (
             <div className={styles.validationError}>
@@ -83,6 +85,7 @@ export default function EditHotel() {
               onChange={handleInputChange}
               className={styles.input}
               disabled={isEditing}
+              required
             />
             {validationErrors.address && (
               <div className={styles.validationError}>
@@ -103,6 +106,7 @@ export default function EditHotel() {
               onChange={handleInputChange}
               className={styles.input}
               disabled={isEditing}
+              required
             />
             {validationErrors.city && (
               <div className={styles.validationError}>
@@ -125,6 +129,7 @@ export default function EditHotel() {
               onChange={handleInputChange}
               className={styles.input}
               disabled={isEditing}
+              required
             />
             {validationErrors.country && (
               <div className={styles.validationError}>
@@ -145,6 +150,7 @@ export default function EditHotel() {
               onChange={handleInputChange}
               className={styles.input}
               disabled={isEditing}
+              required
             />
             {validationErrors.stars && (
               <div className={styles.validationError}>
@@ -167,6 +173,7 @@ export default function EditHotel() {
               onChange={handleInputChange}
               className={styles.input}
               disabled={isEditing}
+              required
             />
           </div>
 
@@ -182,6 +189,7 @@ export default function EditHotel() {
               onChange={handleInputChange}
               className={styles.input}
               disabled={isEditing}
+              required
             />
             {validationErrors.checkOut && (
               <div className={styles.validationError}>

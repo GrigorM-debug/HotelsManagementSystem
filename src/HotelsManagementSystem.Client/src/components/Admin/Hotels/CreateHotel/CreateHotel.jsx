@@ -210,7 +210,7 @@ export default function CreateHotel() {
             </div>
           )}
           <div className={styles.fileInputHelper}>
-            Select multiple images (JPEG, PNG, WebP)
+            Select multiple images (JPEG, PNG, JPG)
           </div>
 
           {imagePreviews.length > 0 && (

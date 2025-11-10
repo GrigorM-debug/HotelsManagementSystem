@@ -5,63 +5,63 @@ namespace HotelsManagementSystem.Api.DTOs.Admin.Hotels.Edit
 {
     public class EditHotelPostDto : IValidatableObject
     {
-        public string? Name { get; set; } = string.Empty;
-        public string? Description { get; set; } = string.Empty;
-        public string? Address { get; set; } = string.Empty;
-        public string? City { get; set; } = string.Empty;
-        public string? Country { get; set; } = string.Empty;
-        public int? Stars { get; set; }
-        public TimeSpan? CheckInTime { get; set; }
-        public TimeSpan? CheckOutTime { get; set; }
+        [Required(ErrorMessage = GeneralConstants.ValueRequiredErrorMessage)]
+        [StringLength(HotelConstants.NameMaxLength,
+            MinimumLength = HotelConstants.NameMinLength, ErrorMessage = GeneralConstants.ValueLengthErrorMessage)]
+        [RegularExpression(HotelConstants.NameRegexPattern, ErrorMessage = GeneralConstants.ValueInvalidPatternErrorMessage)]
+        public string Name { get; set; } = string.Empty;
+
+        [Required(ErrorMessage = GeneralConstants.ValueRequiredErrorMessage)]
+        [StringLength(HotelConstants.DescriptionMaxLength,
+            MinimumLength = HotelConstants.DescriptionMinLength, ErrorMessage = GeneralConstants.ValueLengthErrorMessage)]
+        public string Description { get; set; } = string.Empty;
+
+        [Required(ErrorMessage = GeneralConstants.ValueRequiredErrorMessage)]
+        [StringLength(GeneralConstants.AddressMaxLength,
+            MinimumLength = GeneralConstants.AddressMinLength, ErrorMessage = GeneralConstants.ValueLengthErrorMessage)]
+        [RegularExpression(GeneralConstants.AddressRegexPattern, ErrorMessage = GeneralConstants.ValueInvalidPatternErrorMessage)]
+        public string Address { get; set; } = string.Empty;
+
+        [Required(ErrorMessage = GeneralConstants.ValueRequiredErrorMessage)]
+        [StringLength(GeneralConstants.CityMaxLength,
+            MinimumLength = GeneralConstants.CityMinLength, ErrorMessage = GeneralConstants.ValueLengthErrorMessage)]
+        [RegularExpression(GeneralConstants.CityRegexPattern, ErrorMessage = GeneralConstants.ValueInvalidPatternErrorMessage)]
+        public string City { get; set; } = string.Empty;
+
+        [Required(ErrorMessage = GeneralConstants.ValueRequiredErrorMessage)]
+        [StringLength(GeneralConstants.CountryMaxLength,
+            MinimumLength = GeneralConstants.CountryMinLength, ErrorMessage = GeneralConstants.ValueLengthErrorMessage)]
+        [RegularExpression(GeneralConstants.CountryRegexPattern, ErrorMessage = GeneralConstants.ValueInvalidPatternErrorMessage)]
+        public string Country { get; set; } = string.Empty;
+
+        [Range(HotelConstants.StarsMinValue, HotelConstants.StarsMaxValue, ErrorMessage = GeneralConstants.ValueRangeErrorMessage)]
+        public int Stars { get; set; }
+
+        public TimeSpan CheckInTime { get; set; }
+        public TimeSpan CheckOutTime { get; set; }
         public IEnumerable<Guid> AmenityIds { get; set; } = new List<Guid>();
         public IEnumerable<IFormFile> NewImages { get; set; } = new List<IFormFile>();
         public IEnumerable<Guid> ExistingImagesIds { get; set; } = new List<Guid>();
 
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
-            //Validate Name if provided
-            if (!string.IsNullOrEmpty(Name))
+            if (CheckOutTime <= CheckInTime)
             {
-                if(Name.Length < HotelConstants.NameMinLength || Name.Length > HotelConstants.NameMaxLength)
-                {
-                    yield return new ValidationResult(
-                        $"Hotel name must be between {HotelConstants.NameMinLength} and {HotelConstants.NameMaxLength} characters long.",
-                        new[] { nameof(Name) });
-                }
-
-                if (!System.Text.RegularExpressions.Regex.IsMatch(Name, HotelConstants.NameRegexPattern))
-                {
-                    yield return new ValidationResult(
-                        GeneralConstants.ValueInvalidPatternErrorMessage,
-                        new[] { nameof(Name) });
-                }
-
+                yield return new ValidationResult(
+                    "Check-out time cannot be earlier than or equal to check-in time.",
+                    new[] { nameof(CheckOutTime), nameof(CheckInTime) });
             }
 
-            // Validate Description if provided
-            if (!string.IsNullOrEmpty(Description))
+            var totalImagesCount = NewImages.Count() + ExistingImagesIds.Count();
+            if (totalImagesCount == 0)
             {
-                if(Description.Length < HotelConstants.DescriptionMinLength || Description.Length > HotelConstants.DescriptionMaxLength)
-                {
-                    yield return new ValidationResult(
-                        $"Description must be between {HotelConstants.DescriptionMinLength} and {HotelConstants.DescriptionMaxLength} characters long.",
-                        new[] { nameof(Description) });
-                }
-            }
-
-            // Validate CheckInTime and CheckOutTime if both provided
-            if (CheckInTime.HasValue && CheckOutTime.HasValue)
-            {
-                if (CheckOutTime <= CheckInTime)
-                {
-                    yield return new ValidationResult(
-                        "Check-out time cannot be earlier than or equal to check-in time.",
-                        new[] { nameof(CheckOutTime), nameof(CheckInTime) });
-                }
+                yield return new ValidationResult(
+                    "At least one image must be associated with the hotel.",
+                    new[] { nameof(Images) });
             }
 
             // Validate Images count
-            if (NewImages.Count() > GeneralConstants.ImageUploadMaxCount)
+            if (totalImagesCount > GeneralConstants.ImageUploadMaxCount)
             {
                 yield return new ValidationResult(
                     $"A hotel cannot have more than {GeneralConstants.ImageUploadMaxCount} images.",

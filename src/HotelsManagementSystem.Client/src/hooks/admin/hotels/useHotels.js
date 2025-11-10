@@ -57,7 +57,7 @@ export function useCreateHotel() {
     const validFiles = files.filter((file) => validTypes.includes(file.type));
 
     if (validFiles.length !== files.length) {
-      setError("Please select only image files (JPEG, PNG, WebP)");
+      setError("Please select only image files (JPEG, PNG, JPG)");
       return;
     }
 
