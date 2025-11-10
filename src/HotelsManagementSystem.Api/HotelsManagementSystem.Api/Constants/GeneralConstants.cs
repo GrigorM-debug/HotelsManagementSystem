@@ -18,5 +18,8 @@
         public const int AddressMinLength = 5;
         public const int AddressMaxLength = 250;
         public const string AddressRegexPattern = @"^(?=.{5,250}$)[\p{L}\p{M}\p{N}\s.,''""\-#/]+$";
+
+        public const int ImageUploadMaxCount = 3;
+        public static List<string> AllowedImageTypes = new List<string>() { "image/jpeg", "image/jpg", "image/png" };
     }
 }

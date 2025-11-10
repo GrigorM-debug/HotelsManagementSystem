@@ -15,6 +15,8 @@ export async function sendContactMessage(contactData) {
         const errorData = await response.json();
         return errorData;
       }
+      case 429:
+        throw new Error("429 Too Many Requests");
       default:
         throw new Error("Failed to send contact message");
     }

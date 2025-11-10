@@ -1,9 +1,14 @@
 ﻿using HotelsManagementSystem.Api.Data;
 using HotelsManagementSystem.Api.Data.Models.Users;
+using HotelsManagementSystem.Api.Helpers;
 using HotelsManagementSystem.Api.Middlewares;
+using HotelsManagementSystem.Api.Services.Admin.Hotels;
+using HotelsManagementSystem.Api.Services.Admin.Hotels.Amentity;
 using HotelsManagementSystem.Api.Services.Auth;
 using HotelsManagementSystem.Api.Services.Contact;
 using HotelsManagementSystem.Api.Services.EmailProvider;
+using HotelsManagementSystem.Api.Services.Hotels;
+using HotelsManagementSystem.Api.Services.Image;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
@@ -97,12 +102,17 @@ namespace HotelsManagementSystem.Api.Extensions
         // Additional services registration method
         public static IServiceCollection AddServices(this IServiceCollection services, IConfiguration configuration)
         {
-           var smtpApiKey = configuration.GetValue<string>("Smtp2Go:ApiKey");
+           services.Configure<CloudinarySettings>(configuration.GetSection("CloudinarySettings"));
+            var smtpApiKey = configuration.GetValue<string>("Smtp2Go:ApiKey");
             services.AddSingleton<Smtp2GoApiService>(x => new Smtp2GoApiService(smtpApiKey)); 
             services.AddSingleton<IEmailProvider, EmailProvider>();
             services.AddScoped<IContactService, ContactService>();
             services.AddScoped<ITokenProviderService, TokenProviderService>();
             services.AddScoped<TokenValidator>();
+            services.AddScoped<IAmenityService, AmenityService>();
+            services.AddScoped<IImageService, ImageService>();
+            services.AddScoped<Services.Admin.Hotels.IHotelService, Services.Admin.Hotels.HotelService>();
+            services.AddScoped<Services.Hotels.IHotelService, Services.Hotels.HotelService>();
 
             return services;
         }

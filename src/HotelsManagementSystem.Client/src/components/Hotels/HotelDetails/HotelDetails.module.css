@@ -1,0 +1,238 @@
+.hotelDetails {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.hotelHeader {
+  margin-bottom: 30px;
+  text-align: center;
+}
+
+.hotelRating {
+  margin-bottom: 10px;
+}
+
+.starFilled {
+  color: #ffd700;
+  font-size: 24px;
+  margin: 0 2px;
+}
+
+.starEmpty {
+  color: #ddd;
+  font-size: 24px;
+  margin: 0 2px;
+}
+
+.hotelName {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: #333;
+  margin: 15px 0;
+  line-height: 1.2;
+}
+
+.hotelLocation {
+  color: #666;
+  font-size: 1.1rem;
+}
+
+.address {
+  margin: 5px 0;
+  font-weight: 500;
+}
+
+.cityCountry {
+  margin: 5px 0;
+  font-style: italic;
+}
+
+.gallerySection {
+  margin-bottom: 40px;
+}
+
+.hotelSwiper {
+  height: 500px;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+}
+
+.galleryImage {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+}
+
+/* Description Section */
+.descriptionSection {
+  margin-bottom: 40px;
+  padding: 30px;
+  background: #f8f9fa;
+  border-radius: 12px;
+  border-left: 4px solid #007bff;
+}
+
+.descriptionSection h2 {
+  font-size: 1.8rem;
+  color: #333;
+  margin-bottom: 20px;
+  font-weight: 600;
+}
+
+.description {
+  font-size: 1.1rem;
+  line-height: 1.7;
+  color: #555;
+  margin: 0;
+}
+
+.amenitiesSection {
+  padding: 30px;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.amenitiesSection h2 {
+  font-size: 1.8rem;
+  color: #333;
+  margin-bottom: 25px;
+  font-weight: 600;
+}
+
+.amenitiesList {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 15px;
+}
+
+.amenityItem {
+  display: flex;
+  align-items: center;
+  padding: 12px;
+  background: #f8f9fa;
+  border-radius: 8px;
+  transition: background-color 0.3s ease;
+}
+
+.amenityItem:hover {
+  background: #e9ecef;
+}
+
+.amenityIcon {
+  color: #28a745;
+  font-weight: bold;
+  margin-right: 12px;
+  font-size: 16px;
+}
+
+.amenityText {
+  color: #333;
+  font-size: 1rem;
+}
+
+.noAmenities {
+  color: #666;
+  font-style: italic;
+  text-align: center;
+  padding: 20px;
+}
+
+.checkInOutSection {
+  margin: 2rem 0;
+  padding: 1.5rem;
+  background-color: #f8f9fa;
+  border-radius: 8px;
+  border: 1px solid #e9ecef;
+}
+
+.checkInOutSection h2 {
+  margin-bottom: 1rem;
+  color: #333;
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+
+.checkInOutInfo {
+  display: flex;
+  gap: 2rem;
+  flex-wrap: wrap;
+}
+
+.checkInInfo,
+.checkOutInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  min-width: 150px;
+}
+
+.checkInOutLabel {
+  font-weight: 600;
+  color: #666;
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.checkInOutTime {
+  font-size: 1.1rem;
+  font-weight: 500;
+  color: #2c3e50;
+  background-color: #fff;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  border: 1px solid #ddd;
+  display: inline-block;
+}
+
+@media (max-width: 768px) {
+  .hotelDetails {
+    padding: 15px;
+  }
+
+  .hotelName {
+    font-size: 2rem;
+  }
+
+  .hotelSwiper {
+    height: 300px;
+  }
+
+  .descriptionSection,
+  .amenitiesSection {
+    padding: 20px;
+  }
+
+  .amenitiesList {
+    grid-template-columns: 1fr;
+  }
+
+  .checkInOutInfo {
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .checkInInfo,
+  .checkOutInfo {
+    min-width: auto;
+  }
+}
+
+@media (max-width: 480px) {
+  .hotelName {
+    font-size: 1.5rem;
+  }
+
+  .hotelSwiper {
+    height: 250px;
+  }
+
+  .descriptionSection h2,
+  .amenitiesSection h2 {
+    font-size: 1.5rem;
+  }
+}

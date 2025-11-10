@@ -13,8 +13,13 @@ import ReceptionistUser from "./components/Route-Guards/ReceptionistUser";
 import NonAuthenticatedUser from "./components/Route-Guards/NonAuthenticatedUser";
 import AdminDashboard from "./components/Dashboards/AdminDashBoard/AdminDashboard";
 import ReceptionistDashBoard from "./components/Dashboards/ReceptionistDashBoard/ReceptionistDashBoard";
-import NotFound404 from "./components/StatusCodePages/404";
+import NotFound404 from "./components/StatusCodePages/404/404";
 import Contact from "./components/Contact/Contact";
+import CreateHotel from "./components/Admin/Hotels/CreateHotel/CreateHotel";
+import HotelsList from "./components/Admin/Hotels/HotelsList/HotelsList";
+import HotelDetails from "./components/Hotels/HotelDetails/HotelDetails";
+import EditHotel from "./components/Admin/Hotels/EditHotel/EditHotel";
+import TooManyRequests429 from "./components/StatusCodePages/429/429";
 
 function App() {
   return (
@@ -27,7 +32,9 @@ function App() {
               <Routes>
                 <Route path="/" element={<Home />} />
                 <Route path="/contact" element={<Contact />} />
+                <Route path="/hotels/:id" element={<HotelDetails />} />
                 <Route path="/404" element={<NotFound404 />} />
+                <Route path="/429" element={<TooManyRequests429 />} />
                 <Route path="*" element={<NotFound404 />} />
                 <Route element={<NonAuthenticatedUser />}>
                   <Route path="/register" element={<Register />} />
@@ -35,12 +42,22 @@ function App() {
                 </Route>
                 <Route element={<AuthenticatedUser />}>
                   {/* You have to put here all the routes that require authentication */}
+
                   <Route element={<AdminUser />}>
                     {/* You have to put here all the routes that require admin role */}
                     <Route
                       path="/admin-dashboard"
                       element={<AdminDashboard />}
                     />
+                    <Route
+                      path="/admin/hotels/create-hotel"
+                      element={<CreateHotel />}
+                    />
+                    <Route
+                      path="/admin/hotels/edit-hotel/:id"
+                      element={<EditHotel />}
+                    />
+                    <Route path="/admin/hotels" element={<HotelsList />} />
                   </Route>
                   <Route element={<ReceptionistUser />}>
                     {/* You have to put here all the routes that require receptionist role */}
