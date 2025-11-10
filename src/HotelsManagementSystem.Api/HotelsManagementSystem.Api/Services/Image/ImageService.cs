@@ -1,8 +1,10 @@
 ﻿using CloudinaryDotNet;
+using CloudinaryDotNet.Actions;
+using HotelsManagementSystem.Api.Data.Models.Hotels;
+using HotelsManagementSystem.Api.DTOs.Admin.Rooms.Create;
+using HotelsManagementSystem.Api.DTOs.Images;
 using HotelsManagementSystem.Api.Helpers;
 using Microsoft.Extensions.Options;
-using CloudinaryDotNet.Actions;
-using HotelsManagementSystem.Api.DTOs.Images;
 
 namespace HotelsManagementSystem.Api.Services.Image
 {
@@ -60,6 +62,37 @@ namespace HotelsManagementSystem.Api.Services.Image
             };
 
             return hotelImage;
+        }
+
+        public async Task<RoomImageUploadResponse> UploadRoomImageAsync(Guid roomId, IFormFile imageFile)
+        {
+            if (imageFile.Length <= 0)
+            {
+                throw new Exception("Invalid image file.");
+            }
+
+            var uploadParams = new ImageUploadParams()
+            {
+                File = new FileDescription(imageFile.FileName, imageFile.OpenReadStream()),
+                Folder = $"rooms/{roomId}",
+                Transformation = new Transformation().Height(500).Width(500).Crop("fill").Gravity("auto").Quality("auto")
+            };
+
+            var uploadResult = await _claudinary.UploadAsync(uploadParams);
+
+            if (uploadResult.StatusCode != System.Net.HttpStatusCode.OK)
+            {
+                throw new Exception("Image upload failed.");
+            }
+
+            var roomImage = new RoomImageUploadResponse()
+            {
+                PublicId = uploadResult.PublicId,
+                Url = uploadResult.SecureUrl.ToString(),
+                RoomId = roomId
+            };
+
+            return roomImage;
         }
     }
 }

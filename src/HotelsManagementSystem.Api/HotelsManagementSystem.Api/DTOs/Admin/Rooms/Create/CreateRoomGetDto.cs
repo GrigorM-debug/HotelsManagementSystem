@@ -1,4 +1,4 @@
-﻿namespace HotelsManagementSystem.Api.DTOs.Admin.Rooms
+﻿namespace HotelsManagementSystem.Api.DTOs.Admin.Rooms.Create
 {
     public class CreateRoomGetDto
     {
