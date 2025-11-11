@@ -38,6 +38,7 @@ namespace HotelsManagementSystem.Api.Controllers.Admin.Rooms
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesDefaultResponseType]
         public async Task<IActionResult> CreateRoom(Guid hotelId)
         {
@@ -131,6 +132,7 @@ namespace HotelsManagementSystem.Api.Controllers.Admin.Rooms
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesDefaultResponseType]
         public async Task<IActionResult> GetRoomsForHotel(Guid hotelId)
         {

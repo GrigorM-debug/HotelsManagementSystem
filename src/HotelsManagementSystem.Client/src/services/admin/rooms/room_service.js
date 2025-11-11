@@ -19,6 +19,8 @@ export async function createRoomGet(hotelId, token) {
         throw new Error("403 Forbidden");
       case 404:
         throw new Error("404 Not Found");
+      case 400:
+        throw new Error("400 Bad Request");
       case 429:
         throw new Error("429 Too Many Requests");
       default:
@@ -78,6 +80,8 @@ export async function getRoomsByHotelId(hotelId, token) {
     switch (response.status) {
       case 401:
         throw new Error("401 Unauthorized");
+      case 400:
+        throw new Error("400 Bad Request");
       case 403:
         throw new Error("403 Forbidden");
       case 404:

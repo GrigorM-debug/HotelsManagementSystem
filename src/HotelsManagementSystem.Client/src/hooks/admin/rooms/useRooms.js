@@ -30,6 +30,9 @@ export function useCreateRoomGet(hotelId) {
           case "404 Not Found":
             navigate("/404");
             break;
+          case "400 Bad Request":
+            navigate("/404");
+            break;
           case "401 Unauthorized":
             clearTokenAndUser();
             navigate("/login");
@@ -233,6 +236,9 @@ export function useGetHotelRooms(hotelId) {
       } catch (err) {
         switch (err.message) {
           case "404 Not Found":
+            navigate("/404");
+            break;
+          case "400 Bad Request":
             navigate("/404");
             break;
           case "401 Unauthorized":

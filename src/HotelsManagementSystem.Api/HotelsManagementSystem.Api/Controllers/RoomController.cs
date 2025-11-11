@@ -28,6 +28,7 @@ namespace HotelsManagementSystem.Api.Controllers
         [HttpGet("hotel/{hotelId}/rooms/{roomId}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesDefaultResponseType]
         public async Task<IActionResult> GetRoomDetails(Guid hotelId, Guid roomId)
         {
