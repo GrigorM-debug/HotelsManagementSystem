@@ -141,7 +141,7 @@ export default function CreateRoom() {
                 <input
                   type="checkbox"
                   id={`roomType-${roomType.id}`}
-                  checked={formData.selectedRoomTypes.includes(roomType.id)}
+                  checked={formData.selectedRoomType === roomType.id}
                   onChange={() => handleRoomTypeChange(roomType.id)}
                   className={styles.checkboxInput}
                 />
@@ -153,7 +153,7 @@ export default function CreateRoom() {
                     <span className={styles.roomTypeName}>{roomType.name}</span>
                     <div className={styles.roomTypeDetails}>
                       <span className={styles.price}>
-                        ${roomType.pricePerNight}/night
+                        EUR {roomType.pricePerNight}/night
                       </span>
                       <span className={styles.capacity}>
                         Capacity: {roomType.capacity}
@@ -163,9 +163,9 @@ export default function CreateRoom() {
                 </label>
               </div>
             ))}
-            {validationErrors.selectedRoomTypes && (
+            {validationErrors.selectedRoomType && (
               <div className={styles.validationError}>
-                {validationErrors.selectedRoomTypes}
+                {validationErrors.selectedRoomType}
               </div>
             )}
           </div>

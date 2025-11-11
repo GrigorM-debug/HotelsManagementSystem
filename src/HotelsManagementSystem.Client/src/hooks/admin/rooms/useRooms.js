@@ -1,7 +1,11 @@
 import { useAuth } from "../../useAuth";
 import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
-import { createRoomGet } from "../../../services/admin/rooms/room_service";
+import {
+  createRoomGet,
+  createRoomPost,
+  getRoomsByHotelId,
+} from "../../../services/admin/rooms/room_service";
 import {
   VALID_ROOM_IMAGE_TYPES,
   MAX_IMAGES_UPLOAD,
@@ -31,7 +35,7 @@ export function useCreateRoomGet(hotelId) {
             navigate("/login");
             break;
           case "403 Forbidden":
-            navigate("/403");
+            navigate("/login");
             break;
           case "429 Too Many Requests":
             navigate("/429");
@@ -55,6 +59,8 @@ export function useCreateRoomGet(hotelId) {
 }
 
 export function useCreateRoomPost(hotelId) {
+  const { token, clearTokenAndUser } = useAuth();
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     roomNumber: "",
     description: "",
@@ -131,7 +137,7 @@ export function useCreateRoomPost(hotelId) {
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     const validation = validateCreateRoomForm(formData);
@@ -142,8 +148,58 @@ export function useCreateRoomPost(hotelId) {
       return;
     }
 
-    // TODO: Implement room creation logic
-    console.log("Form data:", formData);
+    try {
+      const roomDataAsFormData = new FormData();
+      roomDataAsFormData.append("RoomNumber", formData.roomNumber);
+      roomDataAsFormData.append("Description", formData.description);
+      roomDataAsFormData.append("RoomTypeId", formData.selectedRoomType);
+      formData.images.forEach((imageFile) => {
+        roomDataAsFormData.append("Images", imageFile);
+      });
+      formData.selectedFeatures.forEach((featureId) => {
+        roomDataAsFormData.append("FeatureIds", featureId);
+      });
+
+      setIsSubmitting(true);
+
+      const result = await createRoomPost(hotelId, roomDataAsFormData, token);
+
+      if (result) {
+        if (result.error) {
+          setFormSubmitError(result.error);
+        }
+
+        if (result.errors) {
+          setFormSubmitError("Please fix the errors below.");
+          setValidationErrors(result.errors);
+        }
+
+        const roomId = result.roomId;
+        console.log("Created room with ID:", roomId);
+        navigate(`/admin/hotels/${hotelId}/rooms`);
+      }
+    } catch (err) {
+      switch (err.message) {
+        case "404 Not Found":
+          navigate("/404");
+          break;
+        case "401 Unauthorized":
+          clearTokenAndUser();
+          navigate("/login");
+          break;
+        case "403 Forbidden":
+          navigate("/403");
+          clearTokenAndUser();
+          break;
+        case "429 Too Many Requests":
+          navigate("/429");
+          break;
+        default:
+          setFormSubmitError("Failed to create room");
+      }
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return {
@@ -158,5 +214,52 @@ export function useCreateRoomPost(hotelId) {
     formSubmitError,
     isSubmitting,
     validationErrors,
+  };
+}
+
+export function useGetHotelRooms(hotelId) {
+  const { token, clearTokenAndUser } = useAuth();
+  const navigate = useNavigate();
+  const [rooms, setRooms] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchRooms = async () => {
+      setIsLoading(true);
+      try {
+        const data = await getRoomsByHotelId(hotelId, token);
+        setRooms(data);
+      } catch (err) {
+        switch (err.message) {
+          case "404 Not Found":
+            navigate("/404");
+            break;
+          case "401 Unauthorized":
+            clearTokenAndUser();
+            navigate("/login");
+            break;
+          case "403 Forbidden":
+            navigate("/login");
+            clearTokenAndUser();
+            break;
+          case "429 Too Many Requests":
+            navigate("/429");
+            break;
+          default:
+            setError("Failed to fetch hotel rooms");
+        }
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchRooms();
+  }, [hotelId, token, navigate, clearTokenAndUser]);
+
+  return {
+    rooms,
+    isLoading,
+    error,
   };
 }
