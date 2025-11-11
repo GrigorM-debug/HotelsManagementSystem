@@ -22,6 +22,7 @@ import EditHotel from "./components/Admin/Hotels/EditHotel/EditHotel";
 import TooManyRequests429 from "./components/StatusCodePages/429/429";
 import ManageRooms from "./components/Admin/Rooms/ManageRooms/ManageRooms";
 import CreateRoom from "./components/Admin/Rooms/CreateRoom/CreateRoom";
+import RoomDetails from "./components/Rooms/RoomDetails/RoomDetails";
 
 function App() {
   return (
@@ -35,6 +36,10 @@ function App() {
                 <Route path="/" element={<Home />} />
                 <Route path="/contact" element={<Contact />} />
                 <Route path="/hotels/:id" element={<HotelDetails />} />
+                <Route
+                  path="/hotels/:id/rooms/:roomId"
+                  element={<RoomDetails />}
+                />
                 <Route path="/404" element={<NotFound404 />} />
                 <Route path="/429" element={<TooManyRequests429 />} />
                 <Route path="*" element={<NotFound404 />} />

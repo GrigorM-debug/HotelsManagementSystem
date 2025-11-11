@@ -10,8 +10,6 @@ export default function ManageRooms() {
   const { id } = useParams();
   const { rooms, isLoading, error } = useGetHotelRooms(id);
 
-  console.log(rooms);
-
   if (isLoading) {
     return <SpinnerComponent message="Loading rooms..." />;
   }
@@ -26,8 +24,7 @@ export default function ManageRooms() {
   };
 
   const handleDetails = (roomId) => {
-    // TODO: Navigate to room details
-    console.log("View details for room:", roomId);
+    navigate(`/hotels/${id}/rooms/${roomId}`);
   };
 
   const handleEdit = (roomId) => {
