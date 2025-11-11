@@ -40,6 +40,10 @@ export default function RoomDetails() {
       <div className={styles.imagesSection}>
         {room.images && room.images.length > 0 ? (
           <Swiper
+            style={{
+              "--swiper-navigation-color": "#fff",
+              "--swiper-pagination-color": "#fff",
+            }}
             spaceBetween={30}
             effect={"fade"}
             navigation={true}
