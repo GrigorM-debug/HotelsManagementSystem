@@ -61,6 +61,7 @@ export default function ManageRooms() {
               <tr>
                 <th>Room Number</th>
                 <th>Room Type</th>
+                <th>Capacity</th>
                 <th>Price per Night</th>
                 <th>Created On</th>
                 <th>Updated On</th>
@@ -69,14 +70,15 @@ export default function ManageRooms() {
             </thead>
             <tbody>
               {rooms.map((room) => (
-                <tr key={room.Id}>
+                <tr key={room.id}>
                   <td className={styles.roomNumber}>{room.roomNumber}</td>
                   <td>{room.roomTypeName}</td>
+                  <td>{room.capacity}</td>
                   <td className={styles.price}>EUR {room.pricePerNight}</td>
                   <td>{formatDate(room.createdOn)}</td>
                   <td
                     className={
-                      room.UpdatedOn ? styles.updated : styles.notUpdated
+                      room.updatedOn ? styles.updated : styles.notUpdated
                     }
                   >
                     {formatDate(room.updatedOn)}
@@ -84,25 +86,27 @@ export default function ManageRooms() {
                   <td className={styles.actions}>
                     <button
                       className={`${styles.actionBtn} ${styles.detailsBtn}`}
-                      onClick={() => handleDetails(room.Id)}
+                      onClick={() => handleDetails(room.id)}
                       title="View Details"
                     >
                       Details
                     </button>
                     <button
                       className={`${styles.actionBtn} ${styles.editBtn}`}
-                      onClick={() => handleEdit(room.Id)}
+                      onClick={() => handleEdit(room.id)}
                       title="Edit Room"
                     >
                       Edit
                     </button>
-                    <button
-                      className={`${styles.actionBtn} ${styles.deleteBtn}`}
-                      onClick={() => handleDelete(room.Id)}
-                      title="Delete Room"
-                    >
-                      Delete
-                    </button>
+                    {room.isDeletable && (
+                      <button
+                        className={`${styles.actionBtn} ${styles.deleteBtn}`}
+                        onClick={() => handleDelete(room.id)}
+                        title="Delete Room"
+                      >
+                        Delete
+                      </button>
+                    )}
                   </td>
                 </tr>
               ))}

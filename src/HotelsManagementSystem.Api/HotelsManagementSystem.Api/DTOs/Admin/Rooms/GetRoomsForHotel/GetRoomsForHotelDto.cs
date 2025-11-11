@@ -9,5 +9,7 @@
         public DateTime CreatedOn { get; set; }
         public DateTime? UpdatedOn { get; set; }
         public decimal PricePerNight { get; set; }
+        public int Capacity { get; set; }
+        public bool IsDeletable { get; set; }   
     }
 }

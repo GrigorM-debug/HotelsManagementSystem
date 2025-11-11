@@ -4,6 +4,8 @@ using HotelsManagementSystem.Api.Data.Models.Rooms;
 using HotelsManagementSystem.Api.DTOs.Admin.Rooms;
 using HotelsManagementSystem.Api.DTOs.Admin.Rooms.Create;
 using HotelsManagementSystem.Api.DTOs.Admin.Rooms.GetRoomsForHotel;
+using HotelsManagementSystem.Api.DTOs.Rooms;
+using HotelsManagementSystem.Api.Enums;
 using HotelsManagementSystem.Api.Services.Image;
 using Microsoft.EntityFrameworkCore;
 
@@ -132,11 +134,37 @@ namespace HotelsManagementSystem.Api.Services.Admin.Rooms
                     CreatedOn = r.CreatedOn,
                     UpdatedOn = r.UpdatedOn,
                     PricePerNight = r.RoomType.PricePerNight,
-                    HotelName = r.Hotel.Name
+                    HotelName = r.Hotel.Name,
+                    Capacity = r.RoomType.Capacity
                 })
                 .ToListAsync();
 
+            foreach(var room in rooms)
+            {
+                room.IsDeletable = await IsRoomDeletable(room.Id, hotelId, adminId);
+            }
+
             return rooms;
+        }
+
+        public async Task<bool> IsRoomDeletable(Guid roomId, Guid hotelId, Guid adminId)
+        {
+            var roomExists = await _context.Rooms
+                .AnyAsync(r => r.Id == roomId &&
+                      r.HotelId == hotelId &&
+                      r.CreatorId == adminId &&
+                      !r.IsDeleted);
+
+            if (!roomExists)
+            {
+                return false;
+            }
+
+            var hasActiveReservations = await _context.Reservations
+                .AnyAsync(res => res.RoomId == roomId &&
+                                res.ReservationStatus != ReservationStatus.Cancelled);
+
+            return !hasActiveReservations;
         }
 
         public async Task<bool> RoomExistsByRoomNumberAndHotelId(int roomNumber, Guid hotelId, Guid adminId)
