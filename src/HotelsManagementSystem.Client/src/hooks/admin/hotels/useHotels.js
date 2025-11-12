@@ -140,7 +140,19 @@ export function useCreateHotel() {
       }
 
       if (result.errors) {
-        setValidationErrors(result.errors);
+        const apiErrors = {
+          name: result.errors.Name || null,
+          description: result.errors.Description || null,
+          address: result.errors.Address || null,
+          city: result.errors.City || null,
+          country: result.errors.Country || null,
+          checkIn: result.errors.CheckInTime || null,
+          checkOut: result.errors.CheckOutTime || null,
+          stars: result.errors.Stars || null,
+          amenities: result.errors.AmenityIds || null,
+          images: result.errors.Images || null,
+        };
+        setValidationErrors(apiErrors);
         setError("Please fix the errors below.");
         return;
       }
@@ -576,7 +588,22 @@ export function useEditHotel(hotelId) {
         }
 
         if (result.errors) {
-          setValidationErrors(result.errors);
+          const apiErrors = {
+            name: result.errors.Name || null,
+            description: result.errors.Description || null,
+            address: result.errors.Address || null,
+            city: result.errors.City || null,
+            country: result.errors.Country || null,
+            checkIn: result.errors.CheckInTime || null,
+            checkOut: result.errors.CheckOutTime || null,
+            stars: result.errors.Stars || null,
+            amenities: result.errors.AmenityIds || null,
+            images:
+              result.errors.NewImages ||
+              result.errors.ExistingImagesIds ||
+              null,
+          };
+          setValidationErrors(apiErrors);
           setError("Please fix the errors below.");
           return;
         }

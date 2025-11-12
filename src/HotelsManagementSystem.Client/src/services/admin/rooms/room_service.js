@@ -156,3 +156,41 @@ export async function editRoomGet(hotelId, roomId, token) {
 
   return response.json();
 }
+
+export async function editRoomPost(hotelId, roomId, roomDataAsFormData, token) {
+  const response = await fetch(
+    `${API_BASE_URL}/room/hotel/${hotelId}/rooms/${roomId}/edit`,
+    {
+      method: "PUT",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      body: roomDataAsFormData,
+    }
+  );
+
+  if (!response.ok) {
+    switch (response.status) {
+      case 400: {
+        const errorData = await response.json();
+        return errorData;
+      }
+      case 409: {
+        const errorData = await response.json();
+        return errorData;
+      }
+      case 401:
+        throw new Error("401 Unauthorized");
+      case 403:
+        throw new Error("403 Forbidden");
+      case 404:
+        throw new Error("404 Not Found");
+      case 429:
+        throw new Error("429 Too Many Requests");
+      default:
+        throw new Error("Failed to edit room");
+    }
+  }
+
+  return response.json();
+}

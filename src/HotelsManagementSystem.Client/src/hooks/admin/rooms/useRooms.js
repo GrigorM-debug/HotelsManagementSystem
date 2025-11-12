@@ -7,12 +7,14 @@ import {
   getRoomsByHotelId,
   deleteRoom,
   editRoomGet,
+  editRoomPost,
 } from "../../../services/admin/rooms/room_service";
 import {
   VALID_ROOM_IMAGE_TYPES,
   MAX_IMAGES_UPLOAD,
 } from "../../../constants/room_constants";
 import { validateCreateRoomForm } from "../../../validations/rooms/create_room_validations";
+import { validateEditRoomForm } from "../../../validations/rooms/edit_room_validations";
 
 export function useCreateRoomGet(hotelId) {
   const { token, clearTokenAndUser } = useAuth();
@@ -175,8 +177,15 @@ export function useCreateRoomPost(hotelId) {
         }
 
         if (result.errors) {
+          const apiErrors = {
+            roomNumber: result.errors.RoomNumber,
+            description: result.errors.Description,
+            images: result.errors.Images,
+            selectedRoomType: result.errors.RoomTypeId,
+            selectedFeatures: result.errors.FeatureIds,
+          };
           setFormSubmitError("Please fix the errors below.");
-          setValidationErrors(result.errors);
+          setValidationErrors(apiErrors);
         }
 
         const roomId = result.roomId;
@@ -536,7 +545,84 @@ export function useEditRoom(hotelId, roomId) {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    console.log("Form submitted with data:", formData);
+    const validation = validateEditRoomForm(formData);
+
+    if (!validation.isValid) {
+      setFormSubmitError("Please fix the errors below.");
+      setValidationErrors(validation.errors);
+      return;
+    }
+
+    const formDataAsFormData = new FormData();
+    formDataAsFormData.append("RoomNumber", formData.roomNumber);
+    formDataAsFormData.append("Description", formData.description);
+    formDataAsFormData.append("RoomTypeId", formData.roomType);
+    formData.existingImages.forEach((image) => {
+      formDataAsFormData.append("ExistingImagesIds", image.id);
+    });
+    formData.newImages.forEach((imageFile) => {
+      formDataAsFormData.append("NewImages", imageFile);
+    });
+    formData.features.forEach((featureId) => {
+      formDataAsFormData.append("FeatureIds", featureId);
+    });
+
+    try {
+      setIsSubmitting(true);
+      const result = await editRoomPost(
+        hotelId,
+        roomId,
+        formDataAsFormData,
+        token
+      );
+
+      if (result) {
+        if (result.error) {
+          setFormSubmitError(result.error);
+        }
+
+        if (result.errors) {
+          const apiErrors = {
+            roomNumber: result.errors.RoomNumber || null,
+            description: result.errors.Description || null,
+            images:
+              result.errors.NewImages ||
+              result.errors.ExistingImagesIds ||
+              null,
+            selectedRoomType: result.errors.RoomTypeId || null,
+            selectedFeatures: result.errors.FeatureIds || null,
+          };
+          setFormSubmitError("Please fix the errors below.");
+          console.log(result.errors);
+          setValidationErrors(apiErrors);
+        }
+
+        if (result.success) {
+          navigate(`/hotels/${hotelId}/rooms/${roomId}`);
+        }
+      }
+    } catch (error) {
+      switch (error.message) {
+        case "404 Not Found":
+          navigate("/404");
+          break;
+        case "401 Unauthorized":
+          clearTokenAndUser();
+          navigate("/login");
+          break;
+        case "403 Forbidden":
+          clearTokenAndUser();
+          navigate("/login");
+          break;
+        case "429 Too Many Requests":
+          navigate("/429");
+          break;
+        default:
+          setFormSubmitError("Failed to edit room");
+      }
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return {

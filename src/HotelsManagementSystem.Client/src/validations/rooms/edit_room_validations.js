@@ -1,6 +1,6 @@
 import { validateRoomNumber, validateDescription } from "./room_validations";
 
-export function validateCreateRoomForm(formData) {
+export function validateEditRoomForm(formData) {
   const errors = {};
 
   const roomNumberError = validateRoomNumber(formData.roomNumber);
@@ -13,16 +13,16 @@ export function validateCreateRoomForm(formData) {
     errors.description = descriptionError;
   }
 
-  if (formData.images.length < 0) {
+  if (formData.existingImages.length + formData.newImages.length <= 0) {
     errors.images = "At least one image is required.";
   }
 
-  if (!formData.selectedRoomType) {
-    errors.selectedRoomType = "A room type must be selected.";
+  if (!formData.roomType) {
+    errors.roomType = "A room type must be selected.";
   }
 
-  if (formData.selectedFeatures.length === 0) {
-    errors.selectedFeatures = "At least one feature must be selected.";
+  if (formData.features.length === 0) {
+    errors.features = "At least one feature must be selected.";
   }
 
   return {
