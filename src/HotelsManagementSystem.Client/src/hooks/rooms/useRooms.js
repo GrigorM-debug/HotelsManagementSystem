@@ -7,6 +7,7 @@ export function useGetRoomDetails(id, roomId) {
     id: "",
     roomNumber: "",
     description: "",
+    isAvailable: true,
     roomType: {
       id: "",
       name: "",
@@ -29,13 +30,13 @@ export function useGetRoomDetails(id, roomId) {
         setRoom(data);
       } catch (err) {
         switch (err.message) {
-          case "404":
+          case "404 Not Found":
             navigate("/404");
             break;
-          case "400":
+          case "400 Bad Request":
             navigate("/404");
             break;
-          case "429":
+          case "429 Too Many Requests":
             navigate("/429");
             break;
           default:

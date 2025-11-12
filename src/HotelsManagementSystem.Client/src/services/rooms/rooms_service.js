@@ -11,11 +11,11 @@ export async function getRoomByIdAndHotelId(id, roomId) {
   if (!response.ok) {
     switch (response.status) {
       case 404:
-        throw new Error("404");
+        throw new Error("404 Not Found");
       case 400:
-        throw new Error("400");
+        throw new Error("400 Bad Request");
       case 429:
-        throw new Error("429");
+        throw new Error("429 Too Many Requests");
       default:
         throw new Error("Failed to fetch room details");
     }
