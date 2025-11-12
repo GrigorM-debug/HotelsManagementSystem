@@ -46,8 +46,7 @@ export default function ManageRooms() {
   };
 
   const handleEdit = (roomId) => {
-    // TODO: Navigate to edit room
-    console.log("Edit room:", roomId);
+    navigate(`/admin/hotels/${id}/rooms/edit-room/${roomId}`);
   };
 
   const handleDelete = (roomData) => {

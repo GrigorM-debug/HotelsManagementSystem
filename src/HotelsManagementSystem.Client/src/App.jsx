@@ -23,6 +23,7 @@ import TooManyRequests429 from "./components/StatusCodePages/429/429";
 import ManageRooms from "./components/Admin/Rooms/ManageRooms/ManageRooms";
 import CreateRoom from "./components/Admin/Rooms/CreateRoom/CreateRoom";
 import RoomDetails from "./components/Rooms/RoomDetails/RoomDetails";
+import EditRoom from "./components/Admin/Rooms/EditRoom/EditRoom";
 
 function App() {
   return (
@@ -72,6 +73,10 @@ function App() {
                     <Route
                       path="/admin/hotels/:id/rooms/add-room"
                       element={<CreateRoom />}
+                    />
+                    <Route
+                      path="/admin/hotels/:id/rooms/edit-room/:roomId"
+                      element={<EditRoom />}
                     />
                   </Route>
                   <Route element={<ReceptionistUser />}>

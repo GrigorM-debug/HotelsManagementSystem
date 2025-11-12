@@ -6,6 +6,7 @@ import {
   createRoomPost,
   getRoomsByHotelId,
   deleteRoom,
+  editRoomGet,
 } from "../../../services/admin/rooms/room_service";
 import {
   VALID_ROOM_IMAGE_TYPES,
@@ -367,5 +368,192 @@ export function useDeleteRoom(hotelId, refreshRooms) {
     deleteError,
     isDeleting,
     roomData,
+  };
+}
+
+export function useEditRoom(hotelId, roomId) {
+  const { token, clearTokenAndUser } = useAuth();
+  const navigate = useNavigate();
+  const [formData, setFormData] = useState({
+    id: "",
+    roomNumber: "",
+    description: "",
+    existingImages: [],
+    roomType: null,
+    features: [],
+    newImages: [],
+  });
+  const [allRoomTypes, setAllRoomTypes] = useState([]);
+  const [allFeatures, setAllFeatures] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const [imagePreviews, setImagePreviews] = useState([]);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [formSubmitError, setFormSubmitError] = useState(null);
+  const [validationErrors, setValidationErrors] = useState({});
+
+  // Fetch existing room data
+  useEffect(() => {
+    const fetchRoomData = async () => {
+      setIsLoading(true);
+      try {
+        const data = await editRoomGet(hotelId, roomId, token);
+        setFormData({
+          id: data.id,
+          roomNumber: data.roomNumber,
+          description: data.description,
+          roomType: data.roomTypeId,
+          existingImages: data.images,
+          features: data.selectedFeatureIds,
+          newImages: [],
+        });
+        setAllFeatures(data.allFeatures);
+        setAllRoomTypes(data.allRoomTypes);
+        setImagePreviews(
+          data.images.map((image) => ({
+            id: image.id,
+            url: image.url,
+            file: null,
+            isExisting: true,
+          }))
+        );
+      } catch (err) {
+        switch (err.message) {
+          case "404 Not Found":
+            navigate("/404");
+            break;
+          case "400 Bad Request":
+            navigate("/404");
+            break;
+          case "401 Unauthorized":
+            clearTokenAndUser();
+            navigate("/login");
+            break;
+          case "403 Forbidden":
+            clearTokenAndUser();
+            navigate("/login");
+            break;
+          case "429 Too Many Requests":
+            navigate("/429");
+            break;
+          default:
+            setError("Failed to fetch room edit data");
+            break;
+        }
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    fetchRoomData();
+  }, [hotelId, roomId, token, navigate, clearTokenAndUser]);
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  const handleImageUpload = (e) => {
+    const files = Array.from(e.target.files);
+    const validTypes = VALID_ROOM_IMAGE_TYPES;
+
+    const validFiles = files.filter((file) => validTypes.includes(file.type));
+
+    if (validFiles.length !== files.length) {
+      setFormSubmitError("Please select only image files (JPEG, PNG, JPG)");
+      return;
+    }
+
+    if (imagePreviews.length + validFiles.length > MAX_IMAGES_UPLOAD) {
+      setFormSubmitError(
+        `You can upload a maximum of ${MAX_IMAGES_UPLOAD} images total.`
+      );
+      return;
+    }
+
+    const newPreviews = validFiles.map((file) => ({
+      id: Date.now() + Math.random(),
+      url: URL.createObjectURL(file),
+      file: file,
+      isExisting: false,
+    }));
+
+    setFormData((prev) => ({
+      ...prev,
+      newImages: [...prev.newImages, ...validFiles],
+    }));
+
+    setImagePreviews((prev) => [...prev, ...newPreviews]);
+  };
+
+  const removeImage = (index) => {
+    const imageToRemove = imagePreviews[index];
+
+    if (imageToRemove.isExisting) {
+      setFormData((prev) => ({
+        ...prev,
+        existingImages: prev.existingImages.filter(
+          (img) => img.id !== imageToRemove.id
+        ),
+      }));
+
+      setImagePreviews((prev) =>
+        prev.filter((img) => img.id !== imageToRemove.id)
+      );
+    } else {
+      setFormData((prev) => ({
+        ...prev,
+        newImages: prev.newImages.filter(
+          (_, i) => i !== index - formData.existingImages.length
+        ),
+      }));
+
+      setImagePreviews((prev) => {
+        prev.filter((img) => img.id !== imageToRemove.id);
+        URL.revokeObjectURL(imageToRemove.url);
+      });
+    }
+  };
+
+  const handleRoomTypeChange = (roomTypeId) => {
+    setFormData((prev) => ({
+      ...prev,
+      roomType: roomTypeId,
+    }));
+  };
+
+  const handleFeatureChange = (featureId) => {
+    setFormData((prev) => ({
+      ...prev,
+      features: prev.features.includes(featureId)
+        ? prev.features.filter((id) => id !== featureId)
+        : [...prev.features, featureId],
+    }));
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    console.log("Form submitted with data:", formData);
+  };
+
+  return {
+    formData,
+    isLoading,
+    error,
+    imagePreviews,
+    allRoomTypes,
+    allFeatures,
+    isSubmitting,
+    formSubmitError,
+    validationErrors,
+    handleInputChange,
+    handleImageUpload,
+    removeImage,
+    handleRoomTypeChange,
+    handleFeatureChange,
+    handleSubmit,
   };
 }
