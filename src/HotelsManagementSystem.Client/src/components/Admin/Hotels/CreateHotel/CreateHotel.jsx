@@ -1,9 +1,15 @@
 import styles from "./CreateHotel.module.css";
 import { useGetAmenities } from "../../../../hooks/admin/hotels/useAmenity";
 import { useCreateHotel } from "../../../../hooks/admin/hotels/useHotels";
+import SpinnerComponent from "../../../SpinnerComponent/SpinnerComponent";
+import ErrorComponent from "../../../ErrorComponent/ErrorComponent";
 
 export default function CreateHotel() {
-  const { amenities, isLoading: isLoadingAmenities } = useGetAmenities();
+  const {
+    amenities,
+    isLoading: isLoadingAmenities,
+    amenitiesFetchError,
+  } = useGetAmenities();
   const {
     isLoading: isCreating,
     handleSubmit,
@@ -16,6 +22,14 @@ export default function CreateHotel() {
     handleInputChange,
     formData,
   } = useCreateHotel();
+
+  if (isLoadingAmenities) {
+    return <SpinnerComponent message="Loading amenities..." />;
+  }
+
+  if (amenitiesFetchError) {
+    return <ErrorComponent error={amenitiesFetchError} />;
+  }
 
   return (
     <div className={styles.createHotelContainer}>

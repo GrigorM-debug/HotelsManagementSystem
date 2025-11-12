@@ -5,6 +5,7 @@ import {
   createRoomGet,
   createRoomPost,
   getRoomsByHotelId,
+  deleteRoom,
 } from "../../../services/admin/rooms/room_service";
 import {
   VALID_ROOM_IMAGE_TYPES,
@@ -263,9 +264,108 @@ export function useGetHotelRooms(hotelId) {
     fetchRooms();
   }, [hotelId, token, navigate, clearTokenAndUser]);
 
+  const refreashRooms = async () => {
+    setIsLoading(true);
+    try {
+      const data = await getRoomsByHotelId(hotelId, token);
+      setRooms(data);
+    } catch (err) {
+      switch (err.message) {
+        case "404 Not Found":
+          navigate("/404");
+          break;
+        case "400 Bad Request":
+          navigate("/404");
+          break;
+        case "401 Unauthorized":
+          clearTokenAndUser();
+          navigate("/login");
+          break;
+        case "403 Forbidden":
+          navigate("/login");
+          clearTokenAndUser();
+          break;
+        case "429 Too Many Requests":
+          navigate("/429");
+          break;
+        default:
+          setError("Failed to fetch hotel rooms");
+      }
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return {
     rooms,
     isLoading,
     error,
+    refreashRooms,
+  };
+}
+
+export function useDeleteRoom(hotelId, refreshRooms) {
+  const { token, clearTokenAndUser } = useAuth();
+  const navigate = useNavigate();
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [deleteError, setDeleteError] = useState(null);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [roomData, setRoomData] = useState({});
+
+  const toggleDeleteModal = (roomData) => {
+    setRoomData(roomData);
+    setIsDeleteModalOpen(true);
+  };
+
+  const closeDeleteModal = () => {
+    setIsDeleteModalOpen(false);
+    setRoomData({});
+  };
+
+  const onConfirmDeletion = async () => {
+    try {
+      setIsDeleting(true);
+      const result = await deleteRoom(hotelId, roomData.id, token);
+
+      if (result && result.success) {
+        closeDeleteModal();
+        setRoomData({});
+        await refreshRooms();
+      }
+    } catch (err) {
+      switch (err.message) {
+        case "400 Bad Request":
+          navigate("/404");
+          break;
+        case "404 Not Found":
+          navigate("/404");
+          break;
+        case "401 Unauthorized":
+          clearTokenAndUser();
+          navigate("/login");
+          break;
+        case "403 Forbidden":
+          navigate("/login");
+          clearTokenAndUser();
+          break;
+        case "429 Too Many Requests":
+          navigate("/429");
+          break;
+        default:
+          setDeleteError("Failed to delete room");
+      }
+    } finally {
+      setIsDeleting(false);
+    }
+  };
+
+  return {
+    isDeleteModalOpen,
+    toggleDeleteModal,
+    closeDeleteModal,
+    onConfirmDeletion,
+    deleteError,
+    isDeleting,
+    roomData,
   };
 }

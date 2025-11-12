@@ -99,6 +99,18 @@ export default function RoomDetails() {
                 EUR {room.roomType.pricePerNight}
               </span>
             </div>
+            <div className={styles.infoItem}>
+              <span className={styles.infoLabel}>Availability:</span>
+              <span
+                className={
+                  room.isAvailable
+                    ? styles.availableStatus
+                    : styles.unavailableStatus
+                }
+              >
+                {room.isAvailable ? "Available" : "Not Available"}
+              </span>
+            </div>
           </div>
         </div>
 

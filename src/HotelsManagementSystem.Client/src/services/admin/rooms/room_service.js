@@ -95,3 +95,33 @@ export async function getRoomsByHotelId(hotelId, token) {
 
   return response.json();
 }
+
+export async function deleteRoom(hotelId, roomId, token) {
+  const response = await fetch(
+    `${API_BASE_URL}/room/hotel/${hotelId}/rooms/${roomId}/delete`,
+    {
+      method: "DELETE",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+
+  if (!response.ok) {
+    switch (response.status) {
+      case 401:
+        throw new Error("401 Unauthorized");
+      case 403:
+        throw new Error("403 Forbidden");
+      case 404:
+        throw new Error("404 Not Found");
+      case 400:
+        throw new Error("400 Bad Request");
+      case 429:
+        throw new Error("429 Too Many Requests");
+      default:
+        throw new Error("Failed to delete room");
+    }
+  }
+  return response.json();
+}

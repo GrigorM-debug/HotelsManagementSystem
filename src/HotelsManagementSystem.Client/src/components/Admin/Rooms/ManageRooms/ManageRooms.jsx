@@ -1,21 +1,39 @@
 import styles from "./ManageRooms.module.css";
-import { useGetHotelRooms } from "../../../../hooks/admin/rooms/useRooms";
+import {
+  useGetHotelRooms,
+  useDeleteRoom,
+} from "../../../../hooks/admin/rooms/useRooms";
 import { useParams } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import SpinnerComponent from "../../../SpinnerComponent/SpinnerComponent";
 import ErrorComponent from "../../../ErrorComponent/ErrorComponent";
+import DeleteModal from "../../../Modals/DeleteModal/DeleteModal";
 
 export default function ManageRooms() {
   const navigate = useNavigate();
   const { id } = useParams();
-  const { rooms, isLoading, error } = useGetHotelRooms(id);
+  const { rooms, isLoading, error, refreashRooms } = useGetHotelRooms(id);
 
-  if (isLoading) {
-    return <SpinnerComponent message="Loading rooms..." />;
+  const {
+    isDeleteModalOpen,
+    toggleDeleteModal,
+    closeDeleteModal,
+    onConfirmDeletion,
+    deleteError,
+    isDeleting,
+    roomData,
+  } = useDeleteRoom(id, refreashRooms);
+
+  if (isLoading || isDeleting) {
+    return (
+      <SpinnerComponent
+        message={isLoading ? "Loading rooms..." : "Deleting room..."}
+      />
+    );
   }
 
-  if (error) {
-    return <ErrorComponent error={error} />;
+  if (error || deleteError) {
+    return <ErrorComponent error={error || deleteError} />;
   }
 
   const formatDate = (dateString) => {
@@ -32,9 +50,8 @@ export default function ManageRooms() {
     console.log("Edit room:", roomId);
   };
 
-  const handleDelete = (roomId) => {
-    // TODO: Implement delete functionality
-    console.log("Delete room:", roomId);
+  const handleDelete = (roomData) => {
+    toggleDeleteModal(roomData);
   };
 
   const handleCreateRoom = () => {
@@ -45,6 +62,13 @@ export default function ManageRooms() {
 
   return (
     <div className={styles.manageRoomsContainer}>
+      {isDeleteModalOpen && (
+        <DeleteModal
+          entityInfo={roomData}
+          onConfirmDeletion={onConfirmDeletion}
+          onClose={closeDeleteModal}
+        />
+      )}
       <div className={styles.header}>
         <h1 className={styles.hotelName}>{hotelName}</h1>
         <h2 className={styles.title}>Room Management</h2>
@@ -62,6 +86,7 @@ export default function ManageRooms() {
                 <th>Price per Night</th>
                 <th>Created On</th>
                 <th>Updated On</th>
+                <th>Status</th>
                 <th>Actions</th>
               </tr>
             </thead>
@@ -79,6 +104,17 @@ export default function ManageRooms() {
                     }
                   >
                     {formatDate(room.updatedOn)}
+                  </td>
+                  <td className={styles.status}>
+                    <span
+                      className={`${styles.statusBadge} ${
+                        room.isAvailable
+                          ? styles.available
+                          : styles.notAvailable
+                      }`}
+                    >
+                      {room.isAvailable ? "Available" : "Not Available"}
+                    </span>
                   </td>
                   <td className={styles.actions}>
                     <button
@@ -98,7 +134,12 @@ export default function ManageRooms() {
                     {room.isDeletable && (
                       <button
                         className={`${styles.actionBtn} ${styles.deleteBtn}`}
-                        onClick={() => handleDelete(room.id)}
+                        onClick={() =>
+                          handleDelete({
+                            name: `Room ${room.roomNumber}`,
+                            id: room.id,
+                          })
+                        }
                         title="Delete Room"
                       >
                         Delete
