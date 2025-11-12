@@ -1,4 +1,4 @@
-﻿namespace HotelsManagementSystem.Api.DTOs.Rooms.Details
+﻿namespace HotelsManagementSystem.Api.DTOs.Rooms
 {
     public class RoomImageDto
     {

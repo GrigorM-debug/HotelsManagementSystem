@@ -1,4 +1,5 @@
 ﻿using HotelsManagementSystem.Api.DTOs.Admin.Rooms.Create;
+using HotelsManagementSystem.Api.DTOs.Admin.Rooms.Edit;
 using HotelsManagementSystem.Api.DTOs.Admin.Rooms.GetRoomsForHotel;
 
 namespace HotelsManagementSystem.Api.Services.Admin.Rooms
@@ -21,6 +22,8 @@ namespace HotelsManagementSystem.Api.Services.Admin.Rooms
 
         public Task<bool> RoomExistsByIdAndHotelIdAsync(Guid roomId, Guid hotelId, Guid adminId);
 
-        Task<bool> DeleteRoomAsync(Guid roomId, Guid hotelId, Guid adminId);
+        public Task<bool> DeleteRoomAsync(Guid roomId, Guid hotelId, Guid adminId);
+
+        public Task<EditRoomGetDto> EditRoomGetAsync(Guid roomId, Guid hotelId, Guid adminId);
     }
 }

@@ -118,7 +118,7 @@ namespace HotelsManagementSystem.Api.Controllers.Admin.Rooms
             {
                 var newRoomId = await _roomService.CreateRoomPostAsync(inputDto, hotelId, adminId);
 
-                return CreatedAtAction(nameof(CreateRoom), new {roomId = newRoomId});
+                return CreatedAtAction(nameof(CreateRoom), new { roomId = newRoomId });
             }
             catch (Exception ex)
             {
@@ -160,7 +160,7 @@ namespace HotelsManagementSystem.Api.Controllers.Admin.Rooms
 
             return Ok(rooms);
         }
-    
+
         [HttpDelete("hotel/{hotelId}/rooms/{roomId}/delete")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
@@ -183,7 +183,7 @@ namespace HotelsManagementSystem.Api.Controllers.Admin.Rooms
             {
                 return Forbid();
             }
-            
+
             var adminId = Guid.Parse(userId);
             var hotelExists = await _hotelService.HotelExistsByHotelIdAndAdminIdAsync(hotelId, adminId);
             if (!hotelExists)
@@ -210,7 +210,47 @@ namespace HotelsManagementSystem.Api.Controllers.Admin.Rooms
                 return StatusCode(StatusCodes.Status500InternalServerError, new { error = "An error occurred while deleting the room. Please try again later." });
             }
 
-            return Ok(new {success = "Room successfully deleted." });
+            return Ok(new { success = "Room successfully deleted." });
+        }
+
+        [HttpGet("hotel/{hotelId}/rooms/{roomId}/edit")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesDefaultResponseType]
+        public async Task<IActionResult> EditRoomGet(Guid hotelId, Guid roomId)
+        {
+            var userId = _userManager.GetUserId(User);
+            var user = await _userManager.FindByIdAsync(userId);
+            if (user == null)
+            {
+                return Unauthorized(new { error = "User not found." });
+            }
+
+            var isUserAdmin = await _userManager.IsInRoleAsync(user, UserRoles.Admin);
+            if (!isUserAdmin)
+            {
+                return Forbid();
+            }
+
+            var adminId = Guid.Parse(userId);
+            var hotelExists = await _hotelService.HotelExistsByHotelIdAndAdminIdAsync(hotelId, adminId);
+            if (!hotelExists)
+            {
+                return NotFound(new { error = "Hotel not found." });
+            }
+
+            var roomExists = await _roomService.RoomExistsByIdAndHotelIdAsync(roomId, hotelId, adminId);
+            if (!roomExists)
+            {
+                return NotFound(new { error = "Room not found." });
+            }
+
+            var roomData = await _roomService.EditRoomGetAsync(roomId, hotelId, adminId);
+
+            return Ok(roomData);
         }
     }
 }

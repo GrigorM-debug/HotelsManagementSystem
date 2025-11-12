@@ -3,8 +3,10 @@ using HotelsManagementSystem.Api.Data.Models.Images;
 using HotelsManagementSystem.Api.Data.Models.Rooms;
 using HotelsManagementSystem.Api.DTOs.Admin.Rooms;
 using HotelsManagementSystem.Api.DTOs.Admin.Rooms.Create;
+using HotelsManagementSystem.Api.DTOs.Admin.Rooms.Edit;
 using HotelsManagementSystem.Api.DTOs.Admin.Rooms.GetRoomsForHotel;
 using HotelsManagementSystem.Api.DTOs.Rooms;
+using HotelsManagementSystem.Api.DTOs.Rooms.Details;
 using HotelsManagementSystem.Api.Enums;
 using HotelsManagementSystem.Api.Services.Image;
 using Microsoft.EntityFrameworkCore;
@@ -120,6 +122,53 @@ namespace HotelsManagementSystem.Api.Services.Admin.Rooms
                 return true;
             }
             return false;
+        }
+
+        public async Task<EditRoomGetDto> EditRoomGetAsync(Guid roomId, Guid hotelId, Guid adminId)
+        {
+            var room = await _context.Rooms
+                .AsNoTracking()
+                .Where(r => r.Id == roomId &&
+                            r.HotelId == hotelId &&
+                            r.CreatorId == adminId &&
+                            !r.IsDeleted)
+                .Select(r => new EditRoomGetDto
+                {
+                    Id = r.Id,
+                    RoomNumber = r.RoomNumber,
+                    Description = r.Description,
+                    RoomTypeId = r.RoomTypeId,
+                    SelectedFeatureIds = r.RoomFeatures.Select(rf => rf.FeatureId).ToList(),
+                    Images = r.RoomImages.Select(ri => new RoomImageDto
+                    {
+                        Id = ri.Id,
+                        Url = ri.Url
+                    }).ToList()
+                })
+                .FirstOrDefaultAsync();
+
+            var roomTypes = await _context.RoomTypes.ToListAsync();
+            var features = await _context.Features.ToListAsync();
+
+            room.AllRoomTypes = roomTypes
+                .Select(rt => new RoomTypeDto
+                {
+                    Id = rt.Id,
+                    Name = rt.Name,
+                    Capacity = rt.Capacity,
+                    PricePerNight = rt.PricePerNight
+                })
+                .ToList();
+
+            room.AllFeatures = features
+                .Select(f => new FeaturesDto
+                {
+                    Id = f.Id,
+                    Name = f.Name,
+                })
+                .ToList();
+
+            return room;
         }
 
         public async Task<bool> FeaturesExistAsync(IEnumerable<Guid> featureIds)
