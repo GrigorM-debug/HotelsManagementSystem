@@ -160,5 +160,57 @@ namespace HotelsManagementSystem.Api.Controllers.Admin.Rooms
 
             return Ok(rooms);
         }
+    
+        [HttpDelete("hotel/{hotelId}/rooms/{roomId}/delete")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [ProducesDefaultResponseType]
+        public async Task<IActionResult> DeleteRoom(Guid hotelId, Guid roomId)
+        {
+            var userId = _userManager.GetUserId(User);
+            var user = await _userManager.FindByIdAsync(userId);
+            if (user == null)
+            {
+                return Unauthorized(new { error = "User not found." });
+            }
+
+            var isUserAdmin = await _userManager.IsInRoleAsync(user, UserRoles.Admin);
+            if (!isUserAdmin)
+            {
+                return Forbid();
+            }
+            
+            var adminId = Guid.Parse(userId);
+            var hotelExists = await _hotelService.HotelExistsByHotelIdAndAdminIdAsync(hotelId, adminId);
+            if (!hotelExists)
+            {
+                return NotFound(new { error = "Hotel not found." });
+            }
+
+            var roomExists = await _roomService.RoomExistsByIdAndHotelIdAsync(roomId, hotelId, adminId);
+            if (!roomExists)
+            {
+                return NotFound(new { error = "Room not found." });
+            }
+
+            var roomDeletable = await _roomService.IsRoomDeletable(roomId, hotelId, adminId);
+            if (!roomDeletable)
+            {
+                return BadRequest(new { error = "Room cannot be deleted as it is associated with existing bookings or other dependencies." });
+            }
+
+            var isDeleted = await _roomService.DeleteRoomAsync(roomId, hotelId, adminId);
+
+            if (!isDeleted)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, new { error = "An error occurred while deleting the room. Please try again later." });
+            }
+
+            return Ok(new {success = "Room successfully deleted." });
+        }
     }
 }

@@ -18,5 +18,9 @@ namespace HotelsManagementSystem.Api.Services.Admin.Rooms
         public Task<Guid> CreateRoomPostAsync(CreateRoomPostDto inputDto,  Guid hotelId, Guid adminId);
 
         public Task<bool> IsRoomDeletable(Guid roomId, Guid hotelId, Guid adminId);
+
+        public Task<bool> RoomExistsByIdAndHotelIdAsync(Guid roomId, Guid hotelId, Guid adminId);
+
+        Task<bool> DeleteRoomAsync(Guid roomId, Guid hotelId, Guid adminId);
     }
 }

@@ -105,6 +105,23 @@ namespace HotelsManagementSystem.Api.Services.Admin.Rooms
             return newRoom.Id;
         }
 
+        public async Task<bool> DeleteRoomAsync(Guid roomId, Guid hotelId, Guid adminId)
+        {
+            var room = _context.Rooms
+                .FirstOrDefault(r => r.Id == roomId &&
+                                     r.HotelId == hotelId &&
+                                     r.CreatorId == adminId &&
+                                     !r.IsDeleted);
+
+            if (room != null)
+            {
+                room.IsDeleted = true;
+                await _context.SaveChangesAsync();
+                return true;
+            }
+            return false;
+        }
+
         public async Task<bool> FeaturesExistAsync(IEnumerable<Guid> featureIds)
         {
             var features = await _context
@@ -135,7 +152,8 @@ namespace HotelsManagementSystem.Api.Services.Admin.Rooms
                     UpdatedOn = r.UpdatedOn,
                     PricePerNight = r.RoomType.PricePerNight,
                     HotelName = r.Hotel.Name,
-                    Capacity = r.RoomType.Capacity
+                    Capacity = r.RoomType.Capacity,
+                    IsAvailable = !r.Reservations.Any(res => res.ReservationStatus != ReservationStatus.Cancelled)
                 })
                 .ToListAsync();
 
@@ -165,6 +183,20 @@ namespace HotelsManagementSystem.Api.Services.Admin.Rooms
                                 res.ReservationStatus != ReservationStatus.Cancelled);
 
             return !hasActiveReservations;
+        }
+
+        public async Task<bool> RoomExistsByIdAndHotelIdAsync(Guid roomId, Guid hotelId, Guid adminId)
+        {
+            var roomExists = await _context
+                .Rooms
+                .AsNoTracking()
+                .AnyAsync(r => 
+                r.Id == roomId && 
+                r.HotelId == hotelId && 
+                !r.IsDeleted && 
+                r.CreatorId == adminId);
+
+            return roomExists;
         }
 
         public async Task<bool> RoomExistsByRoomNumberAndHotelId(int roomNumber, Guid hotelId, Guid adminId)

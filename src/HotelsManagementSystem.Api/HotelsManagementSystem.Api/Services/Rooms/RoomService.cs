@@ -1,6 +1,7 @@
 ﻿using HotelsManagementSystem.Api.Data;
 using HotelsManagementSystem.Api.DTOs.Rooms;
 using HotelsManagementSystem.Api.DTOs.Rooms.Details;
+using HotelsManagementSystem.Api.Enums;
 using Microsoft.EntityFrameworkCore;
 
 namespace HotelsManagementSystem.Api.Services.Rooms
@@ -25,6 +26,7 @@ namespace HotelsManagementSystem.Api.Services.Rooms
                     Id = r.Id,
                     RoomNumber = r.RoomNumber,
                     Description = r.Description,
+                    IsAvailable = !r.Reservations.Any(res => res.ReservationStatus != ReservationStatus.Cancelled),
                     Images = r.RoomImages.Select(ri => new RoomImageDto
                     {
                         Id = ri.Id,

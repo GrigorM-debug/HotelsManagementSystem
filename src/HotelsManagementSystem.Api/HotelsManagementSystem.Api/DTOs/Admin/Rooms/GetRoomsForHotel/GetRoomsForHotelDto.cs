@@ -11,5 +11,6 @@
         public decimal PricePerNight { get; set; }
         public int Capacity { get; set; }
         public bool IsDeletable { get; set; }   
+        public bool IsAvailable { get; set; }
     }
 }
