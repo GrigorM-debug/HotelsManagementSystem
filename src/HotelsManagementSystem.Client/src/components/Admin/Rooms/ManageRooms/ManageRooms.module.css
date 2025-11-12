@@ -193,6 +193,29 @@
   box-shadow: 0 4px 8px rgba(16, 185, 129, 0.3);
 }
 
+.status {
+  font-weight: 600;
+}
+
+.statusBadge {
+  padding: 0.25rem 0.5rem;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-align: center;
+  display: inline-block;
+}
+
+.available {
+  background-color: #d1fae5;
+  color: #065f46;
+}
+
+.notAvailable {
+  background-color: #fee2e2;
+  color: #991b1b;
+}
+
 /* Responsive Design */
 @media (max-width: 768px) {
   .manageRoomsContainer {
