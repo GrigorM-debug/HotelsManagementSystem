@@ -171,6 +171,91 @@ namespace HotelsManagementSystem.Api.Services.Admin.Rooms
             return room;
         }
 
+        public async Task<bool> EditRoomPostAsync(EditRoomPostDto inputDto, Guid roomId, Guid hotelId, Guid adminId)
+        {
+            var room = await _context.Rooms
+                .FirstOrDefaultAsync(r => r.Id == roomId &&
+                                          r.HotelId == hotelId &&
+                                          r.CreatorId == adminId &&
+                                          !r.IsDeleted);
+
+            if (room == null)
+            {
+                return false;
+            }
+
+            if (room.RoomNumber != inputDto.RoomNumber)
+            {
+                room.RoomNumber = inputDto.RoomNumber;
+            }
+
+            if (room.Description.ToLower() != inputDto.Description.ToLower())
+            {
+                room.Description = inputDto.Description;
+            }
+
+            if (room.RoomTypeId != inputDto.RoomTypeId)
+            {
+                room.RoomTypeId = inputDto.RoomTypeId;
+            }
+
+            var existingFeatureIds = room.RoomFeatures.Select(rf => rf.FeatureId).ToList();
+            var featuresToAdd = inputDto.FeatureIds.Except(existingFeatureIds).ToList();
+            var featuresToRemove = existingFeatureIds.Except(inputDto.FeatureIds).ToList();
+
+            foreach (var featureId in featuresToAdd)
+            {
+                var roomFeature = new RoomFeature()
+                {
+                    RoomId = room.Id,
+                    FeatureId = featureId
+                };
+                await _context.RoomFeatures.AddAsync(roomFeature);
+            }
+
+            foreach (var featureId in featuresToRemove)
+            {
+                var roomFeature = await _context.RoomFeatures
+                    .FirstOrDefaultAsync(rf => rf.RoomId == room.Id && rf.FeatureId == featureId);
+                if (roomFeature != null)
+                {
+                    _context.RoomFeatures.Remove(roomFeature);
+                }
+            }
+
+            var existingImagesIds = await _context.RoomImages
+                .Where(ri => ri.RoomId == room.Id)
+                .Select(ri => ri.Id)
+                .ToListAsync();
+            var newImages = inputDto.NewImages;
+            var imagesToRemoveIds = existingImagesIds.Except(inputDto.ExistingImagesIds).ToList();
+
+            foreach (var image in imagesToRemoveIds)
+            {
+                var img = await _context.RoomImages.FirstOrDefaultAsync(ri => ri.Id == image);
+                if (img != null)
+                {
+                    await _imageService.DeleteImageAsync(img.PublicId);
+                    _context.RoomImages.Remove(img);
+                }
+            }
+
+            foreach (var newImage in newImages)
+            {
+                var uploadedImage = await _imageService.UploadRoomImageAsync(room.Id, newImage);
+                var roomImage = new RoomImage()
+                {
+                    RoomId = room.Id,
+                    Url = uploadedImage.Url,
+                    PublicId = uploadedImage.PublicId,
+                };
+                await _context.RoomImages.AddAsync(roomImage);
+            }
+
+            await _context.SaveChangesAsync();
+            return true;
+        }
+
         public async Task<bool> FeaturesExistAsync(IEnumerable<Guid> featureIds)
         {
             var features = await _context
@@ -184,6 +269,25 @@ namespace HotelsManagementSystem.Api.Services.Admin.Rooms
             }
 
             return true;
+        }
+
+        public async Task<RoomDto> GetRoomByIdAndHotelIdAsync(Guid roomId, Guid hotelId, Guid adminId)
+        {
+            var room =  await _context
+                .Rooms
+                .AsNoTracking()
+                .Where(r => r.Id == roomId &&
+                            r.HotelId == hotelId &&
+                            r.CreatorId == adminId &&
+                            !r.IsDeleted)
+                .Select(r => new RoomDto
+                {
+                    Id = r.Id,
+                    RoomNumber = r.RoomNumber,
+                })
+                .FirstOrDefaultAsync();
+
+            return room;
         }
 
         public async Task<IEnumerable<GetRoomsForHotelDto>> GetRoomsForHotelAsync(Guid hotelId, Guid adminId)

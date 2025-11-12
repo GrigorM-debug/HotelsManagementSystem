@@ -2,6 +2,7 @@
 using HotelsManagementSystem.Api.Data.Models.Hotels;
 using HotelsManagementSystem.Api.Data.Models.Users;
 using HotelsManagementSystem.Api.DTOs.Admin.Rooms.Create;
+using HotelsManagementSystem.Api.DTOs.Admin.Rooms.Edit;
 using HotelsManagementSystem.Api.Services.Admin.Hotels;
 using HotelsManagementSystem.Api.Services.Admin.Rooms;
 using Microsoft.AspNetCore.Authorization;
@@ -251,6 +252,72 @@ namespace HotelsManagementSystem.Api.Controllers.Admin.Rooms
             var roomData = await _roomService.EditRoomGetAsync(roomId, hotelId, adminId);
 
             return Ok(roomData);
+        }
+
+        [HttpPut("hotel/{hotelId}/rooms/{roomId}/edit")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [ProducesDefaultResponseType]
+        public async Task<IActionResult> EditRoomPost(Guid hotelId, Guid roomId, [FromForm] EditRoomPostDto inputDto)
+        {
+            var userId = _userManager.GetUserId(User);
+            var user = await _userManager.FindByIdAsync(userId);
+            if (user == null)
+            {
+                return Unauthorized(new { error = "User not found." });
+            }
+
+            var isUserAdmin = await _userManager.IsInRoleAsync(user, UserRoles.Admin);
+            if (!isUserAdmin)
+            {
+                return Forbid();
+            }
+
+            var adminId = Guid.Parse(userId);
+            var hotelExists = await _hotelService.HotelExistsByHotelIdAndAdminIdAsync(hotelId, adminId);
+            if (!hotelExists)
+            {
+                return NotFound(new { error = "Hotel not found." });
+            }
+
+            var room = await _roomService.GetRoomByIdAndHotelIdAsync(roomId, hotelId, adminId);
+            if (room == null)
+            {
+                return NotFound(new { error = "Room not found." });
+            }
+
+            var selectedRoomTypeExists = await _roomService.RoomTypeExists(inputDto.RoomTypeId);
+            if (!selectedRoomTypeExists)
+            {
+                return BadRequest(new { error = "Selected room type does not exist." });
+            }
+
+            var selectedFeaturesExist = await _roomService.FeaturesExistAsync(inputDto.FeatureIds);
+            if (!selectedFeaturesExist)
+            {
+                return BadRequest(new { error = "One or more selected features do not exist." });
+            }
+
+            if (room.RoomNumber != inputDto.RoomNumber)
+            {
+                var roomWithSameNumberExists = await _roomService.RoomExistsByRoomNumberAndHotelId(inputDto.RoomNumber, hotelId, adminId);
+                if (roomWithSameNumberExists)
+                {
+                    return Conflict(new { error = "Room with the same room number already exists in this hotel." });
+                }
+            }
+
+            var isEdited = await _roomService.EditRoomPostAsync(inputDto, roomId, hotelId, adminId);
+            if (!isEdited)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, new { error = "An error occurred while editing the room. Please try again later." });
+            }
+
+            return Ok(new { success = "Room successfully edited." });
         }
     }
 }

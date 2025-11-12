@@ -25,5 +25,9 @@ namespace HotelsManagementSystem.Api.Services.Admin.Rooms
         public Task<bool> DeleteRoomAsync(Guid roomId, Guid hotelId, Guid adminId);
 
         public Task<EditRoomGetDto> EditRoomGetAsync(Guid roomId, Guid hotelId, Guid adminId);
+
+        public Task<bool> EditRoomPostAsync(EditRoomPostDto inputDto, Guid roomId, Guid hotelId, Guid adminId);
+
+        public Task<RoomDto> GetRoomByIdAndHotelIdAsync(Guid roomId, Guid hotelId, Guid adminId);
     }
 }

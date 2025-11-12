@@ -593,7 +593,6 @@ export function useEditRoom(hotelId, roomId) {
             selectedFeatures: result.errors.FeatureIds || null,
           };
           setFormSubmitError("Please fix the errors below.");
-          console.log(result.errors);
           setValidationErrors(apiErrors);
         }
 
