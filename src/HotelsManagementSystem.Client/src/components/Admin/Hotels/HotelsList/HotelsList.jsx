@@ -29,14 +29,16 @@ export default function HotelsList() {
     closeDeleteModal,
     hotelToDeleteInfo,
     onConfirmDeletion,
+    error: deleteError,
+    isDeleting,
   } = useDeleteHotel(refreshHotels);
 
-  if (isLoading) {
+  if (isLoading || isDeleting) {
     return <SpinnerComponent message="Loading hotels..." />;
   }
 
-  if (error) {
-    return <ErrorComponent error={error} />;
+  if (error || deleteError) {
+    return <ErrorComponent error={error || deleteError} />;
   }
 
   const handleAddNewHotel = () => {

@@ -8,6 +8,7 @@ export function useGetAmenities() {
   const [isLoading, setIsLoading] = useState(true);
   const { token } = useAuth();
   const navigate = useNavigate();
+  const [amenitiesFetchError, setAmenitiesFetchError] = useState(null);
 
   useEffect(() => {
     const fetchAmenities = async () => {
@@ -28,6 +29,10 @@ export function useGetAmenities() {
           case "429 Too Many Requests":
             navigate("/429");
             break;
+          default:
+            setAmenitiesFetchError(
+              "Failed to fetch amenities. Please try again later."
+            );
         }
       } finally {
         setIsLoading(false);
@@ -37,5 +42,5 @@ export function useGetAmenities() {
     fetchAmenities();
   }, [token, navigate]);
 
-  return { amenities, isLoading };
+  return { amenities, isLoading, amenitiesFetchError };
 }

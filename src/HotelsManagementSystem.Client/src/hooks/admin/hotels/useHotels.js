@@ -307,6 +307,8 @@ export function useDeleteHotel(refreshHotels) {
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [hotelToDeleteInfo, setHotelToDeleteInfo] = useState({});
   const navigate = useNavigate();
+  const [error, setError] = useState(null);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   const toggleDeleteModal = (hotelToDeleteData) => {
     setHotelToDeleteInfo(hotelToDeleteData);
@@ -320,6 +322,7 @@ export function useDeleteHotel(refreshHotels) {
 
   const onConfirmDeletion = async () => {
     try {
+      setIsDeleting(true);
       const result = await deleteHotel(hotelToDeleteInfo.id, token);
 
       if (result.success) {
@@ -344,7 +347,11 @@ export function useDeleteHotel(refreshHotels) {
         case "429 Too Many Requests":
           navigate("/429");
           break;
+        default:
+          setError("Failed to delete hotel");
       }
+    } finally {
+      setIsDeleting(false);
     }
   };
 
@@ -354,6 +361,8 @@ export function useDeleteHotel(refreshHotels) {
     closeDeleteModal,
     hotelToDeleteInfo,
     onConfirmDeletion,
+    error,
+    isDeleting,
   };
 }
 
@@ -364,6 +373,8 @@ export function useEditHotel(hotelId) {
   const [error, setError] = useState(null);
   const [validationErrors, setValidationErrors] = useState({});
   const [imagePreviews, setImagePreviews] = useState([]);
+  const [loadingHotelDataError, setLoadingHotelDataError] = useState(null);
+  const [isEditing, setIsEditing] = useState(false);
 
   const [formData, setFormData] = useState({
     name: "",
@@ -424,7 +435,9 @@ export function useEditHotel(hotelId) {
             navigate("/429");
             break;
           default:
-            setError("Failed to fetch hotel details for editing");
+            setLoadingHotelDataError(
+              "Failed to fetch hotel details for editing"
+            );
         }
       } finally {
         setIsLoading(false);
@@ -552,7 +565,7 @@ export function useEditHotel(hotelId) {
     });
 
     try {
-      setIsLoading(true);
+      setIsEditing(true);
 
       const result = await editPostHotel(hotelId, hotelDataAsFormData, token);
 
@@ -592,7 +605,7 @@ export function useEditHotel(hotelId) {
           setError("Failed to edit hotel");
       }
     } finally {
-      setIsLoading(false);
+      setIsEditing(false);
     }
   };
 
@@ -607,5 +620,7 @@ export function useEditHotel(hotelId) {
     error,
     validationErrors,
     imagePreviews,
+    loadingHotelDataError,
+    isEditing,
   };
 }
