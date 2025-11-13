@@ -2,10 +2,13 @@ import { useParams } from "react-router-dom";
 import styles from "./EditHotel.module.css";
 import { useEditHotel } from "../../../../hooks/admin/hotels/useHotels";
 import { useGetAmenities } from "../../../../hooks/admin/hotels/useAmenity";
+import SpinnerComponent from "../../../SpinnerComponent/SpinnerComponent";
+import ErrorComponent from "../../../ErrorComponent/ErrorComponent";
 
 export default function EditHotel() {
   const { id } = useParams();
-  const { amenities, isLoadingAmenities } = useGetAmenities();
+  const { amenities, isLoadingAmenities, amenitiesFetchError } =
+    useGetAmenities();
 
   const {
     formData,
@@ -15,10 +18,28 @@ export default function EditHotel() {
     imagePreviews,
     removeImage,
     handleFormSubmit,
-    isLoading: isEditing,
+    isLoading,
+    isEditing,
     error,
     validationErrors,
+    loadingHotelDataError,
   } = useEditHotel(id);
+
+  if (isLoadingAmenities || isLoading) {
+    return (
+      <SpinnerComponent
+        message={
+          isLoadingAmenities ? "Loading amenities..." : "Loading hotel data..."
+        }
+      />
+    );
+  }
+
+  if (amenitiesFetchError || loadingHotelDataError) {
+    return (
+      <ErrorComponent error={amenitiesFetchError || loadingHotelDataError} />
+    );
+  }
 
   return (
     <div className={styles.createHotelContainer}>

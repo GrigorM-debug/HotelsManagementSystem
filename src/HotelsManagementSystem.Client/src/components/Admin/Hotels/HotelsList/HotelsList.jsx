@@ -29,14 +29,16 @@ export default function HotelsList() {
     closeDeleteModal,
     hotelToDeleteInfo,
     onConfirmDeletion,
+    error: deleteError,
+    isDeleting,
   } = useDeleteHotel(refreshHotels);
 
-  if (isLoading) {
+  if (isLoading || isDeleting) {
     return <SpinnerComponent message="Loading hotels..." />;
   }
 
-  if (error) {
-    return <ErrorComponent error={error} />;
+  if (error || deleteError) {
+    return <ErrorComponent error={error || deleteError} />;
   }
 
   const handleAddNewHotel = () => {
@@ -53,6 +55,14 @@ export default function HotelsList() {
 
   const handleDelete = (hotelToDeleteInfo) => {
     toggleDeleteModal(hotelToDeleteInfo);
+  };
+
+  const handleManageRooms = (hotelId) => {
+    navigate(`/admin/hotels/${hotelId}/rooms`);
+  };
+
+  const handleAddRoom = (hotelId) => {
+    navigate(`/admin/hotels/${hotelId}/rooms/add-room`);
   };
 
   const formatDate = (dateString) => {
@@ -193,6 +203,20 @@ export default function HotelsList() {
                                 🗑️ Delete
                               </button>
                             )}
+                            <button
+                              className={`${styles.actionBtn} ${styles.manageRoomsBtn}`}
+                              onClick={() => handleManageRooms(hotel.id)}
+                              title="Manage Rooms"
+                            >
+                              🏠 Rooms
+                            </button>
+                            <button
+                              className={`${styles.actionBtn} ${styles.addRoomBtn}`}
+                              onClick={() => handleAddRoom(hotel.id)}
+                              title="Add Room"
+                            >
+                              🏠 Add Room
+                            </button>
                           </div>
                         </td>
                       </tr>

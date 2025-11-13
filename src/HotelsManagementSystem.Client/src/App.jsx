@@ -20,6 +20,10 @@ import HotelsList from "./components/Admin/Hotels/HotelsList/HotelsList";
 import HotelDetails from "./components/Hotels/HotelDetails/HotelDetails";
 import EditHotel from "./components/Admin/Hotels/EditHotel/EditHotel";
 import TooManyRequests429 from "./components/StatusCodePages/429/429";
+import ManageRooms from "./components/Admin/Rooms/ManageRooms/ManageRooms";
+import CreateRoom from "./components/Admin/Rooms/CreateRoom/CreateRoom";
+import RoomDetails from "./components/Rooms/RoomDetails/RoomDetails";
+import EditRoom from "./components/Admin/Rooms/EditRoom/EditRoom";
 
 function App() {
   return (
@@ -33,6 +37,10 @@ function App() {
                 <Route path="/" element={<Home />} />
                 <Route path="/contact" element={<Contact />} />
                 <Route path="/hotels/:id" element={<HotelDetails />} />
+                <Route
+                  path="/hotels/:id/rooms/:roomId"
+                  element={<RoomDetails />}
+                />
                 <Route path="/404" element={<NotFound404 />} />
                 <Route path="/429" element={<TooManyRequests429 />} />
                 <Route path="*" element={<NotFound404 />} />
@@ -58,6 +66,18 @@ function App() {
                       element={<EditHotel />}
                     />
                     <Route path="/admin/hotels" element={<HotelsList />} />
+                    <Route
+                      path="/admin/hotels/:id/rooms"
+                      element={<ManageRooms />}
+                    />
+                    <Route
+                      path="/admin/hotels/:id/rooms/add-room"
+                      element={<CreateRoom />}
+                    />
+                    <Route
+                      path="/admin/hotels/:id/rooms/edit-room/:roomId"
+                      element={<EditRoom />}
+                    />
                   </Route>
                   <Route element={<ReceptionistUser />}>
                     {/* You have to put here all the routes that require receptionist role */}

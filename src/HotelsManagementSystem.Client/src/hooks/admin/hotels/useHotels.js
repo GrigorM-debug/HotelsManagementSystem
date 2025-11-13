@@ -140,7 +140,19 @@ export function useCreateHotel() {
       }
 
       if (result.errors) {
-        setValidationErrors(result.errors);
+        const apiErrors = {
+          name: result.errors.Name || null,
+          description: result.errors.Description || null,
+          address: result.errors.Address || null,
+          city: result.errors.City || null,
+          country: result.errors.Country || null,
+          checkIn: result.errors.CheckInTime || null,
+          checkOut: result.errors.CheckOutTime || null,
+          stars: result.errors.Stars || null,
+          amenities: result.errors.AmenityIds || null,
+          images: result.errors.Images || null,
+        };
+        setValidationErrors(apiErrors);
         setError("Please fix the errors below.");
         return;
       }
@@ -229,11 +241,11 @@ export function useGetAdminHotels() {
       try {
         const fetchedHotels = await getAdminHotels(token, appliedFilters);
 
-        // Filter validation errors from the api
-        if (fetchedHotels.errors) {
-          setValidationErrors(fetchedHotels.errors);
-          return;
-        }
+        // // Filter validation errors from the api
+        // if (fetchedHotels.errors) {
+        //   setValidationErrors(fetchedHotels.errors);
+        //   return;
+        // }
         setHotels(fetchedHotels);
       } catch (err) {
         switch (err.message) {
@@ -267,6 +279,17 @@ export function useGetAdminHotels() {
     setIsLoading(true);
     try {
       const fetchedHotels = await getAdminHotels(token, appliedFilters);
+
+      if (fetchedHotels.errors) {
+        const apiErrors = {
+          name: fetchedHotels.errors.Name || null,
+          country: fetchedHotels.errors.Country || null,
+          city: fetchedHotels.errors.City || null,
+        };
+        setValidationErrors(apiErrors);
+        return;
+      }
+
       setHotels(fetchedHotels);
     } catch (err) {
       switch (err.message) {
@@ -307,6 +330,8 @@ export function useDeleteHotel(refreshHotels) {
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [hotelToDeleteInfo, setHotelToDeleteInfo] = useState({});
   const navigate = useNavigate();
+  const [error, setError] = useState(null);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   const toggleDeleteModal = (hotelToDeleteData) => {
     setHotelToDeleteInfo(hotelToDeleteData);
@@ -320,6 +345,7 @@ export function useDeleteHotel(refreshHotels) {
 
   const onConfirmDeletion = async () => {
     try {
+      setIsDeleting(true);
       const result = await deleteHotel(hotelToDeleteInfo.id, token);
 
       if (result.success) {
@@ -344,7 +370,11 @@ export function useDeleteHotel(refreshHotels) {
         case "429 Too Many Requests":
           navigate("/429");
           break;
+        default:
+          setError("Failed to delete hotel");
       }
+    } finally {
+      setIsDeleting(false);
     }
   };
 
@@ -354,6 +384,8 @@ export function useDeleteHotel(refreshHotels) {
     closeDeleteModal,
     hotelToDeleteInfo,
     onConfirmDeletion,
+    error,
+    isDeleting,
   };
 }
 
@@ -364,6 +396,8 @@ export function useEditHotel(hotelId) {
   const [error, setError] = useState(null);
   const [validationErrors, setValidationErrors] = useState({});
   const [imagePreviews, setImagePreviews] = useState([]);
+  const [loadingHotelDataError, setLoadingHotelDataError] = useState(null);
+  const [isEditing, setIsEditing] = useState(false);
 
   const [formData, setFormData] = useState({
     name: "",
@@ -409,6 +443,9 @@ export function useEditHotel(hotelId) {
         );
       } catch (err) {
         switch (err.message) {
+          case "400 Bad Request":
+            navigate("/404");
+            break;
           case "401 Unauthorized":
             clearTokenAndUser();
             navigate("/login");
@@ -424,7 +461,9 @@ export function useEditHotel(hotelId) {
             navigate("/429");
             break;
           default:
-            setError("Failed to fetch hotel details for editing");
+            setLoadingHotelDataError(
+              "Failed to fetch hotel details for editing"
+            );
         }
       } finally {
         setIsLoading(false);
@@ -552,7 +591,7 @@ export function useEditHotel(hotelId) {
     });
 
     try {
-      setIsLoading(true);
+      setIsEditing(true);
 
       const result = await editPostHotel(hotelId, hotelDataAsFormData, token);
 
@@ -563,7 +602,27 @@ export function useEditHotel(hotelId) {
         }
 
         if (result.errors) {
-          setValidationErrors(result.errors);
+          if (result.errors.hotelId) {
+            navigate("/404");
+            return;
+          }
+
+          const apiErrors = {
+            name: result.errors.Name || null,
+            description: result.errors.Description || null,
+            address: result.errors.Address || null,
+            city: result.errors.City || null,
+            country: result.errors.Country || null,
+            checkIn: result.errors.CheckInTime || null,
+            checkOut: result.errors.CheckOutTime || null,
+            stars: result.errors.Stars || null,
+            amenities: result.errors.AmenityIds || null,
+            images:
+              result.errors.NewImages ||
+              result.errors.ExistingImagesIds ||
+              null,
+          };
+          setValidationErrors(apiErrors);
           setError("Please fix the errors below.");
           return;
         }
@@ -592,7 +651,7 @@ export function useEditHotel(hotelId) {
           setError("Failed to edit hotel");
       }
     } finally {
-      setIsLoading(false);
+      setIsEditing(false);
     }
   };
 
@@ -607,5 +666,7 @@ export function useEditHotel(hotelId) {
     error,
     validationErrors,
     imagePreviews,
+    loadingHotelDataError,
+    isEditing,
   };
 }
