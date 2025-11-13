@@ -233,6 +233,7 @@ export function useGetAdminHotels() {
       return;
     } else {
       setAppliedFilters({ ...filter });
+      setValidationErrors({});
     }
   };
 

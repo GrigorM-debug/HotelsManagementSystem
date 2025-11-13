@@ -83,6 +83,7 @@ export function useGetHotels() {
       return;
     } else {
       setAppliedFilters({ ...filter });
+      setFilterValidations({});
     }
   };
 
