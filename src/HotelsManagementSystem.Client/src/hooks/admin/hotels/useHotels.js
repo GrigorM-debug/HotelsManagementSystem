@@ -241,11 +241,11 @@ export function useGetAdminHotels() {
       try {
         const fetchedHotels = await getAdminHotels(token, appliedFilters);
 
-        // Filter validation errors from the api
-        if (fetchedHotels.errors) {
-          setValidationErrors(fetchedHotels.errors);
-          return;
-        }
+        // // Filter validation errors from the api
+        // if (fetchedHotels.errors) {
+        //   setValidationErrors(fetchedHotels.errors);
+        //   return;
+        // }
         setHotels(fetchedHotels);
       } catch (err) {
         switch (err.message) {
@@ -279,6 +279,17 @@ export function useGetAdminHotels() {
     setIsLoading(true);
     try {
       const fetchedHotels = await getAdminHotels(token, appliedFilters);
+
+      if (fetchedHotels.errors) {
+        const apiErrors = {
+          name: fetchedHotels.errors.Name || null,
+          country: fetchedHotels.errors.Country || null,
+          city: fetchedHotels.errors.City || null,
+        };
+        setValidationErrors(apiErrors);
+        return;
+      }
+
       setHotels(fetchedHotels);
     } catch (err) {
       switch (err.message) {
