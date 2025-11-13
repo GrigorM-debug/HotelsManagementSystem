@@ -29,8 +29,6 @@ export default function EditRoom() {
     return <SpinnerComponent message="Loading room data..." />;
   }
 
-  console.log(error);
-
   if (error) {
     return <ErrorComponent error={error} />;
   }
