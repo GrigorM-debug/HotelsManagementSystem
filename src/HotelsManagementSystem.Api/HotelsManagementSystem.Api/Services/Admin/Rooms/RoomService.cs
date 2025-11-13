@@ -174,6 +174,8 @@ namespace HotelsManagementSystem.Api.Services.Admin.Rooms
         public async Task<bool> EditRoomPostAsync(EditRoomPostDto inputDto, Guid roomId, Guid hotelId, Guid adminId)
         {
             var room = await _context.Rooms
+                .Include(r => r.RoomFeatures)
+                .Include(r => r.RoomImages)
                 .FirstOrDefaultAsync(r => r.Id == roomId &&
                                           r.HotelId == hotelId &&
                                           r.CreatorId == adminId &&
