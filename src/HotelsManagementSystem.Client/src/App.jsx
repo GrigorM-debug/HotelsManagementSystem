@@ -25,6 +25,8 @@ import CreateRoom from "./components/Admin/Rooms/CreateRoom/CreateRoom";
 import RoomDetails from "./components/Rooms/RoomDetails/RoomDetails";
 import EditRoom from "./components/Admin/Rooms/EditRoom/EditRoom";
 import BrowseHotels from "./components/Hotels/BrowseHotels/BrowseHotels";
+import CustomerUser from "./components/Route-Guards/CustomerUser";
+import SelectRoomForReservation from "./components/Rooms/SelectRoomForReservation/SelectRoomForReservation";
 
 function App() {
   return (
@@ -52,6 +54,14 @@ function App() {
                 </Route>
                 <Route element={<AuthenticatedUser />}>
                   {/* You have to put here all the routes that require authentication */}
+
+                  <Route element={<CustomerUser />}>
+                    {/* You have to put here all the routes that require customer role */}
+                    <Route
+                      path="/hotel/:id/rooms/select-room"
+                      element={<SelectRoomForReservation />}
+                    />
+                  </Route>
 
                   <Route element={<AdminUser />}>
                     {/* You have to put here all the routes that require admin role */}
