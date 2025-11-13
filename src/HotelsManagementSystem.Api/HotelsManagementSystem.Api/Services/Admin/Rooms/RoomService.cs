@@ -298,6 +298,7 @@ namespace HotelsManagementSystem.Api.Services.Admin.Rooms
             var rooms = await _context
                 .Rooms
                 .AsNoTracking()
+                .OrderByDescending(r => r.CreatedOn)
                 .Where(r => r.HotelId == hotelId && !r.IsDeleted && r.CreatorId == adminId)
                 .Select(r => new GetRoomsForHotelDto
                 {
