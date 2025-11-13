@@ -589,7 +589,12 @@ export function useEditRoom(hotelId, roomId) {
         }
 
         if (result.errors) {
-          if (result.errors.hotelId || result.errors.roomId) {
+          if (result.errors.hotelId) {
+            navigate("/404");
+            return;
+          }
+
+          if (result.errors.roomId) {
             navigate("/404");
             return;
           }
