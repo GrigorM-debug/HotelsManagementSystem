@@ -74,6 +74,12 @@ export default function ManageRooms() {
         <p className={styles.subtitle}>Total Rooms: {rooms?.length || 0}</p>
       </div>
 
+      <div className={styles.actionsBar}>
+        <button className={styles.createRoomBtn} onClick={handleCreateRoom}>
+          Create Room
+        </button>
+      </div>
+
       {rooms && rooms.length > 0 ? (
         <div className={styles.tableContainer}>
           <table className={styles.roomsTable}>

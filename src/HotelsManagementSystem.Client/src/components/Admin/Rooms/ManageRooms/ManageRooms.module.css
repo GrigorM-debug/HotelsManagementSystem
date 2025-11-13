@@ -216,6 +216,27 @@
   color: #991b1b;
 }
 
+.actionsBar {
+  display: flex;
+  gap: 0.5rem;
+  justify-content: center;
+  margin-bottom: 1.5rem;
+}
+
+.createRoomBtn {
+  background-color: #10b981;
+  color: white;
+  border: none;
+  padding: 0.875rem 2rem;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  align-items: center;
+  box-shadow: 0 2px 4px rgba(16, 185, 129, 0.2);
+}
+
 /* Responsive Design */
 @media (max-width: 768px) {
   .manageRoomsContainer {
