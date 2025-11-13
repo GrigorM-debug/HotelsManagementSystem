@@ -2,6 +2,7 @@
 using HotelsManagementSystem.Api.Data.Models.Users;
 using HotelsManagementSystem.Api.Helpers;
 using HotelsManagementSystem.Api.Middlewares;
+using HotelsManagementSystem.Api.Services.Admin.AdminService;
 using HotelsManagementSystem.Api.Services.Admin.Hotels;
 using HotelsManagementSystem.Api.Services.Admin.Hotels.Amentity;
 using HotelsManagementSystem.Api.Services.Admin.Rooms;
@@ -10,6 +11,7 @@ using HotelsManagementSystem.Api.Services.Contact;
 using HotelsManagementSystem.Api.Services.EmailProvider;
 using HotelsManagementSystem.Api.Services.Hotels;
 using HotelsManagementSystem.Api.Services.Image;
+using HotelsManagementSystem.Api.Services.Receptionist;
 using HotelsManagementSystem.Api.Services.Rooms;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
@@ -117,6 +119,8 @@ namespace HotelsManagementSystem.Api.Extensions
             services.AddScoped<Services.Hotels.IHotelService, Services.Hotels.HotelService>();
             services.AddScoped<Services.Admin.Rooms.IRoomService, Services.Admin.Rooms.RoomService>();
             services.AddScoped<Services.Rooms.IRoomService, Services.Rooms.RoomService>();
+            services.AddScoped<IAdminService, AdminService>();
+            services.AddScoped<IReceptionistService , ReceptionistService>();
 
             return services;
         }
