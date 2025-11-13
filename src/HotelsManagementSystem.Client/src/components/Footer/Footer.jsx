@@ -1,4 +1,5 @@
 import styles from "./Footer.module.css";
+import { NavLink } from "react-router-dom";
 
 export default function Footer() {
   const currentYear = new Date().getFullYear();
@@ -28,19 +29,14 @@ export default function Footer() {
               <h4 className={styles.linkTitle}>Quick Links</h4>
               <ul className={styles.linkList}>
                 <li>
-                  <a href="/" className={styles.link}>
+                  <NavLink to="/" className={styles.link}>
                     Home
-                  </a>
+                  </NavLink>
                 </li>
                 <li>
-                  <a href="/about" className={styles.link}>
-                    About
-                  </a>
-                </li>
-                <li>
-                  <a href="/contact" className={styles.link}>
+                  <NavLink to="/contact" className={styles.link}>
                     Contact
-                  </a>
+                  </NavLink>
                 </li>
               </ul>
             </div>
@@ -49,19 +45,9 @@ export default function Footer() {
               <h4 className={styles.linkTitle}>Services</h4>
               <ul className={styles.linkList}>
                 <li>
-                  <a href="/reservations" className={styles.link}>
-                    Reservations
-                  </a>
-                </li>
-                <li>
-                  <a href="/rooms" className={styles.link}>
-                    Room Management
-                  </a>
-                </li>
-                <li>
-                  <a href="/reports" className={styles.link}>
-                    Reports
-                  </a>
+                  <NavLink to="/hotels" className={styles.link}>
+                    Hotels
+                  </NavLink>
                 </li>
               </ul>
             </div>
