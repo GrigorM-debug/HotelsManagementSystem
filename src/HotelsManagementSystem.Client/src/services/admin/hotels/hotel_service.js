@@ -116,6 +116,8 @@ export async function editGetHotel(hotelId, token) {
         throw new Error("404 Not Found");
       case 429:
         throw new Error("429 Too Many Requests");
+      case 400:
+        throw new Error("400 Bad Request");
       default:
         throw new Error("Failed to fetch hotel");
     }

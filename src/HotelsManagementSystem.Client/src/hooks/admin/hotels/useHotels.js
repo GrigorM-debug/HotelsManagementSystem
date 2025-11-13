@@ -443,6 +443,9 @@ export function useEditHotel(hotelId) {
         );
       } catch (err) {
         switch (err.message) {
+          case "400 Bad Request":
+            navigate("/404");
+            break;
           case "401 Unauthorized":
             clearTokenAndUser();
             navigate("/login");
@@ -599,6 +602,11 @@ export function useEditHotel(hotelId) {
         }
 
         if (result.errors) {
+          if (result.errors.hotelId) {
+            navigate("/404");
+            return;
+          }
+
           const apiErrors = {
             name: result.errors.Name || null,
             description: result.errors.Description || null,

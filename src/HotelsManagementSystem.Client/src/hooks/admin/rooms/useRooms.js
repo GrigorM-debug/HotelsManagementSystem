@@ -174,9 +174,15 @@ export function useCreateRoomPost(hotelId) {
       if (result) {
         if (result.error) {
           setFormSubmitError(result.error);
+          return;
         }
 
         if (result.errors) {
+          if (result.errors.hotelId) {
+            navigate("/404");
+            return;
+          }
+
           const apiErrors = {
             roomNumber: result.errors.RoomNumber,
             description: result.errors.Description,
@@ -186,11 +192,11 @@ export function useCreateRoomPost(hotelId) {
           };
           setFormSubmitError("Please fix the errors below.");
           setValidationErrors(apiErrors);
+          return;
         }
 
         const roomId = result.roomId;
-        console.log("Created room with ID:", roomId);
-        navigate(`/admin/hotels/${hotelId}/rooms`);
+        navigate(`/hotels/${hotelId}/rooms/${roomId}`);
       }
     } catch (err) {
       switch (err.message) {
@@ -579,9 +585,15 @@ export function useEditRoom(hotelId, roomId) {
       if (result) {
         if (result.error) {
           setFormSubmitError(result.error);
+          return;
         }
 
         if (result.errors) {
+          if (result.errors.hotelId || result.errors.roomId) {
+            navigate("/404");
+            return;
+          }
+
           const apiErrors = {
             roomNumber: result.errors.RoomNumber || null,
             description: result.errors.Description || null,
@@ -594,6 +606,7 @@ export function useEditRoom(hotelId, roomId) {
           };
           setFormSubmitError("Please fix the errors below.");
           setValidationErrors(apiErrors);
+          return;
         }
 
         if (result.success) {
