@@ -1,5 +1,6 @@
 import { useParams } from "react-router-dom";
 import { useGetHotelDetails } from "../../../hooks/hotels/useHotels";
+import { useAuth } from "../../../hooks/useAuth";
 import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
 import "swiper/css/effect-fade";
@@ -13,6 +14,7 @@ import styles from "./HotelDetails.module.css";
 export default function HotelDetails() {
   const { id } = useParams();
   const { hotel, isLoading, error } = useGetHotelDetails(id);
+  const { user, isAuthenticated } = useAuth();
 
   if (isLoading) {
     return <SpinnerComponent message="Loading hotel details..." />;
@@ -116,6 +118,12 @@ export default function HotelDetails() {
           </p>
         )}
       </div>
+
+      {isAuthenticated && user.roles[0] === "Customer" && (
+        <div className={styles.actionsSection}>
+          <button className={styles.bookNowButton}>Book Now</button>
+        </div>
+      )}
     </div>
   );
 }
