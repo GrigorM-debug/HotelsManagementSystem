@@ -24,6 +24,7 @@ import ManageRooms from "./components/Admin/Rooms/ManageRooms/ManageRooms";
 import CreateRoom from "./components/Admin/Rooms/CreateRoom/CreateRoom";
 import RoomDetails from "./components/Rooms/RoomDetails/RoomDetails";
 import EditRoom from "./components/Admin/Rooms/EditRoom/EditRoom";
+import BrowseHotels from "./components/Hotels/BrowseHotels/BrowseHotels";
 
 function App() {
   return (
@@ -36,6 +37,7 @@ function App() {
               <Routes>
                 <Route path="/" element={<Home />} />
                 <Route path="/contact" element={<Contact />} />
+                <Route path="/hotels" element={<BrowseHotels />} />
                 <Route path="/hotels/:id" element={<HotelDetails />} />
                 <Route
                   path="/hotels/:id/rooms/:roomId"

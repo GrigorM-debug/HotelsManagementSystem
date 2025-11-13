@@ -51,6 +51,17 @@ export default function Navigation() {
           </NavLink>
 
           <NavLink
+            to="/hotels"
+            className={({ isActive }) =>
+              isActive
+                ? `${styles.navButton} ${styles.activeButton}`
+                : styles.navButton
+            }
+          >
+            Hotels
+          </NavLink>
+
+          <NavLink
             to="/contact"
             className={({ isActive }) =>
               isActive

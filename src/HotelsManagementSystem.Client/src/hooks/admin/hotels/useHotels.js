@@ -221,6 +221,7 @@ export function useGetAdminHotels() {
   const handleFilterReset = () => {
     setFilter(initialFilterState);
     setAppliedFilters(initialFilterState);
+    setValidationErrors({});
   };
 
   const handleApplyFilters = () => {
@@ -240,12 +241,6 @@ export function useGetAdminHotels() {
       setIsLoading(true);
       try {
         const fetchedHotels = await getAdminHotels(token, appliedFilters);
-
-        // // Filter validation errors from the api
-        // if (fetchedHotels.errors) {
-        //   setValidationErrors(fetchedHotels.errors);
-        //   return;
-        // }
         setHotels(fetchedHotels);
       } catch (err) {
         switch (err.message) {
@@ -304,6 +299,9 @@ export function useGetAdminHotels() {
         case "404 Not Found":
           clearTokenAndUser();
           navigate("/404");
+          break;
+        case "429 Too Many Requests":
+          navigate("/429");
           break;
         default:
           setError("Failed to fetch hotels");
