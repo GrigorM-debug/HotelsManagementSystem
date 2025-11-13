@@ -254,6 +254,7 @@ namespace HotelsManagementSystem.Api.Services.Admin.Rooms
                 await _context.RoomImages.AddAsync(roomImage);
             }
 
+            room.UpdatedOn = DateTime.UtcNow;
             await _context.SaveChangesAsync();
             return true;
         }
