@@ -22,7 +22,8 @@ namespace HotelsManagementSystem.Api.Services.Customers.Reservation
         {
             var availableRooms = new List<GetHotelAvailableRoomsDto>();
 
-            if((!string.IsNullOrEmpty(filter.CheckInDate) && !string.IsNullOrEmpty(filter.CheckOutDate)) ||filter.NumberOfGuests > 0)
+            // All filters must be applied
+            if ((!string.IsNullOrEmpty(filter.CheckInDate) && !string.IsNullOrEmpty(filter.CheckOutDate)) && filter.NumberOfGuests > 0)
             {
                 var checkInDate = DateTime.Parse(filter.CheckInDate!);
                 var checkOutDate = DateTime.Parse(filter.CheckOutDate!);
