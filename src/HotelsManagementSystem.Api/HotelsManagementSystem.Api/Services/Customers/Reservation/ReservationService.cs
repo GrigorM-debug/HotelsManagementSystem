@@ -76,8 +76,7 @@ namespace HotelsManagementSystem.Api.Services.Customers.Reservation
                     .ToListAsync();
             }
 
-
-                return availableRooms;
+            return availableRooms;
         }
     }
 }
