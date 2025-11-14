@@ -179,6 +179,13 @@
   box-shadow: 0 4px 12px rgba(52, 152, 219, 0.4);
 }
 
+.noRoom {
+  text-align: center;
+  padding: 3rem 0;
+  color: #888;
+  font-size: 1.2rem;
+}
+
 /* Responsive Design */
 @media (max-width: 768px) {
   .title {

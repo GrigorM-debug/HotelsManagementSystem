@@ -22,8 +22,11 @@ namespace HotelsManagementSystem.Api.Services.Customers.Reservation
         {
             var availableRooms = new List<GetHotelAvailableRoomsDto>();
 
-            if(filter != null && filter.CheckInDate.HasValue && filter.CheckOutDate.HasValue && filter.NumberOfGuests > 0)
+            if((!string.IsNullOrEmpty(filter.CheckInDate) && !string.IsNullOrEmpty(filter.CheckOutDate)) ||filter.NumberOfGuests > 0)
             {
+                var checkInDate = DateTime.Parse(filter.CheckInDate!);
+                var checkOutDate = DateTime.Parse(filter.CheckOutDate!);
+
                 availableRooms = await _context
                 .Rooms
                 .Include(r => r.RoomType)
@@ -32,8 +35,8 @@ namespace HotelsManagementSystem.Api.Services.Customers.Reservation
                     && !r.IsDeleted
                     && r.RoomType.Capacity >= filter.NumberOfGuests
                     && !r.Reservations.Any(res =>
-                       res.CheckInDate < filter.CheckOutDate &&
-                       res.CheckOutDate > filter.CheckInDate &&
+                       res.CheckInDate < checkOutDate &&
+                       res.CheckOutDate > checkInDate &&
                        (res.ReservationStatus == ReservationStatus.Pending ||
                         res.ReservationStatus == ReservationStatus.Confirmed ||
                         res.ReservationStatus == ReservationStatus.CheckedIn)))

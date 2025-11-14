@@ -62,7 +62,7 @@ namespace HotelsManagementSystem.Api.Controllers.Customers
 
             var avaibleRooms = await _reservationService.GetHotelAvailableRoomsAsync(hotelId, filter);
 
-            return Ok(new { availableRooms = avaibleRooms });
+            return Ok(avaibleRooms);
         }
     }
 }
