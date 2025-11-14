@@ -335,11 +335,26 @@ namespace HotelsManagementSystem.Api.Services.Admin.Rooms
                 return false;
             }
 
-            var hasActiveReservations = await _context.Reservations
-                .AnyAsync(res => res.RoomId == roomId &&
-                                res.ReservationStatus != ReservationStatus.Cancelled);
+            //var hasActiveReservations = await _context.Reservations
+            //    .AnyAsync(res => res.RoomId == roomId &&
+            //                    res.ReservationStatus != ReservationStatus.Cancelled);
 
-            return !hasActiveReservations;
+            var currentDate = DateTime.UtcNow.Date;
+            var activeReservationCount = await _context.Reservations
+                .AsNoTracking()
+                .Where(r => r.Room.HotelId == hotelId)
+                .Where(r => r.ReservationStatus == ReservationStatus.Pending ||
+                           r.ReservationStatus == ReservationStatus.Confirmed ||
+                           r.ReservationStatus == ReservationStatus.CheckedIn ||
+                           (r.CheckOutDate >= currentDate && r.ReservationStatus != ReservationStatus.Cancelled))
+                .CountAsync();
+
+            if(activeReservationCount == 0)
+            {
+                return true;
+            }
+
+            return false;
         }
 
         public async Task<bool> RoomExistsByIdAndHotelIdAsync(Guid roomId, Guid hotelId, Guid adminId)
