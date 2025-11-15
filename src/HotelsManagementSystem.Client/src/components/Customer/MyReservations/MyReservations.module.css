@@ -1,0 +1,134 @@
+.container {
+  padding: 20px;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.title {
+  color: #333;
+  margin-bottom: 30px;
+  font-size: 2rem;
+  font-weight: 600;
+  text-align: center;
+}
+
+.tableWrapper {
+  overflow-x: auto;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  background: white;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+
+.table th {
+  background-color: #f8f9fa;
+  color: #333;
+  font-weight: bold;
+  padding: 15px 12px;
+  text-align: left;
+  border-bottom: 2px solid #dee2e6;
+  white-space: nowrap;
+}
+
+.table td {
+  padding: 15px 12px;
+  border-bottom: 1px solid #dee2e6;
+  vertical-align: middle;
+  font-size: 1.2em;
+}
+
+.table tbody tr:hover {
+  background-color: #f8f9fa;
+}
+
+.linkButton {
+  background: none;
+  border: none;
+  color: #007bff;
+  text-decoration: underline;
+  cursor: pointer;
+  font-size: inherit;
+  font-family: inherit;
+  padding: 0;
+}
+
+.linkButton:hover {
+  color: #0056b3;
+  text-decoration: none;
+}
+
+.status {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.confirmed {
+  background-color: #d4edda;
+  color: #155724;
+}
+
+.pending {
+  background-color: #fff3cd;
+  color: #856404;
+}
+
+.cancelled {
+  background-color: #f8d7da;
+  color: #721c24;
+}
+
+.cancelButton {
+  background-color: #dc3545;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 500;
+  transition: background-color 0.2s;
+}
+
+.cancelButton:hover {
+  background-color: #c82333;
+}
+
+.cancelButton:active {
+  transform: translateY(1px);
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .container {
+    padding: 10px;
+  }
+
+  .title {
+    font-size: 1.5rem;
+    margin-bottom: 20px;
+  }
+
+  .table {
+    font-size: 12px;
+  }
+
+  .table th,
+  .table td {
+    padding: 8px 6px;
+  }
+
+  .cancelButton {
+    padding: 6px 12px;
+    font-size: 11px;
+  }
+}

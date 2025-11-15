@@ -61,6 +61,19 @@ export default function Navigation() {
             Hotels
           </NavLink>
 
+          {isAuthenticated && user.roles[0] === "Customer" && (
+            <NavLink
+              to="/my-reservations"
+              className={({ isActive }) =>
+                isActive
+                  ? `${styles.navButton} ${styles.activeButton}`
+                  : styles.navButton
+              }
+            >
+              My Reservations
+            </NavLink>
+          )}
+
           <NavLink
             to="/contact"
             className={({ isActive }) =>

@@ -27,6 +27,7 @@ import EditRoom from "./components/Admin/Rooms/EditRoom/EditRoom";
 import BrowseHotels from "./components/Hotels/BrowseHotels/BrowseHotels";
 import CustomerUser from "./components/Route-Guards/CustomerUser";
 import SelectRoomForReservation from "./components/Rooms/SelectRoomForReservation/SelectRoomForReservation";
+import MyReservations from "./components/Customer/MyReservations/MyReservations";
 
 function App() {
   return (
@@ -60,6 +61,10 @@ function App() {
                     <Route
                       path="/hotel/:id/rooms/select-room"
                       element={<SelectRoomForReservation />}
+                    />
+                    <Route
+                      path="/my-reservations"
+                      element={<MyReservations />}
                     />
                   </Route>
 
