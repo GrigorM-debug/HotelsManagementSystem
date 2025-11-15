@@ -25,8 +25,11 @@ namespace HotelsManagementSystem.Api.Services.Customers.Reservation
             // All filters must be applied
             if ((!string.IsNullOrEmpty(filter.CheckInDate) && !string.IsNullOrEmpty(filter.CheckOutDate)) && filter.NumberOfGuests > 0)
             {
-                var checkInDate = DateTime.Parse(filter.CheckInDate!);
-                var checkOutDate = DateTime.Parse(filter.CheckOutDate!);
+                var checkInDate = DateTime.Parse(filter.CheckInDate);
+                var checkOutDate = DateTime.Parse(filter.CheckOutDate);
+
+                var checkInDateOnlyDate = DateOnly.FromDateTime(checkInDate);
+                var checkOutDateOnlyDate = DateOnly.FromDateTime(checkOutDate);
 
                 availableRooms = await _context
                 .Rooms
@@ -36,8 +39,8 @@ namespace HotelsManagementSystem.Api.Services.Customers.Reservation
                     && !r.IsDeleted
                     && r.RoomType.Capacity >= filter.NumberOfGuests
                     && !r.Reservations.Any(res =>
-                       res.CheckInDate < checkOutDate &&
-                       res.CheckOutDate > checkInDate &&
+                       DateOnly.FromDateTime(res.CheckInDate) < checkInDateOnlyDate &&
+                       DateOnly.FromDateTime(res.CheckOutDate) > checkOutDateOnlyDate &&
                        (res.ReservationStatus == ReservationStatus.Pending ||
                         res.ReservationStatus == ReservationStatus.Confirmed ||
                         res.ReservationStatus == ReservationStatus.CheckedIn)))
@@ -48,7 +51,8 @@ namespace HotelsManagementSystem.Api.Services.Customers.Reservation
                     RoomNumber = r.RoomNumber,
                     RoomTypeName = r.RoomType.Name,
                     PricePerNight = r.RoomType.PricePerNight,
-                    Capacity = r.RoomType.Capacity
+                    Capacity = r.RoomType.Capacity,
+                    TotalPrice = r.RoomType.PricePerNight * (decimal)(checkOutDate - checkInDate).TotalDays
                 })
                 .ToListAsync();
             }

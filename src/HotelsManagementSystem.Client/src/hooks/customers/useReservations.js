@@ -34,8 +34,6 @@ export function useGetHotelAvailableRooms(hotelId) {
     setAppliedFilters({ ...filter });
   };
 
-  console.log(appliedFilters);
-
   useEffect(() => {
     const fetchAvailableRooms = async () => {
       setIsLoading(true);
