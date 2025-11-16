@@ -141,7 +141,7 @@ namespace HotelsManagementSystem.Api.Controllers.Customers
 
             var userIdToGuid = Guid.Parse(userId);
 
-            var isBooked = await _reservationService.CreateRoomReservationsAsync(
+            var isBookedSuccessfully = await _reservationService.CreateRoomReservationsAsync(
                 userIdToGuid, 
                 hotelId, 
                 roomId, 
@@ -149,7 +149,7 @@ namespace HotelsManagementSystem.Api.Controllers.Customers
                 checkOutDate, 
                 reservationCreateDto.NumberOfGuests);
 
-            if (isBooked)
+            if (isBookedSuccessfully)
             {
                 return Ok(new { success = "Room successfully booked." });
             }
