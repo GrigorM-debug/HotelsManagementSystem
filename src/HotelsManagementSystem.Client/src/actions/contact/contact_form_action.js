@@ -27,34 +27,50 @@ export async function contactFormAction(prevState, formData) {
     message: formData.get("message"),
   };
 
-  const result = await sendContactMessage(contactData);
+  try {
+    const result = await sendContactMessage(contactData);
 
-  // Validate errors from the API response
-  if (result.errors) {
-    const errors = {
-      firstName: result.errors.FirstName || null,
-      lastName: result.errors.LastName || null,
-      email: result.errors.Email || null,
-      phoneNumber: result.errors.PhoneNumber || null,
-      message: result.errors.Message || null,
-    };
+    // Validate errors from the API response
+    if (result.errors) {
+      const errors = {
+        firstName: result.errors.FirstName || null,
+        lastName: result.errors.LastName || null,
+        email: result.errors.Email || null,
+        phoneNumber: result.errors.PhoneNumber || null,
+        message: result.errors.Message || null,
+      };
 
-    return {
-      success: false,
-      message: "Please fix the errors below.",
-      errors: errors,
-      data: {
-        firstName: formData.get("firstName"),
-        lastName: formData.get("lastName"),
-        email: formData.get("email"),
-        phoneNumber: formData.get("phoneNumber"),
-        message: formData.get("message"),
-      },
-    };
-  } else {
-    return {
-      success: true,
-      message: "Your message has been sent successfully!",
-    };
+      return {
+        success: false,
+        message: "Please fix the errors below.",
+        errors: errors,
+        data: {
+          firstName: formData.get("firstName"),
+          lastName: formData.get("lastName"),
+          email: formData.get("email"),
+          phoneNumber: formData.get("phoneNumber"),
+          message: formData.get("message"),
+        },
+      };
+    } else {
+      return {
+        success: true,
+        message: "Your message has been sent successfully!",
+      };
+    }
+  } catch (error) {
+    switch (error.message) {
+      case "429 Too Many Requests":
+        return {
+          success: false,
+          message:
+            "You have sent too many messages in a short period. Please try again later.",
+        };
+      default:
+        return {
+          success: false,
+          message: "An unexpected error occurred. Please try again later.",
+        };
+    }
   }
 }

@@ -23,34 +23,52 @@ export async function loginAction(prevState, formData) {
     password: formData.get("password"),
   };
 
-  const result = await login(loginData);
+  try {
+    const result = await login(loginData);
+    if (result) {
+      if (result.error) {
+        return {
+          success: false,
+          message: result.error,
+          errors: [],
+          data: {
+            userName: formData.get("userName"),
+          },
+        };
+      } else if (result.errors) {
+        const errors = {
+          userName: result.errors.UserName || null,
+          password: result.errors.Password || null,
+        };
 
-  if (result) {
-    if (result.error) {
+        return {
+          success: false,
+          message: "Please fix the errors below.",
+          errors: errors,
+          data: {
+            userName: formData.get("userName"),
+          },
+        };
+      } else {
+        return {
+          success: true,
+          message: "Login successful!",
+          response: result,
+        };
+      }
+    }
+  } catch (error) {
+    if (error.message === "429 Too Many Requests") {
       return {
         success: false,
-        message: result.error,
-        errors: [],
-        data: {
-          userName: formData.get("userName"),
-        },
-      };
-    } else if (result.errors) {
-      const errors = {
-        userName: result.errors.UserName || null,
-        password: result.errors.Password || null,
-      };
-
-      return {
-        success: false,
-        message: "Please fix the errors below.",
-        errors: errors,
-        data: {
-          userName: formData.get("userName"),
-        },
+        message:
+          "You have made too many login attempts in a short period. Please try again later.",
       };
     } else {
-      return { success: true, message: "Login successful!", response: result };
+      return {
+        success: false,
+        message: "An unexpected error occurred. Please try again later.",
+      };
     }
   }
 }

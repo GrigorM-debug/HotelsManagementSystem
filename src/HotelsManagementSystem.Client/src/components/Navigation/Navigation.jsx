@@ -24,6 +24,9 @@ export default function Navigation() {
             clearTokenAndUser();
             navigate("/404");
             break;
+          case "429 Too Many Requests":
+            navigate("/429");
+            break;
         }
       }
     }
