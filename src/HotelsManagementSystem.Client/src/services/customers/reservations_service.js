@@ -53,8 +53,10 @@ export async function bookRoom(hotelId, roomId, reservationInfo, token) {
         throw new Error("403 Forbidden");
       case 404:
         throw new Error("404 Not Found");
-      case 400:
-        throw new Error("400 Bad Request");
+      case 400: {
+        const errorData = await response.json();
+        return errorData;
+      }
       case 429:
         throw new Error("429 Too Many Requests");
       default:

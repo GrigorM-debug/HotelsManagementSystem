@@ -102,8 +102,22 @@ export function useBookRoom() {
     try {
       const result = await bookRoom(hotelId, roomId, reservationInfo, token);
 
-      if (result.success) {
-        navigate("/my-reservations");
+      if (result) {
+        if (result.error) {
+          setBookingError(result.error);
+          return;
+        }
+
+        if (result.errors) {
+          if (result.errors.hotelId || result.errors.roomId) {
+            navigate("/404");
+            return;
+          }
+        }
+
+        if (result.success) {
+          navigate("/my-reservations");
+        }
       }
     } catch (err) {
       switch (err.message) {
@@ -116,9 +130,6 @@ export function useBookRoom() {
           navigate("/login");
           break;
         case "404 Not Found":
-          navigate("/404");
-          break;
-        case "400 Bad Request":
           navigate("/404");
           break;
         case "429 Too Many Requests":
