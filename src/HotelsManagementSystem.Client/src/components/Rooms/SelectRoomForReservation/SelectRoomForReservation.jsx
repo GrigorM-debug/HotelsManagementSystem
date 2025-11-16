@@ -1,7 +1,10 @@
 import styles from "./SelectRoomForReservation.module.css";
 import { useNavigate } from "react-router-dom";
 import { useParams } from "react-router-dom";
-import { useGetHotelAvailableRooms } from "../../../hooks/customers/useReservations";
+import {
+  useGetHotelAvailableRooms,
+  useBookRoom,
+} from "../../../hooks/customers/useReservations";
 import RoomsFilter from "../RoomsFilter/RoomsFilter";
 import ErrorComponent from "../../ErrorComponent/ErrorComponent";
 import SpinnerComponent from "../../SpinnerComponent/SpinnerComponent";
@@ -20,21 +23,31 @@ export default function SelectRoomForReservation() {
     handleApplyFilters,
   } = useGetHotelAvailableRooms(id);
 
-  if (isLoading) {
-    return <SpinnerComponent message="Loading available rooms..." />;
+  const { isBooking, bookingError, handleBookRoom } = useBookRoom();
+
+  if (isLoading || isBooking) {
+    return (
+      <SpinnerComponent
+        message={isLoading ? "Loading available rooms..." : "Booking room..."}
+      />
+    );
   }
 
-  if (error) {
-    return <ErrorComponent error={error} />;
+  if (error || bookingError) {
+    return <ErrorComponent error={error || bookingError} />;
   }
 
   const handleViewDetails = (roomId) => {
     navigate(`/hotels/${id}/rooms/${roomId}`);
   };
 
-  const handleBookRoom = (roomId) => {
-    console.log("Book room:", roomId);
-    // Logic to book the room
+  const handleBookClick = (roomId) => {
+    const reservationInfo = {
+      checkInDate: filter.checkInDate,
+      checkOutDate: filter.checkOutDate,
+      numberOfGuests: filter.numberOfGuests,
+    };
+    handleBookRoom(id, roomId, reservationInfo);
   };
 
   return (
@@ -97,7 +110,7 @@ export default function SelectRoomForReservation() {
                           Details
                         </button>
                         <button
-                          onClick={() => handleBookRoom(room.id)}
+                          onClick={() => handleBookClick(room.id)}
                           className={styles.bookBtn}
                         >
                           Book

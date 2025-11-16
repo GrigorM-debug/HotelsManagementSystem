@@ -31,3 +31,36 @@ export async function getHotelAvailableRooms(hotelId, appliedFilters, token) {
 
   return response.json();
 }
+
+export async function bookRoom(hotelId, roomId, reservationInfo, token) {
+  const response = await fetch(
+    `${API_BASE_URL}/reservation/hotel/${hotelId}/room/${roomId}/book`,
+    {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(reservationInfo),
+    }
+  );
+
+  if (!response.ok) {
+    switch (response.status) {
+      case 401:
+        throw new Error("401 Unauthorized");
+      case 403:
+        throw new Error("403 Forbidden");
+      case 404:
+        throw new Error("404 Not Found");
+      case 400:
+        throw new Error("400 Bad Request");
+      case 429:
+        throw new Error("429 Too Many Requests");
+      default:
+        throw new Error("Failed to book room");
+    }
+  }
+
+  return response.json();
+}

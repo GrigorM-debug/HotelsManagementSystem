@@ -1,4 +1,7 @@
-import { getHotelAvailableRooms } from "../../services/customers/reservations_service";
+import {
+  getHotelAvailableRooms,
+  bookRoom,
+} from "../../services/customers/reservations_service";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../useAuth";
@@ -85,5 +88,53 @@ export function useGetHotelAvailableRooms(hotelId) {
     handleFilterChange,
     handleFilterReset,
     handleApplyFilters,
+  };
+}
+
+export function useBookRoom() {
+  const [isBooking, setIsBooking] = useState(false);
+  const [bookingError, setBookingError] = useState(null);
+  const { token, clearTokenAndUser } = useAuth();
+  const navigate = useNavigate();
+
+  const handleBookRoom = async (hotelId, roomId, reservationInfo) => {
+    setIsBooking(true);
+    try {
+      const result = await bookRoom(hotelId, roomId, reservationInfo, token);
+
+      if (result.success) {
+        navigate("/my-reservations");
+      }
+    } catch (err) {
+      switch (err.message) {
+        case "401 Unauthorized":
+          clearTokenAndUser();
+          navigate("/login");
+          break;
+        case "403 Forbidden":
+          clearTokenAndUser();
+          navigate("/login");
+          break;
+        case "404 Not Found":
+          navigate("/404");
+          break;
+        case "400 Bad Request":
+          navigate("/404");
+          break;
+        case "429 Too Many Requests":
+          navigate("/429");
+          break;
+        default:
+          setBookingError("Failed to book room. Please try again later.");
+      }
+    } finally {
+      setIsBooking(false);
+    }
+  };
+
+  return {
+    isBooking,
+    bookingError,
+    handleBookRoom,
   };
 }
