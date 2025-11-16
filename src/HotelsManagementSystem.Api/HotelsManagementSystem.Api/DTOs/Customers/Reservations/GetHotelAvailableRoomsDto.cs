@@ -1,4 +1,4 @@
-﻿namespace HotelsManagementSystem.Api.DTOs.Customers.Reservation
+﻿namespace HotelsManagementSystem.Api.DTOs.Customers.Reservations
 {
     public class GetHotelAvailableRoomsDto
     {

@@ -1,8 +1,9 @@
 ﻿using CloudinaryDotNet.Actions;
 using HotelsManagementSystem.Api.Data;
-using HotelsManagementSystem.Api.DTOs.Customers.Reservation;
 using HotelsManagementSystem.Api.Enums;
+using HotelsManagementSystem.Api.Data.Models.Reservations;
 using Microsoft.EntityFrameworkCore;
+using HotelsManagementSystem.Api.DTOs.Customers.Reservations;
 
 namespace HotelsManagementSystem.Api.Services.Customers.Reservation
 {
@@ -18,11 +19,44 @@ namespace HotelsManagementSystem.Api.Services.Customers.Reservation
             _context = context;
         }
 
+        public async Task<bool> CreateRoomReservationsAsync(Guid customerId, Guid hotelId, Guid roomId, DateTime checkInDate, DateTime checkOutDate, int numberOfGuests)
+        {
+            var room = await _context.Rooms
+                .Include(r => r.RoomType)
+                .FirstOrDefaultAsync(r => r.Id == roomId && r.HotelId == hotelId && !r.IsDeleted);
+
+            if (room == null)
+            {
+                _logger.LogError("Room with ID {RoomId} not found in Hotel with ID {HotelId}.", roomId, hotelId);
+                return false;
+            }
+
+            var totalDays = (checkOutDate - checkInDate).TotalDays;
+            var totalPrice = room.RoomType.PricePerNight * (decimal)totalDays;
+
+            var reservation = new Data.Models.Reservations.Reservation
+            {
+                Id = Guid.NewGuid(),
+                CustomerId = customerId,
+                RoomId = roomId,
+                CheckInDate = checkInDate,
+                CheckOutDate = checkOutDate,
+                TotalPrice = totalPrice,
+                ReservationDate = DateTime.UtcNow,
+                ReservationStatus = ReservationStatus.Pending
+            };
+
+            _context.Reservations.Add(reservation);
+            await _context.SaveChangesAsync();
+
+            return true;
+        }
+
         public async Task<IEnumerable<GetHotelAvailableRoomsDto>> GetHotelAvailableRoomsAsync(Guid hotelId, ReservationHotelRoomsFilter? filter)
         {
             var availableRooms = new List<GetHotelAvailableRoomsDto>();
 
-            // All filters must be applied
+            // When all filters are applied
             if ((!string.IsNullOrEmpty(filter.CheckInDate) && !string.IsNullOrEmpty(filter.CheckOutDate)) && filter.NumberOfGuests > 0)
             {
                 var checkInDate = DateTime.Parse(filter.CheckInDate);
@@ -81,6 +115,23 @@ namespace HotelsManagementSystem.Api.Services.Customers.Reservation
             }
 
             return availableRooms;
+        }
+
+        public async Task<bool> ReservationAlreadyExists(Guid hotelId, Guid roomId, DateTime checkInDate, DateTime checkOutDate)
+        {
+            var reservationExists = await _context
+                .Reservations
+                .Include(r => r.Room)
+                .AnyAsync(res =>
+                    res.Room.HotelId == hotelId &&
+                    res.RoomId == roomId &&
+                    DateOnly.FromDateTime(res.CheckInDate) < DateOnly.FromDateTime(checkOutDate) &&
+                    DateOnly.FromDateTime(res.CheckOutDate) > DateOnly.FromDateTime(checkInDate) &&
+                    (res.ReservationStatus == ReservationStatus.Pending ||
+                     res.ReservationStatus == ReservationStatus.Confirmed ||
+                     res.ReservationStatus == ReservationStatus.CheckedIn));
+            
+            return reservationExists;
         }
     }
 }
