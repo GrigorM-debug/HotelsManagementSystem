@@ -179,6 +179,13 @@
   box-shadow: 0 4px 12px rgba(52, 152, 219, 0.4);
 }
 
+.bookBtn:disabled {
+  background-color: #a0c4db;
+  cursor: not-allowed;
+  box-shadow: none;
+  transform: none;
+}
+
 .noRoom {
   text-align: center;
   padding: 3rem 0;

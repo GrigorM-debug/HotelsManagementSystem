@@ -18,6 +18,7 @@ export default function SelectRoomForReservation() {
     isLoading,
     error,
     filter,
+    appliedFilters,
     handleFilterChange,
     handleFilterReset,
     handleApplyFilters,
@@ -43,11 +44,14 @@ export default function SelectRoomForReservation() {
 
   const handleBookClick = (roomId) => {
     const reservationInfo = {
-      checkInDate: filter.checkInDate,
-      checkOutDate: filter.checkOutDate,
-      numberOfGuests: filter.numberOfGuests,
+      checkInDate: appliedFilters.checkInDate,
+      checkOutDate: appliedFilters.checkOutDate,
+      numberOfGuests: appliedFilters.numberOfGuests,
     };
-    handleBookRoom(id, roomId, reservationInfo);
+
+    console.log("Booking info:", reservationInfo);
+
+    //handleBookRoom(id, roomId, reservationInfo);
   };
 
   return (
@@ -96,7 +100,7 @@ export default function SelectRoomForReservation() {
                   rooms.map((room) => (
                     <tr key={room.id} className={styles.roomRow}>
                       <td className={styles.roomNumber}>#{room.roomNumber}</td>
-                      <td className={styles.roomType}>{room.roomType}</td>
+                      <td className={styles.roomType}>{room.roomTypeName}</td>
                       <td className={styles.price}>EUR {room.pricePerNight}</td>
                       <td className={styles.capacity}>
                         <span className={styles.capacityIcon}>👤</span>
@@ -112,6 +116,12 @@ export default function SelectRoomForReservation() {
                         <button
                           onClick={() => handleBookClick(room.id)}
                           className={styles.bookBtn}
+                          disabled={
+                            appliedFilters.checkInDate === "" ||
+                            appliedFilters.checkOutDate === "" ||
+                            appliedFilters.numberOfGuests === 0 ||
+                            isBooking
+                          }
                         >
                           Book
                         </button>
