@@ -30,11 +30,10 @@ namespace HotelsManagementSystem.Api.Data.Models.Reservations
         [Range(typeof(decimal), "0.01", "1000000.00", ErrorMessage = GeneralConstants.ValueRangeErrorMessage)]
         public decimal TotalPrice { get; set; }
 
-        public Guid ManagedById { get; set; }
+        public Guid? ManagedById { get; set; }
 
-        [Required(ErrorMessage = GeneralConstants.ValueRequiredErrorMessage)]
         [ForeignKey(nameof(ManagedById))]
-        public Receptionist ManagedBy { get; set; } = null!;
+        public Receptionist? ManagedBy { get; set; }
 
         public DateTime CheckInDate { get; set; }
 

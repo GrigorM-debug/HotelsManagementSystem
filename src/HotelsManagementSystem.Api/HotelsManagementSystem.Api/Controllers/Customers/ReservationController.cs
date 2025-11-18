@@ -104,8 +104,8 @@ namespace HotelsManagementSystem.Api.Controllers.Customers
             }
 
             // Check if room exists and belongs to the hotel
-            var roomExists = await _roomService.RoomExistsByIdAndHotelIdAsync(roomId, hotelId);
-            if (!roomExists)
+            var room = await _roomService.GetRoomByIdAndHotelIdAsync(roomId, hotelId);
+            if (room == null)
             {
                 return NotFound(new { error = "Room not found in the specified hotel." });
             }
@@ -128,6 +128,16 @@ namespace HotelsManagementSystem.Api.Controllers.Customers
                 return BadRequest(new { error = "Number of guests must be greater than zero." });
             }
 
+            if(reservationCreateDto.NumberOfGuests > room.RoomType.Capacity)
+            {
+                return BadRequest(new { error = $"Number of guests exceeds room capacity of {room.RoomType.Capacity}." });
+            }
+
+            if(reservationCreateDto.NumberOfGuests < room.RoomType.Capacity)
+            {
+                return BadRequest(new { error = $"Number of guests is less than room capacity of {room.RoomType.Capacity}." });
+            }
+
             // Check if reservation already exists for the specified room and dates
             var reservationExists = await _reservationService.ReservationAlreadyExists(
                 hotelId, 
@@ -141,12 +151,15 @@ namespace HotelsManagementSystem.Api.Controllers.Customers
 
             var userIdToGuid = Guid.Parse(userId);
 
+            var checkInDateToUtc = checkInDate.ToUniversalTime();
+            var checkOutDateToUtc = checkOutDate.ToUniversalTime();
+
             var isBookedSuccessfully = await _reservationService.CreateRoomReservationsAsync(
                 userIdToGuid, 
                 hotelId, 
                 roomId, 
                 checkInDate, 
-                checkOutDate, 
+                checkOutDate,
                 reservationCreateDto.NumberOfGuests);
 
             if (isBookedSuccessfully)
@@ -156,6 +169,81 @@ namespace HotelsManagementSystem.Api.Controllers.Customers
             else
             {
                 return BadRequest(new { error = "Failed to book the room." });
+            }
+        }
+
+        [HttpGet("my-reservations")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [ProducesDefaultResponseType]
+        public async Task<IActionResult> GetCustomerReservations()
+        {
+            var userId = _userManager.GetUserId(User);
+            var user = await _userManager.FindByIdAsync(userId);
+            if (user == null)
+            {
+                return Unauthorized(new { error = "User not found." });
+            }
+
+            var isCustomer = await _userManager.IsInRoleAsync(user, UserRoles.Customer);
+            if (!isCustomer)
+            {
+                return Forbid();
+            }
+
+            var userIdToGuid = Guid.Parse(userId);
+
+            var customerReservations = await _reservationService.GetCustomerReservationsAsync(userIdToGuid);
+
+            return Ok(customerReservations);
+        }
+
+        [HttpPost("{reservationId}/cancel")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesDefaultResponseType]
+        public async Task<IActionResult> CancelReservation(Guid reservationId)
+        {
+            var userId = _userManager.GetUserId(User);
+            var user = await _userManager.FindByIdAsync(userId);
+            if (user == null)
+            {
+                return Unauthorized(new { error = "User not found." });
+            }
+
+            var isCustomer = await _userManager.IsInRoleAsync(user, UserRoles.Customer);
+            if (!isCustomer)
+            {
+                return Forbid();
+            }
+
+            var userIdToGuid = Guid.Parse(userId);
+            var reservationExists = await _reservationService.ReservationExistsByCustomerIdAndReservationIdAsync(reservationId, userIdToGuid);
+            if (!reservationExists)
+            {
+                return NotFound(new { error = "Reservation not found." });
+            }
+
+            var isAlreadyCancelled = await _reservationService.CheckIfReservationIsAlreadyCancelledAsync(reservationId, userIdToGuid);
+            if (isAlreadyCancelled)
+            {
+                return BadRequest(new { error = "Reservation is already cancelled." });
+            }
+
+            var isCancelledSuccessfully = await _reservationService.CancelReservationAsync(
+                reservationId, 
+                userIdToGuid);
+            if (isCancelledSuccessfully)
+            {
+                return Ok(new { success = "Reservation successfully cancelled." });
+            }
+            else
+            {
+                return BadRequest(new { error = "Failed to cancel the reservation." });
             }
         }
     }

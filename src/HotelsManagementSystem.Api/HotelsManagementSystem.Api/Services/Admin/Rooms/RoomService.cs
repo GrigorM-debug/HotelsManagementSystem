@@ -310,13 +310,14 @@ namespace HotelsManagementSystem.Api.Services.Admin.Rooms
                     PricePerNight = r.RoomType.PricePerNight,
                     HotelName = r.Hotel.Name,
                     Capacity = r.RoomType.Capacity,
-                    IsAvailable = !r.Reservations.Any(res => res.ReservationStatus != ReservationStatus.Cancelled)
+                    IsAvailable = r.IsAvailable,
                 })
                 .ToListAsync();
 
             foreach(var room in rooms)
             {
-                room.IsDeletable = await IsRoomDeletable(room.Id, hotelId, adminId);
+                var isDeletable = await IsRoomDeletable(room.Id, hotelId, adminId);
+                room.IsDeletable = isDeletable;
             }
 
             return rooms;
@@ -328,6 +329,7 @@ namespace HotelsManagementSystem.Api.Services.Admin.Rooms
                 .AnyAsync(r => r.Id == roomId &&
                       r.HotelId == hotelId &&
                       r.CreatorId == adminId &&
+                      r.IsAvailable &&
                       !r.IsDeleted);
 
             if (!roomExists)
@@ -335,18 +337,14 @@ namespace HotelsManagementSystem.Api.Services.Admin.Rooms
                 return false;
             }
 
-            //var hasActiveReservations = await _context.Reservations
-            //    .AnyAsync(res => res.RoomId == roomId &&
-            //                    res.ReservationStatus != ReservationStatus.Cancelled);
-
             var currentDate = DateTime.UtcNow.Date;
             var activeReservationCount = await _context.Reservations
                 .AsNoTracking()
-                .Where(r => r.Room.HotelId == hotelId)
+                .Where(r => r.Room.HotelId == hotelId && r.Room.Id == roomId)
                 .Where(r => r.ReservationStatus == ReservationStatus.Pending ||
                            r.ReservationStatus == ReservationStatus.Confirmed ||
                            r.ReservationStatus == ReservationStatus.CheckedIn ||
-                           (r.CheckOutDate >= currentDate && r.ReservationStatus != ReservationStatus.Cancelled))
+                           (r.CheckOutDate >= currentDate && r.ReservationStatus == ReservationStatus.Pending ||r.ReservationStatus == ReservationStatus.CheckedIn || r.ReservationStatus == ReservationStatus.Confirmed))
                 .CountAsync();
 
             if(activeReservationCount == 0)

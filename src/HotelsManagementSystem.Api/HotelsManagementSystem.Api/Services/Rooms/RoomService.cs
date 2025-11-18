@@ -26,7 +26,7 @@ namespace HotelsManagementSystem.Api.Services.Rooms
                     Id = r.Id,
                     RoomNumber = r.RoomNumber,
                     Description = r.Description,
-                    IsAvailable = !r.Reservations.Any(res => res.ReservationStatus != ReservationStatus.Cancelled),
+                    IsAvailable = r.IsAvailable,
                     Images = r.RoomImages.Select(ri => new RoomImageDto
                     {
                         Id = ri.Id,

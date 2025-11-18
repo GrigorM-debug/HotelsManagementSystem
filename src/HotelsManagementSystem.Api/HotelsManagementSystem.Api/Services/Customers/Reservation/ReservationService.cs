@@ -19,11 +19,84 @@ namespace HotelsManagementSystem.Api.Services.Customers.Reservation
             _context = context;
         }
 
-        public async Task<bool> CreateRoomReservationsAsync(Guid customerId, Guid hotelId, Guid roomId, DateTime checkInDate, DateTime checkOutDate, int numberOfGuests)
+        // Only pending reservations can be cancelled
+        public async Task<bool> CancelReservationAsync(Guid reservationId, Guid customerId)
         {
+            var reservation = await _context
+                .Reservations
+                .FirstOrDefaultAsync(r=> 
+                    r.Id == reservationId && 
+                    r.CustomerId == customerId && 
+                    r.ReservationStatus == ReservationStatus.Pending);
+
+            var room = await _context
+                .Rooms
+                .FirstOrDefaultAsync(r => 
+                    r.Id == reservation.RoomId && 
+                    r.IsAvailable == false &&
+                    !r.IsDeleted);
+
+            if (reservation == null)
+            {
+                return false;
+            }
+
+            reservation.ReservationStatus = ReservationStatus.Cancelled;
+            room.IsAvailable = true;
+
+            await _context.SaveChangesAsync();
+            return true;
+        }
+
+        // Used to check if the reservation is already cancelled when trying to cancel it again
+        public async Task<bool> CheckIfReservationIsAlreadyCancelledAsync(
+            Guid reservationId, 
+            Guid customerId)
+        {
+            var reservationIsCancelled = await _context
+                .Reservations
+                .AsNoTracking()
+                .AnyAsync(r => 
+                    r.Id == reservationId && 
+                    r.CustomerId == customerId && 
+                    r.ReservationStatus == ReservationStatus.Cancelled);
+
+            return reservationIsCancelled;
+        }
+
+        public async Task<bool> CreateRoomReservationsAsync(
+            Guid customerId, 
+            Guid hotelId, 
+            Guid roomId, 
+            DateTime checkInDate, 
+            DateTime checkOutDate, 
+            int numberOfGuests)
+        {
+            if (checkInDate.Kind == DateTimeKind.Unspecified)
+            {
+                checkInDate = DateTime.SpecifyKind(checkInDate, DateTimeKind.Utc);
+            }
+            else if (checkInDate.Kind == DateTimeKind.Local)
+            {
+                checkInDate = checkInDate.ToUniversalTime();
+            }
+
+            if (checkOutDate.Kind == DateTimeKind.Unspecified)
+            {
+                checkOutDate = DateTime.SpecifyKind(checkOutDate, DateTimeKind.Utc);
+            }
+            else if (checkOutDate.Kind == DateTimeKind.Local)
+            {
+                checkOutDate = checkOutDate.ToUniversalTime();
+            }
+
             var room = await _context.Rooms
                 .Include(r => r.RoomType)
-                .FirstOrDefaultAsync(r => r.Id == roomId && r.HotelId == hotelId && !r.IsDeleted);
+                .FirstOrDefaultAsync(r => 
+                    r.Id == roomId && 
+                    r.HotelId == hotelId && 
+                    !r.IsDeleted && 
+                    r.IsAvailable == true);
 
             if (room == null)
             {
@@ -47,9 +120,35 @@ namespace HotelsManagementSystem.Api.Services.Customers.Reservation
             };
 
             _context.Reservations.Add(reservation);
+            room.IsAvailable = false;
             await _context.SaveChangesAsync();
 
             return true;
+        }
+
+        public async Task<IEnumerable<GetCustomerReservationsDto>> GetCustomerReservationsAsync(Guid customerId)
+        {
+            var customerReservations = await _context
+                .Reservations
+                .Include(r => r.Room)
+                .ThenInclude(r => r.Hotel)
+                .Where(r => r.CustomerId == customerId)
+                .Select(r => new GetCustomerReservationsDto()
+                {
+                    ReservationId = r.Id,
+                    HotelId = r.Room.HotelId,
+                    RoomId = r.RoomId,
+                    HotelName = r.Room.Hotel.Name,
+                    RoomNumber = r.Room.RoomNumber,
+                    ReservationDate = r.ReservationDate,
+                    TotalPrice = r.TotalPrice,
+                    CheckInDate = DateOnly.FromDateTime(r.CheckInDate),
+                    CheckOutDate = DateOnly.FromDateTime(r.CheckOutDate),
+                    ReservationStatus = r.ReservationStatus.ToString()
+                })
+                .ToListAsync();
+
+            return customerReservations;
         }
 
         public async Task<IEnumerable<GetHotelAvailableRoomsDto>> GetHotelAvailableRoomsAsync(Guid hotelId, ReservationHotelRoomsFilter? filter)
@@ -71,7 +170,8 @@ namespace HotelsManagementSystem.Api.Services.Customers.Reservation
                 .Where(r =>
                     r.HotelId == hotelId
                     && !r.IsDeleted
-                    && r.RoomType.Capacity >= filter.NumberOfGuests
+                    && r.IsAvailable == true
+                    && r.RoomType.Capacity == filter.NumberOfGuests
                     && !r.Reservations.Any(res =>
                        DateOnly.FromDateTime(res.CheckInDate) < checkInDateOnlyDate &&
                        DateOnly.FromDateTime(res.CheckOutDate) > checkOutDateOnlyDate &&
@@ -98,6 +198,7 @@ namespace HotelsManagementSystem.Api.Services.Customers.Reservation
                     .Where(r =>
                         r.HotelId == hotelId
                         && !r.IsDeleted
+                        && r.IsAvailable == true
                         && !r.Reservations.Any(res =>
                            res.ReservationStatus == ReservationStatus.Pending ||
                            res.ReservationStatus == ReservationStatus.Confirmed ||
@@ -117,7 +218,12 @@ namespace HotelsManagementSystem.Api.Services.Customers.Reservation
             return availableRooms;
         }
 
-        public async Task<bool> ReservationAlreadyExists(Guid hotelId, Guid roomId, DateTime checkInDate, DateTime checkOutDate)
+        // Check the room in the hotel is already reserved for the given dates
+        public async Task<bool> ReservationAlreadyExists(
+            Guid hotelId,
+            Guid roomId, 
+            DateTime checkInDate, 
+            DateTime checkOutDate)
         {
             var reservationExists = await _context
                 .Reservations
@@ -125,12 +231,31 @@ namespace HotelsManagementSystem.Api.Services.Customers.Reservation
                 .AnyAsync(res =>
                     res.Room.HotelId == hotelId &&
                     res.RoomId == roomId &&
+                    res.Room.IsDeleted == false &&
+                    res.Room.IsAvailable == false &&
                     DateOnly.FromDateTime(res.CheckInDate) < DateOnly.FromDateTime(checkOutDate) &&
                     DateOnly.FromDateTime(res.CheckOutDate) > DateOnly.FromDateTime(checkInDate) &&
                     (res.ReservationStatus == ReservationStatus.Pending ||
                      res.ReservationStatus == ReservationStatus.Confirmed ||
                      res.ReservationStatus == ReservationStatus.CheckedIn));
             
+            return reservationExists;
+        }
+
+        // Check if reservation exists by customerId and reservationId and is not cancelled
+        // Used to validate if the reservation can be cancelled or not
+        public async Task<bool> ReservationExistsByCustomerIdAndReservationIdAsync(
+            Guid reservationId, 
+            Guid customerId)
+        {
+            var reservationExists = await _context
+                .Reservations
+                .AsNoTracking()
+                .AnyAsync(r => 
+                    r.Id == reservationId && 
+                    r.CustomerId == customerId && 
+                    r.ReservationStatus == ReservationStatus.Pending); // The reservation can be cancelled only if its status is Pending
+
             return reservationExists;
         }
     }
