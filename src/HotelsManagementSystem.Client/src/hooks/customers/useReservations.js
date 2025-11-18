@@ -1,6 +1,8 @@
 import {
   getHotelAvailableRooms,
   bookRoom,
+  getCustomerReservations,
+  cancelReservation,
 } from "../../services/customers/reservations_service";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
@@ -147,5 +149,132 @@ export function useBookRoom() {
     isBooking,
     bookingError,
     handleBookRoom,
+  };
+}
+
+export function useGetCustomerReservations() {
+  const [reservations, setReservations] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const { token, clearTokenAndUser } = useAuth();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const fetchReservations = async () => {
+      setIsLoading(true);
+      try {
+        const data = await getCustomerReservations(token);
+        setReservations(data);
+      } catch (err) {
+        switch (err.message) {
+          case "401 Unauthorized":
+            clearTokenAndUser();
+            navigate("/login");
+            break;
+          case "403 Forbidden":
+            clearTokenAndUser();
+            navigate("/login");
+            break;
+          case "429 Too Many Requests":
+            navigate("/429");
+            break;
+          default:
+            setError("Failed to fetch reservations. Please try again later.");
+        }
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    fetchReservations();
+  }, [token, navigate, clearTokenAndUser]);
+
+  const refreshCustomerReservations = async () => {
+    setIsLoading(true);
+    try {
+      const data = await getCustomerReservations(token);
+      setReservations(data);
+    } catch (err) {
+      switch (err.message) {
+        case "401 Unauthorized":
+          clearTokenAndUser();
+          navigate("/login");
+          break;
+        case "403 Forbidden":
+          clearTokenAndUser();
+          navigate("/login");
+          break;
+        case "429 Too Many Requests":
+          navigate("/429");
+          break;
+        default:
+          setError("Failed to fetch reservations. Please try again later.");
+      }
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  return {
+    reservations,
+    isLoading,
+    error,
+    refreshCustomerReservations,
+  };
+}
+
+export function useCancelReservation(refreshCustomerReservations) {
+  const [isCancelling, setIsCancelling] = useState(false);
+  const [cancellationError, setCancellationError] = useState(null);
+  const { token, clearTokenAndUser } = useAuth();
+  const navigate = useNavigate();
+
+  const handleCancelReservation = async (reservationId) => {
+    setIsCancelling(true);
+    try {
+      const result = await cancelReservation(reservationId, token);
+      if (result) {
+        if (result.error) {
+          setCancellationError(result.error);
+          return;
+        }
+
+        if (result.errors) {
+          if (result.errors.reservationId) {
+            navigate("/404");
+            return;
+          }
+        }
+
+        if (result.success) {
+          await refreshCustomerReservations();
+        }
+      }
+    } catch (err) {
+      switch (err.message) {
+        case "401 Unauthorized":
+          clearTokenAndUser();
+          navigate("/login");
+          break;
+        case "403 Forbidden":
+          clearTokenAndUser();
+          navigate("/login");
+          break;
+        case "429 Too Many Requests":
+          navigate("/429");
+          break;
+        default:
+          setCancellationError(
+            "Failed to cancel reservation. Please try again later."
+          );
+      }
+    } finally {
+      setIsCancelling(false);
+    }
+  };
+
+  return {
+    isCancelling,
+    cancellationError,
+    handleCancelReservation,
   };
 }

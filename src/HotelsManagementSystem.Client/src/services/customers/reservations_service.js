@@ -66,3 +66,62 @@ export async function bookRoom(hotelId, roomId, reservationInfo, token) {
 
   return response.json();
 }
+
+export async function getCustomerReservations(token) {
+  const response = await fetch(`${API_BASE_URL}/reservation/my-reservations`, {
+    method: "GET",
+    headers: {
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "application/json",
+    },
+  });
+
+  if (!response.ok) {
+    switch (response.status) {
+      case 401:
+        throw new Error("401 Unauthorized");
+      case 403:
+        throw new Error("403 Forbidden");
+      case 429:
+        throw new Error("429 Too Many Requests");
+      default:
+        throw new Error("Failed to fetch reservations");
+    }
+  }
+
+  return response.json();
+}
+
+export async function cancelReservation(reservationId, token) {
+  const response = await fetch(
+    `${API_BASE_URL}/reservation/${reservationId}/cancel`,
+    {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+    }
+  );
+
+  if (!response.ok) {
+    switch (response.status) {
+      case 400: {
+        const errorData = await response.json();
+        return errorData;
+      }
+      case 401:
+        throw new Error("401 Unauthorized");
+      case 403:
+        throw new Error("403 Forbidden");
+      case 404:
+        throw new Error("404 Not Found");
+      case 429:
+        throw new Error("429 Too Many Requests");
+      default:
+        throw new Error("Failed to cancel reservation");
+    }
+  }
+
+  return response.json();
+}

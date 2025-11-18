@@ -87,6 +87,16 @@
   color: #721c24;
 }
 
+.checkedIn {
+  background-color: #d4edda;
+  color: #155724;
+}
+
+.checkedOut {
+  background-color: #f8d7da;
+  color: #721c24;
+}
+
 .cancelButton {
   background-color: #dc3545;
   color: white;

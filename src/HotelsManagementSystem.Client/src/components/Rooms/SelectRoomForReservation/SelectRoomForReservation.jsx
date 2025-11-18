@@ -49,9 +49,7 @@ export default function SelectRoomForReservation() {
       numberOfGuests: appliedFilters.numberOfGuests,
     };
 
-    console.log("Booking info:", reservationInfo);
-
-    //handleBookRoom(id, roomId, reservationInfo);
+    handleBookRoom(id, roomId, reservationInfo);
   };
 
   return (

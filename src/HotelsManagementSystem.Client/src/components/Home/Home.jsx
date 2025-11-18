@@ -22,12 +22,14 @@ export default function Home() {
             platform
           </p>
           <div className={styles.heroButtons}>
-            <button
-              className={styles.primaryBtn}
-              onClick={() => navigate("/login")}
-            >
-              Login
-            </button>
+            {!isAuthenticated && (
+              <button
+                className={styles.primaryBtn}
+                onClick={() => navigate("/login")}
+              >
+                Login
+              </button>
+            )}
             <button
               className={styles.secondaryBtn}
               onClick={() => navigate("/contact")}
