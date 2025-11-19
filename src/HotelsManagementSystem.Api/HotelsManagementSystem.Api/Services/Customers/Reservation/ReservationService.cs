@@ -133,6 +133,7 @@ namespace HotelsManagementSystem.Api.Services.Customers.Reservation
                 .Include(r => r.Room)
                 .ThenInclude(r => r.Hotel)
                 .Where(r => r.CustomerId == customerId)
+                .OrderByDescending(r => r.ReservationDate)
                 .Select(r => new GetCustomerReservationsDto()
                 {
                     ReservationId = r.Id,

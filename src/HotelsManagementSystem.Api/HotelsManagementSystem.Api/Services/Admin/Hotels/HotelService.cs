@@ -355,26 +355,25 @@ namespace HotelsManagementSystem.Api.Services.Admin.Hotels
                            (r.CheckOutDate >= currentDate && r.ReservationStatus == ReservationStatus.Pending || r.ReservationStatus == ReservationStatus.CheckedIn || r.ReservationStatus == ReservationStatus.Confirmed))
                 .CountAsync();
 
-            // !USE THIS WHEN YOU MAKE THE LOGIC FOR RECEPTIONISTS
-            //if (!areAllRoomsAvaiable && receptionists.Any() && activeReservationCount > 0)
+            if (!areAllRoomsAvaiable || receptionists.Any() || activeReservationCount > 0)
+            {
+                return false;
+            }
+
+            //if (!areAllRoomsAvaiable)
             //{
             //    return false;
             //}
 
-            if(!areAllRoomsAvaiable)
-            {
-                return false;
-            }
+            //if (receptionists.Any())
+            //{
+            //    return false;
+            //}
 
-            if (receptionists.Any())
-            {
-                return false;
-            }
-
-            if (activeReservationCount > 0)
-            {
-                return false;
-            }
+            //if (activeReservationCount > 0)
+            //{
+            //    return false;
+            //}
 
             return true;
         }
