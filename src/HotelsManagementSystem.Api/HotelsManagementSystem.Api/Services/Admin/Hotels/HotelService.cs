@@ -4,6 +4,7 @@ using HotelsManagementSystem.Api.Data.Models.Hotels;
 using HotelsManagementSystem.Api.Data.Models.Images;
 using HotelsManagementSystem.Api.DTOs.Admin.Hotels;
 using HotelsManagementSystem.Api.DTOs.Admin.Hotels.Edit;
+using HotelsManagementSystem.Api.DTOs.Admin.Receptionists;
 using HotelsManagementSystem.Api.DTOs.Hotels;
 using HotelsManagementSystem.Api.DTOs.Images;
 using HotelsManagementSystem.Api.Enums;
@@ -308,6 +309,29 @@ namespace HotelsManagementSystem.Api.Services.Admin.Hotels
                 .FirstOrDefaultAsync();
 
             return hotel;
+        }
+
+        public async Task<IEnumerable<GetHotelReceptionistsDto>> GetHotelReceptionistsAsync(Guid hotelId, Guid adminId)
+        {
+            var hotelReceptionists = await _context.Receptionists
+                .Include(r => r.Hotel)
+                .Include(r => r.User)
+                .AsNoTracking()
+                .Where(r => 
+                    r.HotelId == hotelId && 
+                    r.Hotel.CreatorId == adminId && 
+                    !r.Hotel.IsDeleted)
+                .Select(r => new GetHotelReceptionistsDto
+                {
+                    Id = r.UserId,
+                    FirstName = r.User.FirstName,
+                    LastName = r.User.LastName,
+                    Email = r.User.Email,
+                    PhoneNumber = r.User.PhoneNumber,
+                })
+                .ToListAsync();
+
+            return hotelReceptionists;
         }
 
         public Task<bool> HotelExistsByHotelIdAndAdminIdAsync(Guid hotelId, Guid adminId)
