@@ -178,8 +178,8 @@ namespace HotelsManagementSystem.Api.Extensions
                                        ?? httpContext.Request.Headers.Host.ToString(),
                          factory: partition => new FixedWindowRateLimiterOptions
                          {
-                             PermitLimit = 15,
-                             Window = TimeSpan.FromMinutes(2)
+                             PermitLimit = 20,
+                             Window = TimeSpan.FromMinutes(1)
                          }));
             });
 
