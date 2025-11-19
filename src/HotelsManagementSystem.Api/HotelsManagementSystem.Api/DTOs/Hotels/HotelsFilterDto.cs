@@ -22,8 +22,7 @@ namespace HotelsManagementSystem.Api.DTOs.Hotels
 
                 if (!System.Text.RegularExpressions.Regex.IsMatch(Name, HotelConstants.NameRegexPattern))
                 {
-                    yield return new ValidationResult(
-                        GeneralConstants.ValueInvalidPatternErrorMessage,
+                    yield return new ValidationResult("Name is invalid pattern",
                         new[] { nameof(Name) });
                 }
             }
@@ -38,8 +37,7 @@ namespace HotelsManagementSystem.Api.DTOs.Hotels
                 }
                 if (!System.Text.RegularExpressions.Regex.IsMatch(City, GeneralConstants.CityRegexPattern))
                 {
-                    yield return new ValidationResult(
-                        GeneralConstants.ValueInvalidPatternErrorMessage,
+                    yield return new ValidationResult("City is invalid pattern",
                         new[] { nameof(City) });
                 }
             }
@@ -54,8 +52,7 @@ namespace HotelsManagementSystem.Api.DTOs.Hotels
                 }
                 if (!System.Text.RegularExpressions.Regex.IsMatch(Country, GeneralConstants.CountryRegexPattern))
                 {
-                    yield return new ValidationResult(
-                        GeneralConstants.ValueInvalidPatternErrorMessage,
+                    yield return new ValidationResult("Country is invalid pattern",
                         new[] { nameof(Country) });
                 }
             }

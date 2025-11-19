@@ -24,6 +24,9 @@ export default function Navigation() {
             clearTokenAndUser();
             navigate("/404");
             break;
+          case "429 Too Many Requests":
+            navigate("/429");
+            break;
         }
       }
     }
@@ -49,6 +52,30 @@ export default function Navigation() {
           >
             Home
           </NavLink>
+
+          <NavLink
+            to="/hotels"
+            className={({ isActive }) =>
+              isActive
+                ? `${styles.navButton} ${styles.activeButton}`
+                : styles.navButton
+            }
+          >
+            Hotels
+          </NavLink>
+
+          {isAuthenticated && user.roles[0] === "Customer" && (
+            <NavLink
+              to="/my-reservations"
+              className={({ isActive }) =>
+                isActive
+                  ? `${styles.navButton} ${styles.activeButton}`
+                  : styles.navButton
+              }
+            >
+              My Reservations
+            </NavLink>
+          )}
 
           <NavLink
             to="/contact"

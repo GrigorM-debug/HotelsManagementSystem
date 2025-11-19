@@ -10,11 +10,13 @@ import { EffectFade, Navigation, Pagination } from "swiper/modules";
 import ErrorComponent from "../../ErrorComponent/ErrorComponent";
 import SpinnerComponent from "../../SpinnerComponent/SpinnerComponent";
 import styles from "./HotelDetails.module.css";
+import { useNavigate } from "react-router-dom";
 
 export default function HotelDetails() {
   const { id } = useParams();
   const { hotel, isLoading, error } = useGetHotelDetails(id);
   const { user, isAuthenticated } = useAuth();
+  const navigate = useNavigate();
 
   if (isLoading) {
     return <SpinnerComponent message="Loading hotel details..." />;
@@ -30,6 +32,10 @@ export default function HotelDetails() {
       starsArray.push(<span key={i}>⭐</span>);
     }
     return starsArray;
+  };
+
+  const handleBookNow = (hotelId) => {
+    navigate(`/hotel/${hotelId}/rooms/select-room`);
   };
 
   return (
@@ -121,7 +127,12 @@ export default function HotelDetails() {
 
       {isAuthenticated && user.roles[0] === "Customer" && (
         <div className={styles.actionsSection}>
-          <button className={styles.bookNowButton}>Book Now</button>
+          <button
+            onClick={() => handleBookNow(hotel.id)}
+            className={styles.bookNowButton}
+          >
+            Book Now
+          </button>
         </div>
       )}
     </div>

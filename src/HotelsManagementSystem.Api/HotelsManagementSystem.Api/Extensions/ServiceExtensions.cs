@@ -8,6 +8,7 @@ using HotelsManagementSystem.Api.Services.Admin.Hotels.Amentity;
 using HotelsManagementSystem.Api.Services.Admin.Rooms;
 using HotelsManagementSystem.Api.Services.Auth;
 using HotelsManagementSystem.Api.Services.Contact;
+using HotelsManagementSystem.Api.Services.Customers.Reservation;
 using HotelsManagementSystem.Api.Services.EmailProvider;
 using HotelsManagementSystem.Api.Services.Hotels;
 using HotelsManagementSystem.Api.Services.Image;
@@ -121,6 +122,7 @@ namespace HotelsManagementSystem.Api.Extensions
             services.AddScoped<Services.Rooms.IRoomService, Services.Rooms.RoomService>();
             services.AddScoped<IAdminService, AdminService>();
             services.AddScoped<IReceptionistService , ReceptionistService>();
+            services.AddScoped<IReservationService, ReservationService>();
 
             return services;
         }
@@ -176,7 +178,7 @@ namespace HotelsManagementSystem.Api.Extensions
                                        ?? httpContext.Request.Headers.Host.ToString(),
                          factory: partition => new FixedWindowRateLimiterOptions
                          {
-                             PermitLimit = 10,
+                             PermitLimit = 20,
                              Window = TimeSpan.FromMinutes(1)
                          }));
             });

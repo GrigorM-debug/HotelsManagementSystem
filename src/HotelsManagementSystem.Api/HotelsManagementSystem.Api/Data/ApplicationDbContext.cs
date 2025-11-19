@@ -164,7 +164,8 @@ namespace HotelsManagementSystem.Api.Data
                 .HasOne(res => res.ManagedBy)
                 .WithMany(r => r.ManagedReservations)
                 .HasForeignKey(res => res.ManagedById)
-                .OnDelete(DeleteBehavior.Restrict);
+                .OnDelete(DeleteBehavior.SetNull)
+                .IsRequired(false);
         }
 
         private static void ConfigureReviewRelationships(ModelBuilder builder)

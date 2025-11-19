@@ -1,4 +1,5 @@
-﻿using HotelsManagementSystem.Api.Services.Hotels;
+﻿using HotelsManagementSystem.Api.DTOs.Hotels;
+using HotelsManagementSystem.Api.Services.Hotels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -40,6 +41,18 @@ namespace HotelsManagementSystem.Api.Controllers
             var hotelDetails = await _hotelService.GetHotelDetailsByIdAsync(hotelId);
 
             return Ok(hotelDetails);
+        }
+
+        [HttpGet("hotels")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesDefaultResponseType]
+        public async Task<IActionResult> GetHotels([FromQuery] HotelsFilterDto? filter)
+        {
+            var hotels = await _hotelService.GetHotelsAsync(filter);
+
+
+            return Ok(new {fetchedHotels = hotels});
         }
     }
 }

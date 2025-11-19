@@ -24,6 +24,10 @@ import ManageRooms from "./components/Admin/Rooms/ManageRooms/ManageRooms";
 import CreateRoom from "./components/Admin/Rooms/CreateRoom/CreateRoom";
 import RoomDetails from "./components/Rooms/RoomDetails/RoomDetails";
 import EditRoom from "./components/Admin/Rooms/EditRoom/EditRoom";
+import BrowseHotels from "./components/Hotels/BrowseHotels/BrowseHotels";
+import CustomerUser from "./components/Route-Guards/CustomerUser";
+import SelectRoomForReservation from "./components/Rooms/SelectRoomForReservation/SelectRoomForReservation";
+import MyReservations from "./components/Customer/MyReservations/MyReservations";
 
 function App() {
   return (
@@ -36,6 +40,7 @@ function App() {
               <Routes>
                 <Route path="/" element={<Home />} />
                 <Route path="/contact" element={<Contact />} />
+                <Route path="/hotels" element={<BrowseHotels />} />
                 <Route path="/hotels/:id" element={<HotelDetails />} />
                 <Route
                   path="/hotels/:id/rooms/:roomId"
@@ -50,6 +55,18 @@ function App() {
                 </Route>
                 <Route element={<AuthenticatedUser />}>
                   {/* You have to put here all the routes that require authentication */}
+
+                  <Route element={<CustomerUser />}>
+                    {/* You have to put here all the routes that require customer role */}
+                    <Route
+                      path="/hotel/:id/rooms/select-room"
+                      element={<SelectRoomForReservation />}
+                    />
+                    <Route
+                      path="/my-reservations"
+                      element={<MyReservations />}
+                    />
+                  </Route>
 
                   <Route element={<AdminUser />}>
                     {/* You have to put here all the routes that require admin role */}

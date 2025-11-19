@@ -45,7 +45,7 @@ namespace HotelsManagementSystem.Api.Services.Admin.Hotels
 
             await _context.Hotels.AddAsync(newHotel);
 
-            foreach(var amenity in inputDto.AmenityIds)
+            foreach (var amenity in inputDto.AmenityIds)
             {
                 var hotelAmenity = new HotelAmenity()
                 {
@@ -56,15 +56,15 @@ namespace HotelsManagementSystem.Api.Services.Admin.Hotels
             }
 
             var uploadedImages = new List<HotelImageUploadResponse>();
-            foreach(var image in inputDto.Images)
+            foreach (var image in inputDto.Images)
             {
                 var uploadedImage = await _imageService.UploadHotelImageAsync(newHotel.Id, image);
                 uploadedImages.Add(uploadedImage);
             }
 
-            if(uploadedImages.Any())
+            if (uploadedImages.Any())
             {
-                foreach(var img in uploadedImages)
+                foreach (var img in uploadedImages)
                 {
                     var hotelImage = new HotelImage()
                     {
@@ -84,9 +84,9 @@ namespace HotelsManagementSystem.Api.Services.Admin.Hotels
         public async Task<bool> DeleteHotelAsync(Guid hotelId, Guid adminId)
         {
             var hotel = await _context.Hotels
-                .FirstOrDefaultAsync(h => 
-                    h.Id == hotelId && 
-                    h.CreatorId == adminId && 
+                .FirstOrDefaultAsync(h =>
+                    h.Id == hotelId &&
+                    h.CreatorId == adminId &&
                     !h.IsDeleted);
 
             if (hotel != null)
@@ -103,9 +103,9 @@ namespace HotelsManagementSystem.Api.Services.Admin.Hotels
             var hotel = await _context.Hotels
                 .Include(h => h.HotelAmenities)
                 .Include(h => h.Images)
-                .FirstOrDefaultAsync(h => 
-                    h.Id == hotelId && 
-                    h.CreatorId == adminId && 
+                .FirstOrDefaultAsync(h =>
+                    h.Id == hotelId &&
+                    h.CreatorId == adminId &&
                     !h.IsDeleted);
 
             if (hotel != null)
@@ -117,7 +117,7 @@ namespace HotelsManagementSystem.Api.Services.Admin.Hotels
 
                 if (inputDto.Description.ToLower() != hotel.Description.ToLower())
                 {
-                    hotel.Description = inputDto.Description; 
+                    hotel.Description = inputDto.Description;
                 }
 
                 if (inputDto.Address.ToLower() != hotel.Address.ToLower())
@@ -149,7 +149,7 @@ namespace HotelsManagementSystem.Api.Services.Admin.Hotels
                 {
                     hotel.CheckOutTime = inputDto.CheckOutTime;
                 }
-                
+
                 // Update amenities
                 var existingAmenityIds = hotel.HotelAmenities.Select(ha => ha.AmenityId).ToList();
                 var amenitiesToAdd = inputDto.AmenityIds.Except(existingAmenityIds).ToList();
@@ -219,7 +219,7 @@ namespace HotelsManagementSystem.Api.Services.Admin.Hotels
                 .AsNoTracking()
                 .Where(h => !h.IsDeleted && h.CreatorId == adminId);
 
-            if(filter != null)
+            if (filter != null)
             {
                 if (!string.IsNullOrEmpty(filter.Name))
                 {
@@ -352,13 +352,28 @@ namespace HotelsManagementSystem.Api.Services.Admin.Hotels
                 .Where(r => r.ReservationStatus == ReservationStatus.Pending ||
                            r.ReservationStatus == ReservationStatus.Confirmed ||
                            r.ReservationStatus == ReservationStatus.CheckedIn ||
-                           (r.CheckOutDate >= currentDate && r.ReservationStatus != ReservationStatus.Cancelled))
+                           (r.CheckOutDate >= currentDate && r.ReservationStatus == ReservationStatus.Pending || r.ReservationStatus == ReservationStatus.CheckedIn || r.ReservationStatus == ReservationStatus.Confirmed))
                 .CountAsync();
 
-            if (!areAllRoomsAvaiable && receptionists.Any() && activeReservationCount > 0)
+            if (!areAllRoomsAvaiable || receptionists.Any() || activeReservationCount > 0)
             {
                 return false;
             }
+
+            //if (!areAllRoomsAvaiable)
+            //{
+            //    return false;
+            //}
+
+            //if (receptionists.Any())
+            //{
+            //    return false;
+            //}
+
+            //if (activeReservationCount > 0)
+            //{
+            //    return false;
+            //}
 
             return true;
         }

@@ -298,6 +298,7 @@ namespace HotelsManagementSystem.Api.Services.Admin.Rooms
             var rooms = await _context
                 .Rooms
                 .AsNoTracking()
+                .OrderByDescending(r => r.CreatedOn)
                 .Where(r => r.HotelId == hotelId && !r.IsDeleted && r.CreatorId == adminId)
                 .Select(r => new GetRoomsForHotelDto
                 {
@@ -309,13 +310,14 @@ namespace HotelsManagementSystem.Api.Services.Admin.Rooms
                     PricePerNight = r.RoomType.PricePerNight,
                     HotelName = r.Hotel.Name,
                     Capacity = r.RoomType.Capacity,
-                    IsAvailable = !r.Reservations.Any(res => res.ReservationStatus != ReservationStatus.Cancelled)
+                    IsAvailable = r.IsAvailable,
                 })
                 .ToListAsync();
 
             foreach(var room in rooms)
             {
-                room.IsDeletable = await IsRoomDeletable(room.Id, hotelId, adminId);
+                var isDeletable = await IsRoomDeletable(room.Id, hotelId, adminId);
+                room.IsDeletable = isDeletable;
             }
 
             return rooms;
@@ -327,6 +329,7 @@ namespace HotelsManagementSystem.Api.Services.Admin.Rooms
                 .AnyAsync(r => r.Id == roomId &&
                       r.HotelId == hotelId &&
                       r.CreatorId == adminId &&
+                      r.IsAvailable &&
                       !r.IsDeleted);
 
             if (!roomExists)
@@ -334,11 +337,22 @@ namespace HotelsManagementSystem.Api.Services.Admin.Rooms
                 return false;
             }
 
-            var hasActiveReservations = await _context.Reservations
-                .AnyAsync(res => res.RoomId == roomId &&
-                                res.ReservationStatus != ReservationStatus.Cancelled);
+            var currentDate = DateTime.UtcNow.Date;
+            var activeReservationCount = await _context.Reservations
+                .AsNoTracking()
+                .Where(r => r.Room.HotelId == hotelId && r.Room.Id == roomId)
+                .Where(r => r.ReservationStatus == ReservationStatus.Pending ||
+                           r.ReservationStatus == ReservationStatus.Confirmed ||
+                           r.ReservationStatus == ReservationStatus.CheckedIn ||
+                           (r.CheckOutDate >= currentDate && r.ReservationStatus == ReservationStatus.Pending ||r.ReservationStatus == ReservationStatus.CheckedIn || r.ReservationStatus == ReservationStatus.Confirmed))
+                .CountAsync();
 
-            return !hasActiveReservations;
+            if(activeReservationCount == 0)
+            {
+                return true;
+            }
+
+            return false;
         }
 
         public async Task<bool> RoomExistsByIdAndHotelIdAsync(Guid roomId, Guid hotelId, Guid adminId)

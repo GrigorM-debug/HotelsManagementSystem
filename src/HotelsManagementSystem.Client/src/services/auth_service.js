@@ -16,6 +16,8 @@ export async function login(loginData) {
     } else if (response.status === 400) {
       const errorData = await response.json();
       return errorData;
+    } else if (response.status === 429) {
+      throw new Error("429 Too Many Requests");
     } else {
       throw new Error("Failed to login");
     }
@@ -39,6 +41,8 @@ export async function register(registerData) {
       const errorData = await response.json();
       console.log(errorData);
       return errorData;
+    } else if (response.status === 429) {
+      throw new Error("429 Too Many Requests");
     } else {
       throw new Error("Failed to register");
     }
@@ -59,6 +63,8 @@ export async function logout(token) {
         throw new Error("401 Unauthorized");
       case 404:
         throw new Error("404 User Not Found");
+      case 429:
+        throw new Error("429 Too Many Requests");
       default:
         throw new Error("Failed to logout");
     }

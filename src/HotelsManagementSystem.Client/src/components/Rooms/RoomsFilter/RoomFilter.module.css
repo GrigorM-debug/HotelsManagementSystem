@@ -1,0 +1,209 @@
+.filterSection {
+  background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+  color: white;
+  padding: 2rem 0;
+}
+
+.filterContainer {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+.filterHeader {
+  margin-top: 1em;
+  text-align: end;
+  margin-bottom: 2rem;
+}
+
+.filterSubtitle {
+  font-size: 1.2rem;
+  opacity: 0.95;
+  margin: 0;
+  line-height: 1.6;
+  color: white;
+  font-weight: 300;
+}
+
+.filterContent {
+  background: white;
+  border-radius: 12px;
+  padding: 2rem;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  margin-top: 1rem;
+}
+
+.filterGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+@media (min-width: 768px) {
+  .filterGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 1024px) {
+  .filterGrid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.filterGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.filterLabel {
+  font-weight: 600;
+  color: #333;
+  font-size: 1rem;
+  margin-bottom: 0.5rem;
+}
+
+.filterInput {
+  padding: 0.75rem 1rem;
+  border: 2px solid #e9ecef;
+  border-radius: 8px;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  background-color: #ffffff;
+  outline: none;
+  color: black;
+}
+
+.filterInput:focus {
+  border-color: #3498db;
+  box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+}
+
+.filterInput:hover {
+  border-color: #bdc3c7;
+}
+
+.filterActions {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.applyButton {
+  padding: 0.75rem 2rem;
+  background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.applyButton:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(52, 152, 219, 0.4);
+}
+
+.clearButton {
+  padding: 0.75rem 1.5rem;
+  background: white;
+  color: #2980b9;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+.clearButton:hover {
+  background: #6c757d;
+  color: white;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(108, 117, 125, 0.3);
+}
+
+.clearButton:active {
+  transform: translateY(0);
+}
+
+.error {
+  color: #e74c3c;
+  font-size: 0.85rem;
+  font-weight: 500;
+  margin-top: 0.25rem;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.error::before {
+  content: "⚠️";
+  font-size: 0.8rem;
+}
+
+/* Mobile responsiveness */
+@media (max-width: 768px) {
+  .filterTitle {
+    font-size: 1.8rem;
+  }
+
+  .filterSubtitle {
+    font-size: 1rem;
+  }
+
+  .filterContent {
+    padding: 1.5rem;
+  }
+
+  .filterActions {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .applyButton,
+  .clearButton {
+    width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .filterSection {
+    padding: 1.5rem 0;
+  }
+
+  .filterContainer {
+    padding: 0 15px;
+  }
+
+  .filterContent {
+    padding: 1rem;
+  }
+
+  .filterGrid {
+    gap: 1rem;
+  }
+
+  .filterInput {
+    padding: 0.65rem 0.85rem;
+    font-size: 0.95rem;
+  }
+
+  .applyButton,
+  .clearButton {
+    padding: 0.65rem 1.5rem;
+    font-size: 0.9rem;
+  }
+
+  .filterTitle {
+    font-size: 1.5rem;
+  }
+}

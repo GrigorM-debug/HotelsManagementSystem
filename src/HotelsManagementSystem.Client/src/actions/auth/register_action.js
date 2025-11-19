@@ -29,49 +29,65 @@ export async function registerAction(prevState, formData) {
     password: formData.get("password"),
   };
 
-  const result = await register(registerData);
+  try {
+    const result = await register(registerData);
 
-  if (result) {
-    if (result.error) {
-      return {
-        success: false,
-        message: result.error,
-        errors: [],
-        data: {
-          firstName: formData.get("firstName"),
-          lastName: formData.get("lastName"),
-          userName: formData.get("userName"),
-          email: formData.get("email"),
-          phoneNumber: formData.get("phoneNumber"),
-        },
-      };
-    } else if (result.errors) {
-      const errors = {
-        firstName: result.errors.FirstName || null,
-        lastName: result.errors.LastName || null,
-        userName: result.errors.UserName || null,
-        email: result.errors.Email || null,
-        phoneNumber: result.errors.PhoneNumber || null,
-        password: result.errors.Password || null,
-      };
+    if (result) {
+      if (result.error) {
+        return {
+          success: false,
+          message: result.error,
+          errors: [],
+          data: {
+            firstName: formData.get("firstName"),
+            lastName: formData.get("lastName"),
+            userName: formData.get("userName"),
+            email: formData.get("email"),
+            phoneNumber: formData.get("phoneNumber"),
+          },
+        };
+      } else if (result.errors) {
+        const errors = {
+          firstName: result.errors.FirstName || null,
+          lastName: result.errors.LastName || null,
+          userName: result.errors.UserName || null,
+          email: result.errors.Email || null,
+          phoneNumber: result.errors.PhoneNumber || null,
+          password: result.errors.Password || null,
+        };
 
+        return {
+          success: false,
+          message: "Please fix the errors below.",
+          errors: errors,
+          data: {
+            firstName: formData.get("firstName"),
+            lastName: formData.get("lastName"),
+            userName: formData.get("userName"),
+            email: formData.get("email"),
+            phoneNumber: formData.get("phoneNumber"),
+          },
+        };
+      }
+    } else {
       return {
-        success: false,
-        message: "Please fix the errors below.",
-        errors: errors,
-        data: {
-          firstName: formData.get("firstName"),
-          lastName: formData.get("lastName"),
-          userName: formData.get("userName"),
-          email: formData.get("email"),
-          phoneNumber: formData.get("phoneNumber"),
-        },
+        success: true,
+        message: "Registration successful!",
       };
     }
-  } else {
-    return {
-      success: true,
-      message: "Registration successful!",
-    };
+  } catch (err) {
+    switch (err.message) {
+      case "429 Too Many Requests":
+        return {
+          success: false,
+          message:
+            "You have made too many registration attempts in a short period. Please try again later.",
+        };
+      default:
+        return {
+          success: false,
+          message: "An unexpected error occurred. Please try again later.",
+        };
+    }
   }
 }
