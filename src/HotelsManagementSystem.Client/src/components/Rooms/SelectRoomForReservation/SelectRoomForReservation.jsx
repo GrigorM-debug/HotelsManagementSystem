@@ -34,7 +34,8 @@ export default function SelectRoomForReservation() {
     );
   }
 
-  if (error || bookingError) {
+  if (error !== null || bookingError !== null) {
+    console.log(bookingError);
     return <ErrorComponent error={error || bookingError} />;
   }
 

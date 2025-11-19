@@ -107,13 +107,11 @@ export function useBookRoom() {
       if (result) {
         if (result.error) {
           setBookingError(result.error);
-          return;
         }
 
         if (result.errors) {
           if (result.errors.hotelId || result.errors.roomId) {
             navigate("/404");
-            return;
           }
         }
 
@@ -235,13 +233,11 @@ export function useCancelReservation(refreshCustomerReservations) {
       if (result) {
         if (result.error) {
           setCancellationError(result.error);
-          return;
         }
 
         if (result.errors) {
           if (result.errors.reservationId) {
             navigate("/404");
-            return;
           }
         }
 
