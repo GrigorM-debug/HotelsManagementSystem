@@ -151,9 +151,6 @@ namespace HotelsManagementSystem.Api.Controllers.Customers
 
             var userIdToGuid = Guid.Parse(userId);
 
-            var checkInDateToUtc = checkInDate.ToUniversalTime();
-            var checkOutDateToUtc = checkOutDate.ToUniversalTime();
-
             var isBookedSuccessfully = await _reservationService.CreateRoomReservationsAsync(
                 userIdToGuid, 
                 hotelId, 
