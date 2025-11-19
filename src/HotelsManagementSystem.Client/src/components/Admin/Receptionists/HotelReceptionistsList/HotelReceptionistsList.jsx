@@ -1,10 +1,12 @@
 import styles from "./HotelReceptionistsList.module.css";
-import ErrorComponent from "../../ErrorComponent/ErrorComponent";
-import SpinnerComponent from "../../SpinnerComponent/SpinnerComponent";
-import { useGetHotelReceptionists } from "../../../hooks/admin/receptionists/useReceptionists";
+import ErrorComponent from "../../../ErrorComponent/ErrorComponent";
+import SpinnerComponent from "../../../SpinnerComponent/SpinnerComponent";
+import { useGetHotelReceptionists } from "../../../../hooks/admin/receptionists/useReceptionists";
 import { useParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 export default function HotelReceptionistsList() {
+  const navigate = useNavigate();
   const { id } = useParams();
   const { receptionists, isLoading, error } = useGetHotelReceptionists(id);
 
@@ -20,9 +22,22 @@ export default function HotelReceptionistsList() {
     console.log(`Delete receptionist with ID: ${receptionistId}`);
   };
 
+  const handleAddReceptionistClick = () => {
+    navigate(`/admin/hotels/${id}/receptionists/create`);
+  };
+
   return (
     <div className={styles.container}>
-      <h1 className={styles.title}>Hotel Receptionists</h1>
+      <div className={styles.header}>
+        <h1 className={styles.title}>Hotel Receptionists</h1>
+        <button
+          onClick={handleAddReceptionistClick}
+          className={styles.addButton}
+        >
+          <span className={styles.addButtonIcon}>+</span>
+          Add Receptionist
+        </button>
+      </div>
       {receptionists.length > 0 ? (
         <div className={styles.tableContainer}>
           <table className={styles.receptionistsTable}>

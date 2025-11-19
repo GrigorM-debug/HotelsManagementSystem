@@ -6,6 +6,16 @@
   min-height: 100vh;
 }
 
+.header {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 3rem;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
 .title {
   font-size: 2.5rem;
   color: #1e293b;
@@ -17,6 +27,41 @@
   -webkit-text-fill-color: transparent;
   background-clip: text;
   position: relative;
+}
+
+.addButton {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+  color: white;
+  border: none;
+  border-radius: 10px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
+}
+
+.addButton:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(59, 130, 246, 0.4);
+  background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%);
+}
+
+.addButton:active {
+  transform: translateY(0);
+  box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
+}
+
+.addButtonIcon {
+  font-size: 1.2rem;
+  font-weight: 700;
+  line-height: 1;
 }
 
 .title::after {
@@ -214,6 +259,10 @@
 @media (max-width: 1024px) {
   .container {
     padding: 1.5rem;
+  }
+
+  .header {
+    margin-bottom: 2.5rem;
   }
 
   .title {
