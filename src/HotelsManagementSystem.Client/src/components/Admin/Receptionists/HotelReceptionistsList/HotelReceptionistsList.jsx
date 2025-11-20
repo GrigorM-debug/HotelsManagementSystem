@@ -1,25 +1,46 @@
 import styles from "./HotelReceptionistsList.module.css";
 import ErrorComponent from "../../../ErrorComponent/ErrorComponent";
 import SpinnerComponent from "../../../SpinnerComponent/SpinnerComponent";
-import { useGetHotelReceptionists } from "../../../../hooks/admin/receptionists/useReceptionists";
+import {
+  useGetHotelReceptionists,
+  useDeleteReceptionist,
+} from "../../../../hooks/admin/receptionists/useReceptionists";
 import { useParams } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
+import DeleteModal from "../../../Modals/DeleteModal/DeleteModal";
 
 export default function HotelReceptionistsList() {
   const navigate = useNavigate();
   const { id } = useParams();
-  const { receptionists, isLoading, error } = useGetHotelReceptionists(id);
+  const { receptionists, isLoading, error, refreshReceptionists } =
+    useGetHotelReceptionists(id);
 
-  if (isLoading) {
-    return <SpinnerComponent message="Loading receptionists..." />;
+  const {
+    isDeleting,
+    isDeleteModalOpen,
+    deletionError,
+    receptionist,
+    toggleDeleteModal,
+    closeDeleteModal,
+    onConfirmDeletion,
+  } = useDeleteReceptionist(refreshReceptionists);
+
+  if (isLoading || isDeleting) {
+    return (
+      <SpinnerComponent
+        message={
+          isLoading ? "Loading receptionists..." : "Deleting receptionist..."
+        }
+      />
+    );
   }
 
-  if (error) {
-    return <ErrorComponent error={error} />;
+  if (error || deletionError) {
+    return <ErrorComponent error={error || deletionError} />;
   }
 
-  const handleDeleteReceptionistClick = (receptionistId) => {
-    console.log(`Delete receptionist with ID: ${receptionistId}`);
+  const handleDeleteReceptionistClick = (receptionistInfo) => {
+    toggleDeleteModal(receptionistInfo);
   };
 
   const handleAddReceptionistClick = () => {
@@ -28,6 +49,13 @@ export default function HotelReceptionistsList() {
 
   return (
     <div className={styles.container}>
+      {isDeleteModalOpen && (
+        <DeleteModal
+          onClose={closeDeleteModal}
+          entityInfo={receptionist}
+          onConfirmDeletion={onConfirmDeletion}
+        />
+      )}
       <div className={styles.header}>
         <h1 className={styles.title}>Hotel Receptionists</h1>
         <button
@@ -61,7 +89,11 @@ export default function HotelReceptionistsList() {
                     {/* <button className={styles.actionButton}>Edit</button> */}
                     <button
                       onClick={() =>
-                        handleDeleteReceptionistClick(receptionist.id)
+                        handleDeleteReceptionistClick({
+                          name: `${receptionist.firstName} ${receptionist.lastName}`,
+                          id: receptionist.id,
+                          hotelId: id,
+                        })
                       }
                       className={`${styles.actionButton} ${styles.deleteButton}`}
                     >

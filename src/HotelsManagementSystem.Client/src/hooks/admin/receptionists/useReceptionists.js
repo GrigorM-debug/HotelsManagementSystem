@@ -50,10 +50,44 @@ export function useGetHotelReceptionists(hotelId) {
     fetchReceptionists();
   }, [hotelId, token, navigate, clearTokenAndUser]);
 
+  const refreshReceptionists = async () => {
+    setIsLoading(true);
+    try {
+      const data = await getReceptionistsByHotelId(hotelId, token);
+
+      setReceptionists(data.receptionists);
+    } catch (err) {
+      switch (err.message) {
+        case "400 Bad Request":
+          navigate("/404");
+          break;
+        case "401 Unauthorized":
+          clearTokenAndUser();
+          navigate("/login");
+          break;
+        case "403 Forbidden":
+          clearTokenAndUser();
+          navigate("/login");
+          break;
+        case "404 Not Found":
+          navigate("/404");
+          break;
+        case "429 Too Many Requests":
+          navigate("/429");
+          break;
+        default:
+          setError("Failed to fetch receptionists. Please try again later.");
+      }
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return {
     receptionists,
     isLoading,
     error,
+    refreshReceptionists,
   };
 }
 
@@ -156,5 +190,38 @@ export function useCreateReceptionist(hotelId) {
     creationError,
     handleInputChange,
     handleCreateReceptionistFormSubmit,
+  };
+}
+
+export function useDeleteReceptionist(refreshReceptionists) {
+  const { token, clearTokenAndUser } = useAuth();
+  const navigate = useNavigate();
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [deletionError, setDeletionError] = useState(null);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [receptionist, setReceptionist] = useState({});
+
+  const toggleDeleteModal = (receptionistInfo) => {
+    setIsDeleteModalOpen(true);
+    setReceptionist(receptionistInfo);
+  };
+
+  const closeDeleteModal = () => {
+    setIsDeleteModalOpen(false);
+    setReceptionist({});
+  };
+
+  const onConfirmDeletion = async () => {
+    console.log("Deleting receptionist with ID:", receptionist);
+  };
+
+  return {
+    isDeleting,
+    isDeleteModalOpen,
+    deletionError,
+    receptionist,
+    toggleDeleteModal,
+    closeDeleteModal,
+    onConfirmDeletion,
   };
 }
