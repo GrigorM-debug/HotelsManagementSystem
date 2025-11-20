@@ -1,7 +1,11 @@
 import { useAuth } from "../../useAuth";
 import { useNavigate } from "react-router-dom";
-import { getReceptionistsByHotelId } from "../../../services/admin/receptionsts/receptionists_service";
+import {
+  getReceptionistsByHotelId,
+  createReceptionist,
+} from "../../../services/admin/receptionsts/receptionists_service";
 import { useEffect, useState } from "react";
+import { validateRegisterData } from "../../../validations/auth/register_form_validations";
 
 export function useGetHotelReceptionists(hotelId) {
   const { token, clearTokenAndUser } = useAuth();
@@ -50,5 +54,107 @@ export function useGetHotelReceptionists(hotelId) {
     receptionists,
     isLoading,
     error,
+  };
+}
+
+export function useCreateReceptionist(hotelId) {
+  const { token, clearTokenAndUser } = useAuth();
+  const navigate = useNavigate();
+  const [isCreating, setIsCreating] = useState(false);
+  const [creationError, setCreationError] = useState(null);
+  const [formErrors, setFormErrors] = useState({});
+  const [formData, setFormData] = useState({
+    firstName: "",
+    lastName: "",
+    userName: "",
+    email: "",
+    phoneNumber: "",
+    password: "",
+  });
+
+  const handleInputChange = (e) => {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value,
+    });
+  };
+
+  const handleCreateReceptionistFormSubmit = async (e) => {
+    e.preventDefault();
+
+    const formDataAsFormData = new FormData();
+    formDataAsFormData.append("firstName", formData.firstName);
+    formDataAsFormData.append("lastName", formData.lastName);
+    formDataAsFormData.append("userName", formData.userName);
+    formDataAsFormData.append("email", formData.email);
+    formDataAsFormData.append("phoneNumber", formData.phoneNumber);
+    formDataAsFormData.append("password", formData.password);
+
+    const validation = validateRegisterData(formDataAsFormData);
+
+    if (!validation.isValid) {
+      setCreationError("Please fix the errors below.");
+      setFormErrors(validation.errors);
+    }
+
+    try {
+      setIsCreating(true);
+      const result = await createReceptionist(hotelId, formData, token);
+
+      if (result) {
+        if (result.success) {
+          navigate(`/admin/hotels/${hotelId}/receptionists`);
+        }
+
+        if (result.error) {
+          setCreationError(result.error);
+        }
+
+        if (result.errors) {
+          const apiErrors = {
+            firstName: result.errors.FirstName,
+            lastName: result.errors.LastName,
+            userName: result.errors.UserName,
+            email: result.errors.Email,
+            phoneNumber: result.errors.PhoneNumber,
+            password: result.errors.Password,
+          };
+          setCreationError("Please fix the errors below.");
+          setFormErrors({ ...apiErrors });
+        }
+      }
+    } catch (err) {
+      switch (err.message) {
+        case "401 Unauthorized":
+          clearTokenAndUser();
+          navigate("/login");
+          break;
+        case "403 Forbidden":
+          clearTokenAndUser();
+          navigate("/login");
+          break;
+        case "404 Not Found":
+          navigate("/404");
+          break;
+        case "429 Too Many Requests":
+          navigate("/429");
+          break;
+        default:
+          setCreationError(
+            "Failed to create receptionist. Please try again later."
+          );
+      }
+    } finally {
+      setIsCreating(false);
+    }
+  };
+
+  return {
+    formData,
+    formErrors,
+    isCreating,
+    creationError,
+    handleInputChange,
+    handleCreateReceptionistFormSubmit,
   };
 }
