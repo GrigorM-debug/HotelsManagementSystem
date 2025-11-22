@@ -13,6 +13,7 @@ using HotelsManagementSystem.Api.Services.EmailProvider;
 using HotelsManagementSystem.Api.Services.Hotels;
 using HotelsManagementSystem.Api.Services.Image;
 using HotelsManagementSystem.Api.Services.Receptionist;
+using HotelsManagementSystem.Api.Services.Receptionist.ReceptionistReservations;
 using HotelsManagementSystem.Api.Services.Rooms;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
@@ -123,6 +124,7 @@ namespace HotelsManagementSystem.Api.Extensions
             services.AddScoped<IAdminService, AdminService>();
             services.AddScoped<IReceptionistService , ReceptionistService>();
             services.AddScoped<IReservationService, ReservationService>();
+            services.AddScoped<IReceptionistReservationsService, ReceptionistReservationsService>();
 
             return services;
         }

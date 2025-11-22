@@ -115,6 +115,19 @@ export default function Navigation() {
                 </>
               )}
 
+              {user.roles[0] === "Receptionist" && (
+                <NavLink
+                  to="/manage-reservations"
+                  className={({ isActive }) =>
+                    isActive
+                      ? `${styles.navButton} ${styles.activeButton}`
+                      : styles.navButton
+                  }
+                >
+                  Manage Reservations
+                </NavLink>
+              )}
+
               <button
                 onClick={handleLogoutCallback}
                 className={`${styles.navButton} ${styles.logoutButton}`}

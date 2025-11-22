@@ -2,9 +2,11 @@ import styles from "./ReceptionistDashBoard.module.css";
 import { useReceptionistDashboard } from "../../../hooks/receptionist/useReceptionist";
 import SpinnerComponent from "../../SpinnerComponent/SpinnerComponent";
 import ErrorComponent from "../../ErrorComponent/ErrorComponent";
+import { useNavigate } from "react-router-dom";
 
 export default function ReceptionistDashBoard() {
   const { isLoading, dashboardData, error } = useReceptionistDashboard();
+  const navigate = useNavigate();
 
   if (isLoading) {
     return <SpinnerComponent message="Loading dashboard..." />;
@@ -15,7 +17,7 @@ export default function ReceptionistDashBoard() {
   }
 
   const handleManageReservations = () => {
-    // Logic to navigate to Manage Reservations page
+    navigate("/manage-reservations");
   };
 
   return (

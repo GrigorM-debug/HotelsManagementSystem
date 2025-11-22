@@ -118,21 +118,17 @@ export default function MyReservations() {
                   </span>
                 </td>
                 <td>
-                  {reservation.reservationStatus.toLowerCase() !==
-                    "cancelled" &&
-                    reservation.reservationStatus.toLowerCase() !==
-                      "checkedOut" && (
-                      <button
-                        className={styles.cancelButton}
-                        onClick={() =>
-                          handleCancelReservationClick(
-                            reservation.reservationId
-                          )
-                        }
-                      >
-                        Cancel Reservation
-                      </button>
-                    )}
+                  {reservation.reservationStatus.toLowerCase() ===
+                    "pending" && (
+                    <button
+                      className={styles.cancelButton}
+                      onClick={() =>
+                        handleCancelReservationClick(reservation.reservationId)
+                      }
+                    >
+                      Cancel Reservation
+                    </button>
+                  )}
                 </td>
               </tr>
             ))}
