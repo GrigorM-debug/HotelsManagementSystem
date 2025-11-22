@@ -60,3 +60,37 @@ export async function confirmReservation(reservationId, customerId, token) {
 
   return response.json();
 }
+
+export async function checkInReservation(reservationId, customerId, token) {
+  const response = await fetch(
+    `${API_BASE_URL}/receptionistReservations/check-in-reservation/${reservationId}/customer/${customerId}`,
+    {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+    }
+  );
+
+  if (!response.ok) {
+    switch (response.status) {
+      case 401:
+        throw new Error("401 Unauthorized");
+      case 403:
+        throw new Error("403 Forbidden");
+      case 404:
+        throw new Error("404 Not Found");
+      case 400: {
+        const errorData = await response.json();
+        return errorData;
+      }
+      case 429:
+        throw new Error("429 Too Many Requests");
+      default:
+        throw new Error("Failed to check-in reservation");
+    }
+  }
+
+  return response.json();
+}

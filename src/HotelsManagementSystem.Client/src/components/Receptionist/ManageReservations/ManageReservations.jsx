@@ -4,6 +4,7 @@ import ErrorComponent from "../../ErrorComponent/ErrorComponent";
 import {
   useGetReservations,
   useConfirmReservation,
+  useCheckInReservation,
 } from "../../../hooks/receptionist/useReceptionistReservations";
 
 export default function ManageReservations() {
@@ -13,12 +14,15 @@ export default function ManageReservations() {
   const { confirmError, confirmReservationCallBack } =
     useConfirmReservation(refreshReservations);
 
+  const { checkInError, checkInReservationCallBack } =
+    useCheckInReservation(refreshReservations);
+
   if (isLoading) {
     return <SpinnerComponent />;
   }
 
-  if (error || confirmError) {
-    return <ErrorComponent message={error || confirmError} />;
+  if (error || confirmError || checkInError) {
+    return <ErrorComponent message={error || confirmError || checkInError} />;
   }
 
   const formatDate = (dateString) => {
@@ -55,9 +59,7 @@ export default function ManageReservations() {
   };
 
   const handleCheckInReservation = (reservationData) => {
-    // Implement check-in logic
-    console.log(
-      "Check-in reservation:",
+    checkInReservationCallBack(
       reservationData.reservationId,
       reservationData.customerId
     );

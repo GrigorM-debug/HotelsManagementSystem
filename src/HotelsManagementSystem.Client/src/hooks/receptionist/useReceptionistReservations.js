@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import {
   getReservations,
   confirmReservation,
+  checkInReservation,
 } from "../../services/receptionist/receptionist_reservations";
 
 export function useGetReservations() {
@@ -127,5 +128,56 @@ export function useConfirmReservation(refreshReservations) {
   return {
     confirmError,
     confirmReservationCallBack,
+  };
+}
+
+export function useCheckInReservation(refreshReservations) {
+  const { token, clearTokenAndUser } = useAuth();
+  const [checkInError, setCheckInError] = useState(null);
+  const navigate = useNavigate();
+
+  const checkInReservationCallBack = async (reservationId, customerId) => {
+    try {
+      const result = await checkInReservation(reservationId, customerId, token);
+      if (result) {
+        if (result.success) {
+          await refreshReservations();
+        }
+        if (result.error) {
+          setCheckInError(result.error);
+        }
+        if (result.errors) {
+          if (result.errors.reservationId || result.errors.customerId) {
+            navigate("/404");
+          }
+        }
+      }
+    } catch (err) {
+      switch (err.message) {
+        case "401 Unauthorized":
+          clearTokenAndUser();
+          navigate("/login");
+          break;
+        case "404 Not Found":
+          navigate("/404");
+          break;
+        case "403 Forbidden":
+          clearTokenAndUser();
+          navigate("/login");
+          break;
+        case "429 Too Many Requests":
+          navigate("/429");
+          break;
+        default:
+          setCheckInError(
+            "Failed to check-in reservation. Please try again later."
+          );
+      }
+    }
+  };
+
+  return {
+    checkInError,
+    checkInReservationCallBack,
   };
 }
