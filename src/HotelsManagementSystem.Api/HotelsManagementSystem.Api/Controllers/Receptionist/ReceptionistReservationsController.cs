@@ -133,6 +133,11 @@ namespace HotelsManagementSystem.Api.Controllers.Receptionist
                 return BadRequest(new { error = "Cannot check in before the scheduled check-in date." });
             }
 
+            if(reservationCheckInDate < currentDate)
+            {
+                return BadRequest(new { error = "Cannot check in after the scheduled check-in date." });
+            }
+
             if (reservation.ReservationStatus != Enums.ReservationStatus.Confirmed)
             {
                 return BadRequest(new { error = "Only confirmed reservations can be checked in." });
@@ -184,6 +189,11 @@ namespace HotelsManagementSystem.Api.Controllers.Receptionist
             if (reservationCheckOutDate > currentDate)
             {
                 return BadRequest(new { error = "Cannot check out before the scheduled check-out date." });
+            }
+
+            if(reservationCheckOutDate < currentDate)
+            {
+                return BadRequest(new { error = "Cannot check out after the scheduled check-out date." });
             }
 
             if (reservation.ReservationStatus != Enums.ReservationStatus.CheckedIn)
