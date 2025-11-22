@@ -10,5 +10,7 @@ namespace HotelsManagementSystem.Api.Services.Receptionist.ReceptionistReservati
         Task<Reservation> GetReservationAsync(Guid reservationId, Guid customerId);
 
         Task<bool> ConfirmReservationAsync(Guid reservationId, Guid customerId, Guid receptionistId);
+
+        Task<bool> CheckInReservationAsync(Guid reservationId, Guid customerId, Guid receptionistId);
     }
 }

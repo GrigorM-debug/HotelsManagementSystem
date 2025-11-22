@@ -96,5 +96,49 @@ namespace HotelsManagementSystem.Api.Controllers.Receptionist
 
             return Ok(new { success = "Reservation confirmed successfully." });
         }
+
+        [HttpPost("check-in-reservation/{reservationId}/customer/{customerId}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesDefaultResponseType]
+        public async Task<IActionResult> CheckInReservation(Guid reservationId, Guid customerId)
+        {
+            var userId = _userManager.GetUserId(User);
+            var user = await _userManager.FindByIdAsync(userId);
+            if (user == null)
+            {
+                return Unauthorized(new { error = "User not found." });
+            }
+
+            var isUserReceptionist = await _userManager.IsInRoleAsync(user, UserRoles.Receptionist);
+            if (!isUserReceptionist)
+            {
+                return Forbid();
+            }
+
+            var reservation = await _receptionistReservationsService.GetReservationAsync(reservationId, customerId);
+            if (reservation == null)
+            {
+                return NotFound(new { error = "Reservation not found." });
+            }
+
+            if (reservation.ReservationStatus != Enums.ReservationStatus.Confirmed)
+            {
+                return BadRequest(new { error = "Only confirmed reservations can be checked in." });
+            }
+
+            var receptionistId = Guid.Parse(userId);
+            var isCheckedIn = await _receptionistReservationsService.CheckInReservationAsync(reservationId, customerId, receptionistId);
+
+            if (!isCheckedIn)
+            {
+                return BadRequest(new { error = "Failed to check in reservation." });
+            }
+
+            return Ok(new { success = "Reservation checked in successfully." });
+        }
     }
 }
