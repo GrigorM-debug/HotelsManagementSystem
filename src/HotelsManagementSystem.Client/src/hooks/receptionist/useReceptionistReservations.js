@@ -5,6 +5,7 @@ import {
   getReservations,
   confirmReservation,
   checkInReservation,
+  checkOutReservation,
 } from "../../services/receptionist/receptionist_reservations";
 
 export function useGetReservations() {
@@ -179,5 +180,60 @@ export function useCheckInReservation(refreshReservations) {
   return {
     checkInError,
     checkInReservationCallBack,
+  };
+}
+
+export function useCheckOutReservation(refreshReservations) {
+  const { token, clearTokenAndUser } = useAuth();
+  const [checkOutError, setCheckOutError] = useState(null);
+  const navigate = useNavigate();
+
+  const checkOutReservationCallBack = async (reservationId, customerId) => {
+    try {
+      const result = await checkOutReservation(
+        reservationId,
+        customerId,
+        token
+      );
+      if (result) {
+        if (result.success) {
+          await refreshReservations();
+        }
+        if (result.error) {
+          setCheckOutError(result.error);
+        }
+        if (result.errors) {
+          if (result.errors.reservationId || result.errors.customerId) {
+            navigate("/404");
+          }
+        }
+      }
+    } catch (err) {
+      switch (err.message) {
+        case "401 Unauthorized":
+          clearTokenAndUser();
+          navigate("/login");
+          break;
+        case "404 Not Found":
+          navigate("/404");
+          break;
+        case "403 Forbidden":
+          clearTokenAndUser();
+          navigate("/login");
+          break;
+        case "429 Too Many Requests":
+          navigate("/429");
+          break;
+        default:
+          setCheckOutError(
+            "Failed to check-out reservation. Please try again later."
+          );
+      }
+    }
+  };
+
+  return {
+    checkOutError,
+    checkOutReservationCallBack,
   };
 }

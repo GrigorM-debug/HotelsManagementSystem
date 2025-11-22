@@ -5,6 +5,7 @@ import {
   useGetReservations,
   useConfirmReservation,
   useCheckInReservation,
+  useCheckOutReservation,
 } from "../../../hooks/receptionist/useReceptionistReservations";
 
 export default function ManageReservations() {
@@ -17,12 +18,19 @@ export default function ManageReservations() {
   const { checkInError, checkInReservationCallBack } =
     useCheckInReservation(refreshReservations);
 
+  const { checkOutError, checkOutReservationCallBack } =
+    useCheckOutReservation(refreshReservations);
+
   if (isLoading) {
     return <SpinnerComponent />;
   }
 
-  if (error || confirmError || checkInError) {
-    return <ErrorComponent message={error || confirmError || checkInError} />;
+  if (error || confirmError || checkInError || checkOutError) {
+    return (
+      <ErrorComponent
+        error={error || confirmError || checkInError || checkOutError}
+      />
+    );
   }
 
   const formatDate = (dateString) => {
@@ -66,9 +74,7 @@ export default function ManageReservations() {
   };
 
   const handleCheckOutReservation = (reservationData) => {
-    // Implement check-out logic
-    console.log(
-      "Check-out reservation:",
+    checkOutReservationCallBack(
       reservationData.reservationId,
       reservationData.customerId
     );
