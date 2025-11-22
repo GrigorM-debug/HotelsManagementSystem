@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import {
   getReceptionistsByHotelId,
   createReceptionist,
+  deleteReceptionist,
 } from "../../../services/admin/receptionsts/receptionists_service";
 import { useEffect, useState } from "react";
 import { validateRegisterData } from "../../../validations/auth/register_form_validations";
@@ -145,6 +146,9 @@ export function useCreateReceptionist(hotelId) {
         }
 
         if (result.errors) {
+          if (result.errors.hotelId) {
+            navigate("/404");
+          }
           const apiErrors = {
             firstName: result.errors.FirstName,
             lastName: result.errors.LastName,
@@ -212,7 +216,61 @@ export function useDeleteReceptionist(refreshReceptionists) {
   };
 
   const onConfirmDeletion = async () => {
-    console.log("Deleting receptionist with ID:", receptionist);
+    try {
+      setIsDeleting(true);
+      const result = await deleteReceptionist(
+        receptionist.hotelId,
+        receptionist.id,
+        token
+      );
+
+      if (result) {
+        if (result.success) {
+          await refreshReceptionists();
+          closeDeleteModal();
+        }
+
+        if (result.error) {
+          setDeletionError(result.error);
+          closeDeleteModal();
+        }
+
+        if (result.errors) {
+          if (result.errors.receptionistId) {
+            navigate("/404");
+            closeDeleteModal();
+          }
+
+          if (result.errors.hotelId) {
+            navigate("/404");
+            closeDeleteModal();
+          }
+        }
+      }
+    } catch (err) {
+      switch (err.message) {
+        case "401 Unauthorized":
+          clearTokenAndUser();
+          navigate("/login");
+          break;
+        case "403 Forbidden":
+          clearTokenAndUser();
+          navigate("/login");
+          break;
+        case "404 Not Found":
+          navigate("/404");
+          break;
+        case "429 Too Many Requests":
+          navigate("/429");
+          break;
+        default:
+          setDeletionError(
+            "Failed to delete receptionist. Please try again later."
+          );
+      }
+    } finally {
+      setIsDeleting(false);
+    }
   };
 
   return {

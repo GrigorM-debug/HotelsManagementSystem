@@ -82,8 +82,10 @@ export async function deleteReceptionist(hotelId, receptionistId, token) {
 
   if (!response.ok) {
     switch (response.status) {
-      case 400:
-        throw new Error("400 Bad Request");
+      case 400: {
+        const errorData = await response.json();
+        return errorData;
+      }
       case 401:
         throw new Error("401 Unauthorized");
       case 403:
