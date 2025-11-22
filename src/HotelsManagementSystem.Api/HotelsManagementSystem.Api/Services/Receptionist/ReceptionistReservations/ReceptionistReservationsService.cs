@@ -36,6 +36,25 @@ namespace HotelsManagementSystem.Api.Services.Receptionist.ReceptionistReservati
             return true;
         }
 
+        public async Task<bool> CheckOutReservationAsync(Guid reservationId, Guid customerId, Guid receptionistId)
+        {
+            var reservation = await _context.Reservations
+                .FirstOrDefaultAsync(r => 
+                    r.Id == reservationId && 
+                    r.CustomerId == customerId &&
+                    r.ReservationStatus == Enums.ReservationStatus.CheckedIn);
+
+            if (reservation == null)
+            {
+                return false;
+            }
+
+            reservation.ReservationStatus = Enums.ReservationStatus.CheckedOut;
+            reservation.ManagedById = receptionistId;
+            await _context.SaveChangesAsync();
+            return true;
+        }
+
         public async Task<bool> ConfirmReservationAsync(Guid reservationId, Guid customerId, Guid receptionistId)
         {
             var reservation = await _context.Reservations

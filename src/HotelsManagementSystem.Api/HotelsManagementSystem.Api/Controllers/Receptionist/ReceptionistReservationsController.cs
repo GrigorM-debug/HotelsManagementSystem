@@ -125,6 +125,14 @@ namespace HotelsManagementSystem.Api.Controllers.Receptionist
                 return NotFound(new { error = "Reservation not found." });
             }
 
+            var currentDate = DateOnly.FromDateTime(DateTime.UtcNow);
+            var reservationCheckInDate = DateOnly.FromDateTime(reservation.CheckInDate);
+
+            if (reservationCheckInDate > currentDate)
+            {
+                return BadRequest(new { error = "Cannot check in before the scheduled check-in date." });
+            }
+
             if (reservation.ReservationStatus != Enums.ReservationStatus.Confirmed)
             {
                 return BadRequest(new { error = "Only confirmed reservations can be checked in." });
@@ -139,6 +147,58 @@ namespace HotelsManagementSystem.Api.Controllers.Receptionist
             }
 
             return Ok(new { success = "Reservation checked in successfully." });
+        }
+
+        [HttpPost("check-out-reservation/{reservationId}/customer/{customerId}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesDefaultResponseType]
+        public async Task<IActionResult> CheckOutReservation(Guid reservationId, Guid customerId)
+        {
+            var userId = _userManager.GetUserId(User);
+            var user = await _userManager.FindByIdAsync(userId);
+            if (user == null)
+            {
+                return Unauthorized(new { error = "User not found." });
+            }
+
+            var isUserReceptionist = await _userManager.IsInRoleAsync(user, UserRoles.Receptionist);
+            if (!isUserReceptionist)
+            {
+                return Forbid();
+            }
+
+            var reservation = await _receptionistReservationsService.GetReservationAsync(reservationId, customerId);
+            if (reservation == null)
+            {
+                return NotFound(new { error = "Reservation not found." });
+            }
+
+            var currentDate = DateOnly.FromDateTime(DateTime.UtcNow);
+
+            var reservationCheckOutDate = DateOnly.FromDateTime(reservation.CheckOutDate);
+
+            if (reservationCheckOutDate > currentDate)
+            {
+                return BadRequest(new { error = "Cannot check out before the scheduled check-out date." });
+            }
+
+            if (reservation.ReservationStatus != Enums.ReservationStatus.CheckedIn)
+            {
+                return BadRequest(new { error = "Only checked-in reservations can be checked out." });
+            }
+
+            var receptionistId = Guid.Parse(userId);
+            var isCheckedOut = await _receptionistReservationsService.CheckOutReservationAsync(reservationId, customerId, receptionistId);
+            if (!isCheckedOut)
+            {
+                return BadRequest(new { error = "Failed to check out reservation." });
+            }
+
+            return Ok(new { success = "Reservation checked out successfully." });
         }
     }
 }
