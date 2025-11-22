@@ -200,5 +200,49 @@ namespace HotelsManagementSystem.Api.Controllers.Receptionist
 
             return Ok(new { success = "Reservation checked out successfully." });
         }
+
+        [HttpPost("cancel-reservation/{reservationId}/customer/{customerId}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesDefaultResponseType]
+        public async Task<IActionResult> CancelReservation(Guid reservationId, Guid customerId)
+        {
+            var userId = _userManager.GetUserId(User);
+            var user = await _userManager.FindByIdAsync(userId);
+            if (user == null)
+            {
+                return Unauthorized(new { error = "User not found." });
+            }
+
+            var isUserReceptionist = await _userManager.IsInRoleAsync(user, UserRoles.Receptionist);
+            if (!isUserReceptionist)
+            {
+                return Forbid();
+            }
+
+            var reservation = await _receptionistReservationsService.GetReservationAsync(reservationId, customerId);
+            if (reservation == null)
+            {
+                return NotFound(new { error = "Reservation not found." });
+            }
+
+            if (reservation.ReservationStatus != Enums.ReservationStatus.Pending)
+            {
+                return BadRequest(new { error = "Only pending reservations can be cancelled." });
+            }
+
+            var receptionistId = Guid.Parse(userId);
+            var isCancelled = await _receptionistReservationsService.CancelReservationAsync(reservationId, customerId, receptionistId);
+
+            if (!isCancelled)
+            {
+                return BadRequest(new { error = "Failed to cancel reservation." });
+            }
+
+            return Ok(new { success = "Reservation cancelled successfully." });
+        }
     }
 }
