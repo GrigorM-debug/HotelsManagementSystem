@@ -266,5 +266,39 @@ namespace HotelsManagementSystem.Api.Controllers.Admin.Hotels
                 return StatusCode(StatusCodes.Status500InternalServerError, new { error = "An error occurred while editing the hotel. Please try again later." });
             }
         }
+
+        [HttpGet("{hotelId}/receptionists")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesDefaultResponseType]
+        public async Task<IActionResult> GetHotelReceptionists(Guid hotelId)
+        {
+            var userId = _userManager.GetUserId(User);
+            var user = await _userManager.FindByIdAsync(userId);
+            if (user == null)
+            {
+                return Unauthorized(new { error = "User not found." });
+            }
+
+            var isUserAdmin = await _userManager.IsInRoleAsync(user, UserRoles.Admin);
+            if (!isUserAdmin)
+            {
+                return Forbid();
+            }
+
+            var adminIdToGuid = Guid.Parse(userId);
+            var hotelExists = await _hotelService.HotelExistsByHotelIdAndAdminIdAsync(hotelId, adminIdToGuid);
+            if (!hotelExists)
+            {
+                return NotFound(new { error = "Hotel not found." });
+            }
+
+            var hotelReceptionists = await _hotelService.GetHotelReceptionistsAsync(hotelId, adminIdToGuid);
+
+            return Ok(new { receptionists = hotelReceptionists });
+        }
     }
 }

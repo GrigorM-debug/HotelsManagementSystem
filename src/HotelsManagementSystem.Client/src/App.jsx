@@ -28,6 +28,8 @@ import BrowseHotels from "./components/Hotels/BrowseHotels/BrowseHotels";
 import CustomerUser from "./components/Route-Guards/CustomerUser";
 import SelectRoomForReservation from "./components/Rooms/SelectRoomForReservation/SelectRoomForReservation";
 import MyReservations from "./components/Customer/MyReservations/MyReservations";
+import HotelReceptionistsList from "./components/Admin/Receptionists/HotelReceptionistsList/HotelReceptionistsList";
+import CreateReceptionist from "./components/Admin/Receptionists/CreateReceptionist/CreateReceptionist";
 
 function App() {
   return (
@@ -94,6 +96,14 @@ function App() {
                     <Route
                       path="/admin/hotels/:id/rooms/edit-room/:roomId"
                       element={<EditRoom />}
+                    />
+                    <Route
+                      path="/admin/hotels/:id/receptionists"
+                      element={<HotelReceptionistsList />}
+                    />
+                    <Route
+                      path="/admin/hotels/:id/receptionists/create"
+                      element={<CreateReceptionist />}
                     />
                   </Route>
                   <Route element={<ReceptionistUser />}>

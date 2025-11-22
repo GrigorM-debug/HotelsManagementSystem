@@ -1,5 +1,6 @@
 ﻿using HotelsManagementSystem.Api.DTOs.Admin.Hotels;
 using HotelsManagementSystem.Api.DTOs.Admin.Hotels.Edit;
+using HotelsManagementSystem.Api.DTOs.Admin.Receptionists;
 using HotelsManagementSystem.Api.DTOs.Hotels;
 
 namespace HotelsManagementSystem.Api.Services.Admin.Hotels
@@ -23,5 +24,7 @@ namespace HotelsManagementSystem.Api.Services.Admin.Hotels
         public Task<bool> EditHotelPostAsync(EditHotelPostDto inputDto, Guid adminId, Guid hotelId);
 
         public Task<HotelDto> GetHotelByIdAndAdminIdAsync(Guid hotelId, Guid adminId);
+
+        public Task<IEnumerable<GetHotelReceptionistsDto>> GetHotelReceptionistsAsync(Guid hotelId, Guid adminId);
     }
 }

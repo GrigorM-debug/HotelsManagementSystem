@@ -302,6 +302,11 @@
   background-color: #059669;
 }
 
+.viewReceptionistsBtn {
+  background-color: #3b82f6;
+  color: white;
+}
+
 @media (max-width: 768px) {
   .container {
     padding: 1rem;

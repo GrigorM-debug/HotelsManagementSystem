@@ -65,6 +65,10 @@ export default function HotelsList() {
     navigate(`/admin/hotels/${hotelId}/rooms/add-room`);
   };
 
+  const handleViewReceptionists = (hotelId) => {
+    navigate(`/admin/hotels/${hotelId}/receptionists`);
+  };
+
   const formatDate = (dateString) => {
     const options = {
       weekday: "long",
@@ -216,6 +220,13 @@ export default function HotelsList() {
                               title="Add Room"
                             >
                               🏠 Add Room
+                            </button>
+                            <button
+                              className={`${styles.actionBtn} ${styles.viewReceptionistsBtn}`}
+                              onClick={() => handleViewReceptionists(hotel.id)}
+                              title="View Receptionists"
+                            >
+                              👥 Receptionists
                             </button>
                           </div>
                         </td>
