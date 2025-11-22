@@ -6,6 +6,7 @@ import {
   useConfirmReservation,
   useCheckInReservation,
   useCheckOutReservation,
+  useCancelReservation,
 } from "../../../hooks/receptionist/useReceptionistReservations";
 
 export default function ManageReservations() {
@@ -21,14 +22,29 @@ export default function ManageReservations() {
   const { checkOutError, checkOutReservationCallBack } =
     useCheckOutReservation(refreshReservations);
 
+  const { cancellationError, handleCancelReservationCallback } =
+    useCancelReservation(refreshReservations);
+
   if (isLoading) {
     return <SpinnerComponent />;
   }
 
-  if (error || confirmError || checkInError || checkOutError) {
+  if (
+    error ||
+    confirmError ||
+    checkInError ||
+    checkOutError ||
+    cancellationError
+  ) {
     return (
       <ErrorComponent
-        error={error || confirmError || checkInError || checkOutError}
+        error={
+          error ||
+          confirmError ||
+          checkInError ||
+          checkOutError ||
+          cancellationError
+        }
       />
     );
   }
@@ -51,9 +67,7 @@ export default function ManageReservations() {
   };
 
   const handleCancelReservation = (reservationData) => {
-    // Implement cancel logic
-    console.log(
-      "Cancel reservation:",
+    handleCancelReservationCallback(
       reservationData.reservationId,
       reservationData.customerId
     );
