@@ -21,6 +21,7 @@ export function useGetHotelAvailableRooms(hotelId) {
   const navigate = useNavigate();
   const [filter, setFilter] = useState(initialFilterState);
   const [appliedFilters, setAppliedFilters] = useState(initialFilterState);
+  const [validationErrors, setValidationErrors] = useState({});
 
   const handleFilterChange = (e) => {
     const { name, value } = e.target;
@@ -49,6 +50,22 @@ export function useGetHotelAvailableRooms(hotelId) {
           token
         );
 
+        if (data.errors) {
+          if (data.errors.hotelId) {
+            navigate("/404");
+            return;
+          }
+
+          const apiErrors = {
+            checkInDate: data.errors.checkInDate,
+            checkOutDate: data.errors.checkOutDate,
+            numberOfGuests: data.errors.numberOfGuests,
+          };
+
+          setValidationErrors(apiErrors);
+          return;
+        }
+
         setRooms(data);
       } catch (err) {
         switch (err.message) {
@@ -61,9 +78,6 @@ export function useGetHotelAvailableRooms(hotelId) {
             navigate("/login");
             break;
           case "404 Not Found":
-            navigate("/404");
-            break;
-          case "400 Bad Request":
             navigate("/404");
             break;
           case "429 Too Many Requests":
@@ -90,6 +104,7 @@ export function useGetHotelAvailableRooms(hotelId) {
     handleFilterChange,
     handleFilterReset,
     handleApplyFilters,
+    validationErrors,
   };
 }
 
@@ -112,11 +127,13 @@ export function useBookRoom() {
         if (result.errors) {
           if (result.errors.hotelId || result.errors.roomId) {
             navigate("/404");
+            return;
           }
         }
 
         if (result.success) {
           navigate("/my-reservations");
+          return;
         }
       }
     } catch (err) {
