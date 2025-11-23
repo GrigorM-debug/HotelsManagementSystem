@@ -5,7 +5,7 @@ namespace HotelsManagementSystem.Api.Services.Receptionist.ReceptionistReservati
 {
     public interface IReceptionistReservationsService
     {
-        Task<IEnumerable<GetHotelReservationsDto>> GetReservationsAsync(Guid receptionistId);
+        Task<List<GetHotelReservationsDto>> GetReservationsAsync(Guid receptionistId, ReservationFilterDto? filter);
 
         Task<Reservation> GetReservationAsync(Guid reservationId, Guid customerId);
 

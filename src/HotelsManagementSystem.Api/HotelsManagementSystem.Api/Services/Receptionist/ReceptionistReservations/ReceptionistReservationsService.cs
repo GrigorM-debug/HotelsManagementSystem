@@ -116,18 +116,49 @@ namespace HotelsManagementSystem.Api.Services.Receptionist.ReceptionistReservati
             return reservation;
         }
 
-        public async Task<IEnumerable<GetHotelReservationsDto>> GetReservationsAsync(Guid receptionistId)
+        public async Task<List<GetHotelReservationsDto>> GetReservationsAsync(Guid receptionistId, ReservationFilterDto? filter)
         {
             var receptionistProfile = await _context.Receptionists
                 .AsNoTracking()
                 .FirstOrDefaultAsync(r => r.UserId == receptionistId);
 
-            var reservations = await _context.Reservations
+            var reservationsQuery = _context.Reservations
                 .Include(r => r.Room)
                 .Include(r => r.Customer)
                     .ThenInclude(c => c.User)
                 .AsNoTracking()
                 .Where(res => res.Room.HotelId == receptionistProfile.HotelId)
+                .OrderByDescending(res => res.ReservationDate)
+                .AsQueryable();
+
+            if (filter != null)
+            {
+                if (!string.IsNullOrEmpty(filter.CustomerFirstName) && !string.IsNullOrEmpty(filter.CustomerLastName))
+                {
+                    reservationsQuery = reservationsQuery
+                        .Where(res =>
+                            res.Customer.User.FirstName.ToLower().Contains(filter.CustomerFirstName.ToLower()) &&
+                            res.Customer.User.LastName.ToLower().Contains(filter.CustomerLastName.ToLower()));
+                }
+                
+                if (!string.IsNullOrEmpty(filter.CustomerEmail))
+                {
+                    reservationsQuery = reservationsQuery
+                        .Where(res =>
+                            res.Customer.User.Email.ToLower().Contains(filter.CustomerEmail.ToLower()));
+                }
+                
+                if (!string.IsNullOrEmpty(filter.CustomerPhoneNumber))
+                {
+                    reservationsQuery = reservationsQuery
+                        .Where(res =>
+                            res.Customer.User.PhoneNumber != null &&
+                            res.Customer.User.PhoneNumber.Contains(filter.CustomerPhoneNumber));
+                }
+                
+            }
+
+            var reservations = await reservationsQuery
                 .Select(res => new GetHotelReservationsDto
                 {
                     ReservationId = res.Id,
@@ -146,7 +177,7 @@ namespace HotelsManagementSystem.Api.Services.Receptionist.ReceptionistReservati
                     ReservationStatus = res.ReservationStatus.ToString()
 
                 })
-                .ToListAsync(); 
+                .ToListAsync();
 
             return reservations;
         }

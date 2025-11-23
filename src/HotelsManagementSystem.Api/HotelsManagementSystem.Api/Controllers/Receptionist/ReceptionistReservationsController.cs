@@ -1,5 +1,6 @@
 ﻿using HotelsManagementSystem.Api.Constants;
 using HotelsManagementSystem.Api.Data.Models.Users;
+using HotelsManagementSystem.Api.DTOs.Receptionist;
 using HotelsManagementSystem.Api.Services.Receptionist.ReceptionistReservations;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -31,7 +32,7 @@ namespace HotelsManagementSystem.Api.Controllers.Receptionist
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesDefaultResponseType]
-        public async Task<IActionResult> GetReservations()
+        public async Task<IActionResult> GetReservations([FromQuery] ReservationFilterDto? filter)
         {
             var userId = _userManager.GetUserId(User);
             var user = await _userManager.FindByIdAsync(userId);
@@ -47,7 +48,7 @@ namespace HotelsManagementSystem.Api.Controllers.Receptionist
             }
 
             var receptionistId = Guid.Parse(userId);
-            var reservations = await _receptionistReservationsService.GetReservationsAsync(receptionistId);
+            var reservations = await _receptionistReservationsService.GetReservationsAsync(receptionistId, filter);
 
             return Ok(reservations);
         }
