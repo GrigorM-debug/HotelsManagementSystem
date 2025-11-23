@@ -18,7 +18,7 @@ import {
 export function validateFirstName(firstName) {
   const trimmedFirstName = firstName.trim();
 
-  if (!trimmedFirstName || trimmedFirstName === "") {
+  if (trimmedFirstName && trimmedFirstName !== "") {
     if (
       trimmedFirstName.length < FIRST_NAME_AND_LAST_NAME_MIN_LENGTH ||
       trimmedFirstName.length > FIRST_NAME_AND_LAST_NAME_MAX_LENGTH
@@ -37,7 +37,7 @@ export function validateFirstName(firstName) {
 export function validateLastName(lastName) {
   const trimmedLastName = lastName.trim();
 
-  if (!trimmedLastName || trimmedLastName === "") {
+  if (trimmedLastName && trimmedLastName !== "") {
     if (
       trimmedLastName.length < FIRST_NAME_AND_LAST_NAME_MIN_LENGTH ||
       trimmedLastName.length > FIRST_NAME_AND_LAST_NAME_MAX_LENGTH
@@ -54,7 +54,7 @@ export function validateLastName(lastName) {
 }
 
 export function validateEmail(email) {
-  if (!email || email.trim() === "") {
+  if (email && email.trim() !== "") {
     const trimmedEmail = email.trim();
 
     if (
@@ -73,7 +73,7 @@ export function validateEmail(email) {
 }
 
 export function validatePhoneNumber(phoneNumber) {
-  if (!phoneNumber || phoneNumber.trim() === "") {
+  if (phoneNumber && phoneNumber.trim() !== "") {
     const trimmedPhoneNumber = phoneNumber.trim();
 
     if (
