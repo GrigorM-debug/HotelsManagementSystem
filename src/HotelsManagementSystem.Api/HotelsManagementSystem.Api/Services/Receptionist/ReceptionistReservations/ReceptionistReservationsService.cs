@@ -25,13 +25,20 @@ namespace HotelsManagementSystem.Api.Services.Receptionist.ReceptionistReservati
                     r.CustomerId == customerId &&
                     r.ReservationStatus == Enums.ReservationStatus.Pending);
 
-            if (reservation == null)
+            var room = await _context.Rooms
+                .FirstOrDefaultAsync(r => 
+                    r.Id == reservation.RoomId && 
+                    !r.IsDeleted && 
+                    !r.IsAvailable);
+
+            if (reservation == null || room == null)
             {
                 return false;
             }
 
             reservation.ReservationStatus = Enums.ReservationStatus.Cancelled;
             reservation.ManagedById = receptionistId;
+            room.IsAvailable = true;
             await _context.SaveChangesAsync();
             return true;
         }
@@ -63,13 +70,20 @@ namespace HotelsManagementSystem.Api.Services.Receptionist.ReceptionistReservati
                     r.CustomerId == customerId &&
                     r.ReservationStatus == Enums.ReservationStatus.CheckedIn);
 
-            if (reservation == null)
+            var room = await _context.Rooms
+                .FirstOrDefaultAsync(r => 
+                    r.Id == reservation.RoomId && 
+                    !r.IsDeleted && 
+                    !r.IsAvailable);
+
+            if (reservation == null || room == null)
             {
                 return false;
             }
 
             reservation.ReservationStatus = Enums.ReservationStatus.CheckedOut;
             reservation.ManagedById = receptionistId;
+            room.IsAvailable = true;
             await _context.SaveChangesAsync();
             return true;
         }
