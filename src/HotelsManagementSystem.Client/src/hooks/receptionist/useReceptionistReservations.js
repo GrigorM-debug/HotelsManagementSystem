@@ -8,6 +8,7 @@ import {
   checkOutReservation,
   cancelReservation,
 } from "../../services/receptionist/receptionist_reservations";
+import { validateReservationFilter } from "../../validations/reservation_filter/reservation_filter";
 
 export function useGetReservations() {
   const { token, clearTokenAndUser } = useAuth();
@@ -15,13 +16,62 @@ export function useGetReservations() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
   const navigate = useNavigate();
+  const filterInitialState = {
+    customerFirstName: "",
+    customerLastName: "",
+    customerEmail: "",
+    customerPhoneNumber: "",
+  };
+  const [filter, setFilter] = useState(filterInitialState);
+  const [appliedFilter, setAppliedFilter] = useState(filterInitialState);
+  const [validationErrors, setValidationErrors] = useState({});
+
+  const handleFilterChange = (e) => {
+    const { name, value } = e.target;
+    setFilter((prevFilter) => ({
+      ...prevFilter,
+      [name]: value,
+    }));
+  };
+
+  const applyFilter = () => {
+    const validation = validateReservationFilter(filter);
+
+    if (validation.isValid === false) {
+      setValidationErrors(validation.errors);
+      return;
+    }
+    setAppliedFilter({ ...filter });
+    setValidationErrors({});
+  };
+
+  const clearFilter = () => {
+    setFilter(filterInitialState);
+    setAppliedFilter(filterInitialState);
+    setValidationErrors({});
+  };
 
   useEffect(() => {
     const fetchReservations = async () => {
       setIsLoading(true);
       try {
-        const data = await getReservations(token);
-        setReservations(data);
+        const data = await getReservations(appliedFilter, token);
+
+        if (data) {
+          if (data.errors) {
+            const apiErrors = {
+              customerFirstName: data.errors.CustomerEmail,
+              customerLastName: data.errors.CustomerFirstName,
+              customerEmail: data.errors.CustomerLastName,
+              customerPhoneNumber: data.errors.CustomerPhoneNumber,
+            };
+
+            setValidationErrors(apiErrors);
+            return;
+          }
+
+          setReservations(data);
+        }
       } catch (err) {
         switch (err.message) {
           case "401 Unauthorized":
@@ -43,12 +93,12 @@ export function useGetReservations() {
       }
     };
     fetchReservations();
-  }, [token, navigate, clearTokenAndUser]);
+  }, [token, navigate, clearTokenAndUser, appliedFilter]);
 
   const refreshReservations = async () => {
     setIsLoading(true);
     try {
-      const data = await getReservations(token);
+      const data = await getReservations(appliedFilter, token);
       setReservations(data);
     } catch (err) {
       switch (err.message) {
@@ -76,6 +126,11 @@ export function useGetReservations() {
     isLoading,
     error,
     refreshReservations,
+    handleFilterChange,
+    filter,
+    clearFilter,
+    applyFilter,
+    validationErrors,
   };
 }
 

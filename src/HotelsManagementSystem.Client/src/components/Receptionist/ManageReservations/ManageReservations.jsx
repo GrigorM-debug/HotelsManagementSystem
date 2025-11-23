@@ -8,10 +8,20 @@ import {
   useCheckOutReservation,
   useCancelReservation,
 } from "../../../hooks/receptionist/useReceptionistReservations";
+import ReservationFilter from "./ReservationFilter/ReservationFilter";
 
 export default function ManageReservations() {
-  const { reservations, isLoading, error, refreshReservations } =
-    useGetReservations();
+  const {
+    reservations,
+    isLoading,
+    error,
+    refreshReservations,
+    handleFilterChange,
+    filter,
+    clearFilter,
+    applyFilter,
+    validationErrors,
+  } = useGetReservations();
 
   const { confirmError, confirmReservationCallBack } =
     useConfirmReservation(refreshReservations);
@@ -102,6 +112,15 @@ export default function ManageReservations() {
           Total Reservations: {reservations.length}
         </div>
       </div>
+
+      {/* Reservation Filter Component */}
+      <ReservationFilter
+        handleFilterChange={handleFilterChange}
+        filter={filter}
+        clearFilter={clearFilter}
+        applyFilter={applyFilter}
+        validationErrors={validationErrors}
+      />
 
       <div className={styles.tableContainer}>
         <table className={styles.reservationsTable}>

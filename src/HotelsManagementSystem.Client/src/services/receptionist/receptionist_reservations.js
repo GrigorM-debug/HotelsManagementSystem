@@ -1,8 +1,8 @@
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
-export async function getReservations(token) {
+export async function getReservations(appliedFilter, token) {
   const response = await fetch(
-    `${API_BASE_URL}/receptionistReservations/reservations`,
+    `${API_BASE_URL}/receptionistReservations/reservations?CustomerFirstName=${appliedFilter.customerFirstName}&CustomerLastName=${appliedFilter.customerLastName}&CustomerEmail=${appliedFilter.customerEmail}&CustomerPhoneNumber=${appliedFilter.customerPhoneNumber}`,
     {
       method: "GET",
       headers: {
@@ -13,6 +13,10 @@ export async function getReservations(token) {
 
   if (!response.ok) {
     switch (response.status) {
+      case 400: {
+        const errorData = await response.json();
+        return errorData;
+      }
       case 401:
         throw new Error("401 Unauthorized");
       case 403:
