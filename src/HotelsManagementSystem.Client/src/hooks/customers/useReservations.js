@@ -122,6 +122,7 @@ export function useBookRoom() {
       if (result) {
         if (result.error) {
           setBookingError(result.error);
+          return;
         }
 
         if (result.errors) {
@@ -250,11 +251,13 @@ export function useCancelReservation(refreshCustomerReservations) {
       if (result) {
         if (result.error) {
           setCancellationError(result.error);
+          return;
         }
 
         if (result.errors) {
           if (result.errors.reservationId) {
             navigate("/404");
+            return;
           }
         }
 
