@@ -22,6 +22,7 @@ export default function SelectRoomForReservation() {
     handleFilterChange,
     handleFilterReset,
     handleApplyFilters,
+    validationErrors,
   } = useGetHotelAvailableRooms(id);
 
   const { isBooking, bookingError, handleBookRoom } = useBookRoom();
@@ -35,7 +36,6 @@ export default function SelectRoomForReservation() {
   }
 
   if (error !== null || bookingError !== null) {
-    console.log(bookingError);
     return <ErrorComponent error={error || bookingError} />;
   }
 
@@ -71,6 +71,7 @@ export default function SelectRoomForReservation() {
         onFilterChange={handleFilterChange}
         onFilterReset={handleFilterReset}
         onApply={handleApplyFilters}
+        validationErrors={validationErrors}
       />
 
       {/* Rooms Table */}

@@ -1,85 +1,22 @@
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
-export async function getHotelAvailableRooms(hotelId, appliedFilters, token) {
+export async function getReservations(appliedFilter, token) {
   const response = await fetch(
-    `${API_BASE_URL}/reservation/hotel/${hotelId}/available-rooms?CheckInDate=${appliedFilters.checkInDate}&CheckOutDate=${appliedFilters.checkOutDate}&NumberOfGuests=${appliedFilters.numberOfGuests}`,
+    `${API_BASE_URL}/receptionistReservations/reservations?CustomerFirstName=${appliedFilter.customerFirstName}&CustomerLastName=${appliedFilter.customerLastName}&CustomerEmail=${appliedFilter.customerEmail}&CustomerPhoneNumber=${appliedFilter.customerPhoneNumber}`,
     {
       method: "GET",
       headers: {
         Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json",
       },
     }
   );
 
   if (!response.ok) {
     switch (response.status) {
-      case 401:
-        throw new Error("401 Unauthorized");
-      case 403:
-        throw new Error("403 Forbidden");
-      case 404:
-        throw new Error("404 Not Found");
       case 400: {
         const errorData = await response.json();
         return errorData;
       }
-      case 429:
-        throw new Error("429 Too Many Requests");
-      default:
-        throw new Error("Failed to fetch available rooms");
-    }
-  }
-
-  return response.json();
-}
-
-export async function bookRoom(hotelId, roomId, reservationInfo, token) {
-  const response = await fetch(
-    `${API_BASE_URL}/reservation/hotel/${hotelId}/room/${roomId}/book`,
-    {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(reservationInfo),
-    }
-  );
-
-  if (!response.ok) {
-    switch (response.status) {
-      case 401:
-        throw new Error("401 Unauthorized");
-      case 403:
-        throw new Error("403 Forbidden");
-      case 404:
-        throw new Error("404 Not Found");
-      case 400: {
-        const errorData = await response.json();
-        return errorData;
-      }
-      case 429:
-        throw new Error("429 Too Many Requests");
-      default:
-        throw new Error("Failed to book room");
-    }
-  }
-
-  return response.json();
-}
-
-export async function getCustomerReservations(token) {
-  const response = await fetch(`${API_BASE_URL}/reservation/my-reservations`, {
-    method: "GET",
-    headers: {
-      Authorization: `Bearer ${token}`,
-      "Content-Type": "application/json",
-    },
-  });
-
-  if (!response.ok) {
-    switch (response.status) {
       case 401:
         throw new Error("401 Unauthorized");
       case 403:
@@ -94,9 +31,111 @@ export async function getCustomerReservations(token) {
   return response.json();
 }
 
-export async function cancelReservation(reservationId, token) {
+export async function confirmReservation(reservationId, customerId, token) {
   const response = await fetch(
-    `${API_BASE_URL}/reservation/${reservationId}/cancel`,
+    `${API_BASE_URL}/receptionistReservations/confirm-reservation/${reservationId}/customer/${customerId}`,
+    {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+    }
+  );
+
+  if (!response.ok) {
+    switch (response.status) {
+      case 401:
+        throw new Error("401 Unauthorized");
+      case 403:
+        throw new Error("403 Forbidden");
+      case 404:
+        throw new Error("404 Not Found");
+      case 429:
+        throw new Error("429 Too Many Requests");
+      case 400: {
+        const errorData = await response.json();
+        return errorData;
+      }
+      default:
+        throw new Error("Failed to confirm reservation");
+    }
+  }
+
+  return response.json();
+}
+
+export async function checkInReservation(reservationId, customerId, token) {
+  const response = await fetch(
+    `${API_BASE_URL}/receptionistReservations/check-in-reservation/${reservationId}/customer/${customerId}`,
+    {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+    }
+  );
+
+  if (!response.ok) {
+    switch (response.status) {
+      case 401:
+        throw new Error("401 Unauthorized");
+      case 403:
+        throw new Error("403 Forbidden");
+      case 404:
+        throw new Error("404 Not Found");
+      case 400: {
+        const errorData = await response.json();
+        return errorData;
+      }
+      case 429:
+        throw new Error("429 Too Many Requests");
+      default:
+        throw new Error("Failed to check-in reservation");
+    }
+  }
+
+  return response.json();
+}
+
+export async function checkOutReservation(reservationId, customerId, token) {
+  const response = await fetch(
+    `${API_BASE_URL}/receptionistReservations/check-out-reservation/${reservationId}/customer/${customerId}`,
+    {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+    }
+  );
+
+  if (!response.ok) {
+    switch (response.status) {
+      case 400: {
+        const errorData = await response.json();
+        return errorData;
+      }
+      case 401:
+        throw new Error("401 Unauthorized");
+      case 403:
+        throw new Error("403 Forbidden");
+      case 404:
+        throw new Error("404 Not Found");
+      case 429:
+        throw new Error("429 Too Many Requests");
+      default:
+        throw new Error("Failed to check-out reservation");
+    }
+  }
+
+  return response.json();
+}
+
+export async function cancelReservation(reservationId, customerId, token) {
+  const response = await fetch(
+    `${API_BASE_URL}/receptionistReservations/cancel-reservation/${reservationId}/customer/${customerId}`,
     {
       method: "POST",
       headers: {

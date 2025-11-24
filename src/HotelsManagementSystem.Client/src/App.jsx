@@ -30,6 +30,7 @@ import SelectRoomForReservation from "./components/Rooms/SelectRoomForReservatio
 import MyReservations from "./components/Customer/MyReservations/MyReservations";
 import HotelReceptionistsList from "./components/Admin/Receptionists/HotelReceptionistsList/HotelReceptionistsList";
 import CreateReceptionist from "./components/Admin/Receptionists/CreateReceptionist/CreateReceptionist";
+import ManageReservations from "./components/Receptionist/ManageReservations/ManageReservations";
 
 function App() {
   return (
@@ -111,6 +112,10 @@ function App() {
                     <Route
                       path="/receptionist-dashboard"
                       element={<ReceptionistDashBoard />}
+                    />
+                    <Route
+                      path="/manage-reservations"
+                      element={<ManageReservations />}
                     />
                   </Route>
                 </Route>
