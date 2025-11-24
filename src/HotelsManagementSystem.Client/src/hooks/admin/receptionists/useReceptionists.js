@@ -143,6 +143,7 @@ export function useCreateReceptionist(hotelId) {
 
         if (result.error) {
           setCreationError(result.error);
+          return;
         }
 
         if (result.errors) {

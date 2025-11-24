@@ -257,7 +257,6 @@ export function useCancelReservation(refreshCustomerReservations) {
         if (result.errors) {
           if (result.errors.reservationId) {
             navigate("/404");
-            return;
           }
         }
 
