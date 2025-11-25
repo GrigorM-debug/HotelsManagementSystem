@@ -42,7 +42,17 @@ namespace HotelsManagementSystem.Api.Services.Hotels
                             Id = img.Id,
                             ImageUrl = img.Url,
                         })
-                        .ToList()
+                        .ToList(),
+                    Reviews = h.Reviews
+                        .Select(r => new DTOs.Reviews.HotelReviewDto
+                        {
+                            Id = r.Id,
+                            CustomerId = r.CustomerId,
+                            CustomerName = r.Customer.User.FullName,
+                            Rating = r.Rating,
+                            Comment = r.Comment,
+                            CreatedOn = r.CreatedOn
+                        })
                 })
                 .FirstOrDefaultAsync();
 

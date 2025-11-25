@@ -1,4 +1,6 @@
-﻿namespace HotelsManagementSystem.Api.DTOs.Hotels.Details
+﻿using HotelsManagementSystem.Api.DTOs.Reviews;
+
+namespace HotelsManagementSystem.Api.DTOs.Hotels.Details
 {
     public class HotelDetailsDto
     {
@@ -13,6 +15,7 @@
         public TimeSpan CheckOutTime { get; set; }
         public IEnumerable<AmenityDto> Amenities { get; set; } = new List<AmenityDto>();
         public IEnumerable<HotelImageDto> Images { get; set; } = new List<HotelImageDto>();
+        public IEnumerable<HotelReviewDto> Reviews { get; set; } = new List<HotelReviewDto>();
 
     }
 
