@@ -11,6 +11,7 @@ import ErrorComponent from "../../ErrorComponent/ErrorComponent";
 import SpinnerComponent from "../../SpinnerComponent/SpinnerComponent";
 import styles from "./HotelDetails.module.css";
 import { useNavigate } from "react-router-dom";
+import HotelReviewsSection from "./HotelReviewsSection/HotelReviewsSection";
 
 export default function HotelDetails() {
   const { id } = useParams();
@@ -124,6 +125,11 @@ export default function HotelDetails() {
           </p>
         )}
       </div>
+
+      {/* Hotel Reviews Section */}
+      <HotelReviewsSection reviews={hotel.reviews || []} hotelId={id} />
+
+      {/* Book Now Button for Customers */}
 
       {isAuthenticated && user.roles[0] === "Customer" && (
         <div className={styles.actionsSection}>

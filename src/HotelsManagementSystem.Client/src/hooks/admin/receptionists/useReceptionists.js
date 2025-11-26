@@ -234,17 +234,20 @@ export function useDeleteReceptionist(refreshReceptionists) {
         if (result.error) {
           setDeletionError(result.error);
           closeDeleteModal();
+          return;
         }
 
         if (result.errors) {
           if (result.errors.receptionistId) {
             navigate("/404");
             closeDeleteModal();
+            return;
           }
 
           if (result.errors.hotelId) {
             navigate("/404");
             closeDeleteModal();
+            return;
           }
         }
       }

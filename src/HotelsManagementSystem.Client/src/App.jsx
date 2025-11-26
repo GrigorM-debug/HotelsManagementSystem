@@ -31,6 +31,7 @@ import MyReservations from "./components/Customer/MyReservations/MyReservations"
 import HotelReceptionistsList from "./components/Admin/Receptionists/HotelReceptionistsList/HotelReceptionistsList";
 import CreateReceptionist from "./components/Admin/Receptionists/CreateReceptionist/CreateReceptionist";
 import ManageReservations from "./components/Receptionist/ManageReservations/ManageReservations";
+import CreateReview from "./components/Customer/Hotels/Reviews/CreateReview";
 
 function App() {
   return (
@@ -68,6 +69,11 @@ function App() {
                     <Route
                       path="/my-reservations"
                       element={<MyReservations />}
+                    />
+
+                    <Route
+                      path="/hotel/:id/write-review"
+                      element={<CreateReview />}
                     />
                   </Route>
 
