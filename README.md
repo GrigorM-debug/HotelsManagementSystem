@@ -129,3 +129,71 @@ The system uses an enum-based status management for reservations:
 ## 📧 Contact Feature
 
 The system includes a contact page with a form that sends emails directly to the system administrator's email address upon submission.
+
+## Design
+
+### Home Page
+
+![alt text](./readme-images/home1.png)
+![alt text](./readme-images/home2.png)
+![alt text](./readme-images/home3.png)
+![alt text](./readme-images/home4.png)
+
+### Login and Register
+
+![alt text](./readme-images/login.png)
+![alt text](./readme-images/register.png)
+
+### Contact Page
+
+![alt text](./readme-images/contact_page.png)
+
+### Browse Hotels Page
+
+![alt text](./readme-images/browse_hotels.png)
+![alt text](./readme-images/browse_hotels2.png)
+
+### Manage Hotels Page
+
+![alt text](./readme-images/manage_hotels1.png)
+![alt text](./readme-images/manage_hotels2.png)
+
+### Manage Hotel Rooms
+
+![alt text](./readme-images/manage_hotel_rooms.png)
+
+### Manage Hotel Receptionists
+
+![alt text](./readme-images/manage_hotel_receptionists.png)
+
+### Hotel Details
+
+![alt text](./readme-images/hotel_details1.png)
+![alt text](./readme-images/hotel_details2.png)
+![alt text](./readme-images/hotel_details3.png)
+
+### Room Details
+
+![alt text](./readme-images/room_details1.png)
+![alt text](./readme-images/room_details2.png)
+![alt text](./readme-images/room_details3.png)
+
+### Admin Dashboard
+
+![alt text](./readme-images/admin_dashboard.png)
+
+### Receptionist Dashboard
+
+![alt text](./readme-images/receptionist_dashboard.png)
+
+### Manage Reservations
+
+![alt text](./readme-images/manage_reservations.png)
+
+### Book Room
+
+![alt text](./readme-images/select_room_for_booking.png)
+
+### My Reservations
+
+![alt text](./readme-images/my_reservations.png)
