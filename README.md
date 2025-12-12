@@ -151,7 +151,7 @@ The system includes a contact page with a form that sends emails directly to the
 ### Browse Hotels Page
 
 ![alt text](./readme-images/browse_hotels.png)
-![alt text](./readme-images/browse_hotels2.png)
+![alt text](./readme-images/browse_hotels3.png)
 
 ### Manage Hotels Page
 
